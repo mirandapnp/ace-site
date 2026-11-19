@@ -1,0 +1,325 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { LazyImage } from "@/components/lazy-visual";
+import { PrimaryButton } from "@/components/primary-button";
+import { SecondaryButton } from "@/components/secondary-button";
+import { catalogProducts, featuredProducts, productPath, type Product } from "@/content/products";
+import { media } from "@/lib/media";
+
+const cardImage: Record<string, { frame: string; crop: string }> = {
+  "skull-of-shadow": {
+    frame: "h-[315px] w-[287.973px]",
+    crop: "top-[1.74%] left-[-4.86%] h-[98.26%] w-[107.48%]",
+  },
+  "ace-shooter-promax": {
+    frame: "h-[315px] w-[281.382px]",
+    crop: "top-[1.3%] left-[-6.61%] h-[98.82%] w-[115.33%]",
+  },
+  "galaxy-rangers": {
+    frame: "h-[315px] w-[281.382px]",
+    crop: "top-[3.14%] left-[-14.63%] h-[96.86%] w-[129.26%]",
+  },
+  "wild-hunting": {
+    frame: "aspect-[945.271/1063.147] w-full",
+    crop: "top-[0.53%] left-[-6.4%] h-[99.47%] w-[111.87%]",
+  },
+  "roll-n-win": {
+    frame: "aspect-[279/301.217] w-full",
+    crop: "top-[-1.89%] left-[-9.85%] h-[99.54%] w-[119.69%]",
+  },
+  "speedy-toss": {
+    frame: "h-[315px] w-[259.961px]",
+    crop: "top-[-2.26%] left-[-11.95%] h-[102.26%] w-[123.91%]",
+  },
+  "crossbow-fishing": {
+    frame: "h-[315px] w-[287.477px]",
+    crop: "top-0 left-[-3.09%] h-[96.27%] w-[105.48%]",
+  },
+  "jet-ski-racer": {
+    frame: "aspect-[279/315] w-full",
+    crop: "top-[2.59%] left-[-2.6%] h-[90.45%] w-[102.12%]",
+  },
+};
+
+function CatalogCard({ product }: { product: Product }) {
+  const face = useRef<HTMLDivElement>(null);
+  const motion = useRef({ x: 0, y: 0, tx: 0, ty: 0, frame: 0 });
+
+  useEffect(() => {
+    const current = motion.current;
+    return () => cancelAnimationFrame(current.frame);
+  }, []);
+
+  function step() {
+    const node = face.current;
+    const pose = motion.current;
+    if (!node) return;
+    pose.x += (pose.tx - pose.x) * 0.09;
+    pose.y += (pose.ty - pose.y) * 0.09;
+    const settled =
+      Math.abs(pose.tx - pose.x) < 0.02 && Math.abs(pose.ty - pose.y) < 0.02;
+    if (settled && pose.tx === 0 && pose.ty === 0) {
+      pose.x = 0;
+      pose.y = 0;
+      pose.frame = 0;
+      node.style.transform = "";
+      node.parentElement?.style.setProperty("perspective", "");
+      return;
+    }
+    node.style.transform = `rotateX(${pose.y.toFixed(3)}deg) rotateY(${pose.x.toFixed(3)}deg)`;
+    pose.frame = requestAnimationFrame(step);
+  }
+
+  function tilt(event: React.MouseEvent<HTMLLIElement>) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    event.currentTarget.style.perspective = "900px";
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    const max = 5;
+    const pose = motion.current;
+    pose.ty = y * max;
+    pose.tx = -x * max;
+    if (!pose.frame) pose.frame = requestAnimationFrame(step);
+  }
+
+  function rest() {
+    const pose = motion.current;
+    pose.tx = 0;
+    pose.ty = 0;
+    if (!pose.frame) pose.frame = requestAnimationFrame(step);
+  }
+
+  return (
+    <li className="relative z-0 hover:z-10" onMouseMove={tilt} onMouseLeave={rest}>
+      <div
+        ref={face}
+        className="group relative flex h-full origin-center flex-col items-start justify-end gap-10 rounded-[16px] bg-white px-5 pt-10 pb-5"
+      >
+        <div className="flex w-full flex-1 items-end">
+          <div
+            className={`relative shrink-0 ${cardImage[product.id].frame}`}
+          >
+            <div className="absolute inset-0 overflow-hidden">
+              <LazyImage
+                alt=""
+                src={media(product.image)}
+                className={`absolute max-w-none ${cardImage[product.id].crop}`}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex w-full items-center justify-between">
+          <h3 className="min-w-0 flex-1 font-display text-[18px] leading-[1.25] font-medium tracking-[-0.45px] text-black capitalize">
+            {product.name}
+          </h3>
+          <a
+            href={productPath(product.id)}
+            aria-label={`Open ${product.name}`}
+            className="relative flex size-[30px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[rgba(78,78,78,0.25)]"
+          >
+            <span
+              aria-hidden
+              className="ace-card-sweep pointer-events-none absolute inset-0 bg-[rgba(78,78,78,0.1)]"
+            />
+            <img alt="" src={media("/ace/plus.svg")} width={12} height={12} className="relative" />
+          </a>
+        </div>
+        <span
+          aria-hidden
+          className="ace-card-sweep ace-card-fade pointer-events-none absolute inset-0 rounded-[16px] bg-[rgba(0,0,0,0.07)]"
+        />
+      </div>
+    </li>
+  );
+}
+
+const kickerClass =
+  "font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] text-black uppercase";
+
+export function Products() {
+  const [activeId, setActiveId] = useState<Product["id"]>("air-combat");
+  const active = featuredProducts.find((product) => product.id === activeId) ?? featuredProducts[0];
+
+  return (
+    <section
+      id="products"
+      className="w-[1440px] px-5 pt-20 pb-5"
+      aria-labelledby="products-heading"
+    >
+      <div className="flex items-end justify-between">
+        <h2
+          id="products-heading"
+          className="font-display text-[60px] leading-[1.1] font-medium tracking-[-1.95px] text-white"
+        >
+          Core Products
+        </h2>
+        <PrimaryButton href="#products" color="gray">
+          All Products
+        </PrimaryButton>
+      </div>
+
+      <div className="mt-10 grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-x-5">
+        <div
+          className="grid h-[580px] gap-[10px] transition-[grid-template-rows] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+          style={{
+            gridTemplateRows: featuredProducts
+              .map((product) => (product.id === active.id ? "450px" : "55px"))
+              .join(" "),
+          }}
+          role="tablist"
+          aria-label="Core products"
+        >
+          {featuredProducts.map((product) => {
+            const open = product.id === active.id;
+            const panelId = `${product.id}-panel`;
+            const tabId = `${product.id}-tab`;
+
+            return (
+              <div
+                key={product.id}
+                className={
+                  open
+                    ? "flex h-full min-h-0 flex-col overflow-hidden rounded-[16px] bg-[#36f592]"
+                    : "flex h-full min-h-0 flex-col overflow-hidden rounded-[16px] bg-[rgba(54,245,146,0.75)] transition-colors duration-300 ease-out hover:bg-[#36f592] motion-reduce:transition-none"
+                }
+              >
+                <button
+                  id={tabId}
+                  type="button"
+                  role="tab"
+                  aria-selected={open}
+                  aria-controls={panelId}
+                  onClick={() => setActiveId(product.id)}
+                  className={`px-5 text-left text-[12px] leading-[1.25] transition-[padding] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${open ? "pt-7 pb-0" : "py-5"}`}
+                >
+                  <span className={kickerClass}>{product.kicker}</span>
+                </button>
+                <div
+                  id={panelId}
+                  role="tabpanel"
+                  aria-labelledby={tabId}
+                  aria-hidden={!open}
+                  inert={!open}
+                  className="flex min-h-0 flex-1 flex-col justify-between overflow-hidden px-5 pt-5 pb-7"
+                >
+                  <div className="flex flex-col gap-7">
+                    <h3 className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize">
+                      {product.name}
+                    </h3>
+                    {product.stats && product.stats.length > 0 ? (
+                      <div className="flex flex-col gap-5">
+                        <p className={kickerClass}>Stats</p>
+                        <ul className="flex flex-col gap-2">
+                          {product.stats.map((stat) => (
+                            <li
+                              key={stat}
+                              className="flex h-[17px] items-center gap-3 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-black"
+                            >
+                              <span aria-hidden className="size-1.5 shrink-0 bg-black" />
+                              {stat}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="flex items-end gap-10">
+                    {product.body ? (
+                      <p className="flex-1 font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
+                        {product.body}
+                      </p>
+                    ) : (
+                      <span className="flex-1" />
+                    )}
+                    <SecondaryButton href={productPath(product.id)} color="outline" className="shrink-0">
+                      View
+                    </SecondaryButton>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="relative h-[580px] overflow-hidden rounded-[16px]">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(to bottom, rgba(45, 45, 45, 0.25) 11.058%, #7dae95 100%)",
+            }}
+          />
+          {active.scene === "combat" ? (
+            <LazyImage
+              alt=""
+              src={media("/ace/air-combat-bg.webp")}
+              restOpacity={0.7}
+              className="absolute top-[-9.31%] left-[-17.38%] h-[109.31%] w-[136.12%] max-w-none mix-blend-multiply"
+            />
+          ) : null}
+          <div className="ace-product-in relative flex h-full items-center justify-center px-20 py-[100px]">
+            {active.scene === "combat" ? (
+              <div className="relative h-[465.523px] w-[556.468px]">
+                <div className="absolute top-[24.65px] right-[8.12px] left-[21.35px] aspect-[572.365/478.822] overflow-hidden">
+                  <LazyImage
+                    alt={active.name}
+                    src={media(active.image)}
+                    className="absolute top-[-13.2%] left-[-2.41%] h-[125.31%] w-[104.83%] max-w-none"
+                  />
+                </div>
+              </div>
+            ) : (
+              <LazyImage
+                key={active.id}
+                alt={active.name}
+                src={media(active.image)}
+                className="max-h-[460px] w-auto max-w-[680px]"
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      <ul className="mt-10 grid grid-cols-4 gap-5">
+        {catalogProducts.map((product) => (
+          <CatalogCard key={product.id} product={product} />
+        ))}
+      </ul>
+      <style>{`
+        .ace-product-in { animation: ace-product-in 400ms ease-out; }
+        @keyframes ace-product-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ace-product-in { animation: none; }
+        }
+        .ace-card-sweep {
+          -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 33.333%, transparent 66.666%, transparent 100%);
+          mask-image: linear-gradient(90deg, #000 0%, #000 33.333%, transparent 66.666%, transparent 100%);
+          -webkit-mask-size: 300% 100%;
+          mask-size: 300% 100%;
+          -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+          -webkit-mask-position: 100% 0;
+          mask-position: 100% 0;
+          transition: mask-position 700ms cubic-bezier(0.22, 1, 0.36, 1), -webkit-mask-position 700ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .ace-card-fade {
+          -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 33.333%, #000 66.666%, #000 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, transparent 33.333%, #000 66.666%, #000 100%);
+          transition: mask-position 1400ms cubic-bezier(0.22, 1, 0.36, 1), -webkit-mask-position 1400ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .group:hover .ace-card-sweep {
+          -webkit-mask-position: 0 0;
+          mask-position: 0 0;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ace-card-sweep { transition: none; }
+        }
+      `}</style>
+    </section>
+  );
+}
