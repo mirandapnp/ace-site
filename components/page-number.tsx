@@ -49,7 +49,11 @@ export function PageNumber({
         aria-label={ariaLabel}
         aria-selected={active}
         onClick={onClick}
-        className={active ? "relative size-8" : "group relative size-8"}
+        className={
+          active
+            ? "relative h-[32px] w-[32px] shrink-0"
+            : "group relative h-[32px] w-[32px] shrink-0"
+        }
       >
         <span
           className={

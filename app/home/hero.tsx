@@ -73,7 +73,7 @@ export function Hero() {
         </div>
 
         <div className="absolute top-[382px] left-[1328px] flex w-[112px] justify-center">
-          <div className="flex w-8 flex-col items-center" role="tablist" aria-label="Featured machines">
+          <div className="flex w-[32px] flex-col items-center" role="tablist" aria-label="Featured machines">
             {slides.map((label, index) => (
               <div key={label} className="flex w-full flex-col items-center">
                 {index > 0 ? (
