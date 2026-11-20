@@ -53,10 +53,8 @@ const sweepStyles = `
 }
 `;
 
-const leftChevron =
-  "M23.52 24.5L16.48 20.668L16.48 19.324L23.52 15.5L23.52 17.068L18.064 19.964L18.064 20.028L23.52 22.932L23.52 24.5Z";
-const rightChevron =
-  "M16.48 24.5L16.48 22.932L21.936 20.028L21.936 19.964L16.48 17.068L16.48 15.5L23.52 19.324L23.52 20.668L16.48 24.5Z";
+const chevron =
+  "M5.00092 0.000611636L0 5.00153L4.99794 10L7.05041 9.99939L2.05255 5.00084L7.05339 0L5.00092 0.000611636Z";
 
 function storiesOn(index: number) {
   return newsStories.slice(index * pageSize, index * pageSize + pageSize);
@@ -341,7 +339,13 @@ function ArrowFace({ direction, tone }: { direction: "l" | "r"; tone: "rest" | "
           />
         </>
       )}
-      <path d={direction === "l" ? leftChevron : rightChevron} fill={hover ? "black" : "white"} />
+      <path
+        d={chevron}
+        fill={hover ? "black" : "white"}
+        transform={
+          direction === "l" ? "translate(16.473 15)" : "translate(23.527 25) scale(-1 -1)"
+        }
+      />
     </svg>
   );
 }
