@@ -1,3 +1,4 @@
+import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Marquee } from "@/components/marquee";
 import { PartnerCta } from "@/components/partner-cta";
@@ -24,6 +25,7 @@ export default function Home() {
         <Exhibitions />
         <News />
         <PartnerCta />
+        <Footer />
       </ScaleFrame>
     </div>
   );
