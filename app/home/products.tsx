@@ -6,6 +6,11 @@ import { PrimaryButton } from "@/components/primary-button";
 import { SecondaryButton } from "@/components/secondary-button";
 import { catalogProducts, featuredProducts, productPath, type Product } from "@/content/products";
 import { media } from "@/lib/media";
+import {
+  featuredGradientFollow,
+  gradientFollowVars,
+  useGradientFollow,
+} from "@/lib/use-gradient-follow";
 
 const cardImage: Record<string, { frame: string; crop: string }> = {
   "skull-of-shadow": {
@@ -141,6 +146,7 @@ const kickerClass =
 export function Products() {
   const [activeId, setActiveId] = useState<Product["id"]>("air-combat");
   const active = featuredProducts.find((product) => product.id === activeId) ?? featuredProducts[0];
+  const glow = useGradientFollow(featuredGradientFollow);
 
   return (
     <section
@@ -243,12 +249,19 @@ export function Products() {
           })}
         </div>
 
-        <div className="relative h-[580px] overflow-hidden rounded-[16px]">
+        <div
+          ref={glow.cardRef}
+          onPointerMove={glow.onPointerMove}
+          onPointerLeave={glow.onPointerLeave}
+          className="relative h-[580px] overflow-hidden rounded-[16px]"
+        >
           <div
-            className="absolute inset-0"
+            ref={glow.gradientRef}
+            className="pointer-events-none absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(to bottom, rgba(45, 45, 45, 0.25) 11.058%, #7dae95 100%)",
+                "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), #7dae95 var(--core), rgba(125, 174, 149, var(--mid)) var(--mid-at), rgba(125, 174, 149, 0) var(--fade)), linear-gradient(to bottom, rgba(45, 45, 45, 0.25) 11.058%, #7dae95 100%)",
+              ...gradientFollowVars(featuredGradientFollow),
             }}
           />
           {active.scene === "combat" ? (
@@ -256,10 +269,10 @@ export function Products() {
               alt=""
               src={media("/ace/air-combat-bg.webp")}
               restOpacity={0.7}
-              className="absolute top-[-9.31%] left-[-17.38%] h-[109.31%] w-[136.12%] max-w-none mix-blend-multiply"
+              className="pointer-events-none absolute top-[-9.31%] left-[-17.38%] h-[109.31%] w-[136.12%] max-w-none mix-blend-multiply"
             />
           ) : null}
-          <div className="ace-product-in relative flex h-full items-center justify-center px-20 py-[100px]">
+          <div className="ace-product-in pointer-events-none relative flex h-full items-center justify-center px-20 py-[100px]">
             {active.scene === "combat" ? (
               <div className="relative h-[465.523px] w-[556.468px]">
                 <div className="absolute top-[24.65px] right-[8.12px] left-[21.35px] aspect-[572.365/478.822] overflow-hidden">

@@ -1,18 +1,23 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { LazyImage, LazyVideo } from "@/components/lazy-visual";
 import { Marquee } from "@/components/marquee";
 import { PageNumber } from "@/components/page-number";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
+import {
+  gradientFollowVars,
+  heroGradientFollow,
+  useGradientFollow,
+} from "@/lib/use-gradient-follow";
 
 const slides = ["01", "02", "03"] as const;
 
 export function Hero() {
   const [active, setActive] = useState(0);
-  const glow = useGradientFollow();
+  const glow = useGradientFollow(heroGradientFollow);
 
   return (
     <section className="w-[1440px] bg-black">
@@ -34,14 +39,7 @@ export function Hero() {
             style={{
               backgroundImage:
                 "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), #36F592 var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.21) 100%)",
-              ["--gx" as string]: "63.4%",
-              ["--gy" as string]: "85.5%",
-              ["--grx" as string]: "77.31%",
-              ["--gry" as string]: "79.56%",
-              ["--core" as string]: "5.6%",
-              ["--mid" as string]: "0.5",
-              ["--mid-at" as string]: "37%",
-              ["--fade" as string]: "69.11%",
+              ...gradientFollowVars(heroGradientFollow),
             }}
           />
           <LazyImage
@@ -100,58 +98,4 @@ export function Hero() {
       <Marquee />
     </section>
   );
-}
-
-function useGradientFollow() {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const gradientRef = useRef<HTMLDivElement>(null);
-  const target = useRef({ x: 0, y: 0 });
-  const current = useRef({ x: 0, y: 0 });
-  const hoverTarget = useRef(0);
-  const hover = useRef(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    let frame = 0;
-    const tick = () => {
-      current.current.x += (target.current.x - current.current.x) * 0.16;
-      current.current.y += (target.current.y - current.current.y) * 0.16;
-      hover.current += (hoverTarget.current - hover.current) * 0.16;
-      const node = gradientRef.current;
-      if (node) {
-        const scale = 1 + hover.current * 0.03;
-        const h = hover.current;
-        node.style.setProperty("--gx", `${63.4 + current.current.x * 26}%`);
-        node.style.setProperty("--gy", `${85.5 + current.current.y * 18}%`);
-        node.style.setProperty("--grx", `${77.31 * scale}%`);
-        node.style.setProperty("--gry", `${79.56 * scale}%`);
-        node.style.setProperty("--core", `${5.6 + h * 0.5}%`);
-        node.style.setProperty("--mid", `${0.5 - h * 0.16}`);
-        node.style.setProperty("--mid-at", `${37 + h * 8}%`);
-        node.style.setProperty("--fade", `${69.11 + h * 11}%`);
-      }
-      frame = requestAnimationFrame(tick);
-    };
-
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
-    const card = cardRef.current;
-    if (!card) return;
-    hoverTarget.current = 1;
-    const rect = card.getBoundingClientRect();
-    target.current.x = (event.clientX - rect.left) / rect.width - 0.5;
-    target.current.y = (event.clientY - rect.top) / rect.height - 0.5;
-  }
-
-  function onPointerLeave() {
-    hoverTarget.current = 0;
-    target.current.x = 0;
-    target.current.y = 0;
-  }
-
-  return { cardRef, gradientRef, onPointerMove, onPointerLeave };
 }

@@ -4,6 +4,7 @@ import { LazyImage } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
+import { useCtaGradientRise } from "@/lib/use-gradient-follow";
 
 const metaType =
   "font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] uppercase";
@@ -31,9 +32,16 @@ export function PartnerCta({
   href?: string;
   image?: string;
 }) {
+  const glow = useCtaGradientRise({ rest: 35, hover: 45 });
+
   return (
     <section className="w-[1440px] px-5 py-5" aria-labelledby="partner-cta-heading">
-      <div className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-5 py-7">
+      <div
+        ref={glow.cardRef}
+        onPointerMove={glow.onPointerMove}
+        onPointerLeave={glow.onPointerLeave}
+        className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-5 py-7"
+      >
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 overflow-hidden">
             <LazyImage
@@ -46,7 +54,23 @@ export function PartnerCta({
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(178.02deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.2) 45.55%, rgba(54, 245, 146, 0.25) 89.19%), linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4))",
+                "linear-gradient(178.02deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.2) 45.55%, transparent 89.19%), linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4))",
+            }}
+          />
+          <div
+            className="absolute inset-x-0 bottom-0"
+            style={{
+              height: `${glow.restHeight}%`,
+              backgroundImage:
+                "linear-gradient(to top, rgba(54, 245, 146, 0.25) 0%, rgba(54, 245, 146, 0) 100%)",
+            }}
+          />
+          <div
+            ref={glow.gradientRef}
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 110% var(--peak, 41%) at var(--px, 50%) 100%, rgba(54, 245, 146, var(--peak-a, 0)) 0%, rgba(54, 245, 146, calc(var(--peak-a, 0) * 0.45)) 50%, rgba(54, 245, 146, 0) 85%)",
             }}
           />
         </div>
