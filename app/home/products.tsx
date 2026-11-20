@@ -144,7 +144,7 @@ const kickerClass =
   "font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] text-black uppercase";
 
 const mobileKickerClass =
-  "font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-black uppercase";
+  "font-mono text-[12px] leading-[1.25] font-[475] tracking-[0.07px] text-black uppercase";
 
 function FeaturedVisual({ active }: { active: Product }) {
   const glow = useGradientFollow(featuredGradientFollow);
@@ -364,7 +364,7 @@ export function Products() {
                   aria-selected={open}
                   aria-controls={panelId}
                   onClick={() => setActiveId(product.id)}
-                  className={`w-full px-2.5 text-left transition-[padding] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${open ? "pt-5 pb-0" : "py-5"}`}
+                  className={`w-full px-2.5 text-left transition-[padding] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${open ? "pt-5 pb-0" : "py-2.5"}`}
                 >
                   <span className={mobileKickerClass}>{product.kicker}</span>
                 </button>

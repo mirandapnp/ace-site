@@ -7,7 +7,7 @@ import { media } from "@/lib/media";
 import { useCtaGradientRise } from "@/lib/use-gradient-follow";
 
 const metaType =
-  "font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] uppercase";
+  "font-mono text-[12px] leading-[1.25] font-[475] tracking-[0.07px] uppercase min-[1024px]:text-[14px]";
 
 export function PartnerCta({
   eyebrow = "Ready to level up?",
