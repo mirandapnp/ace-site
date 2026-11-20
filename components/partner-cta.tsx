@@ -16,7 +16,10 @@ export function PartnerCta({
     <>
       Upgrade Your
       <br />
-      Arcade Floor Today
+      Arcade Floor
+      <br className="min-[1024px]:hidden" />
+      <span className="hidden min-[1024px]:inline"> </span>
+      Today
     </>
   ),
   body = "Contact us for pricing, shipping details, and availability on our top-earning machines.",
@@ -35,19 +38,22 @@ export function PartnerCta({
   const glow = useCtaGradientRise({ rest: 35, hover: 45 });
 
   return (
-    <section className="w-[1440px] px-5 py-5" aria-labelledby="partner-cta-heading">
+    <section
+      className="w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:py-5"
+      aria-labelledby="partner-cta-heading"
+    >
       <div
         ref={glow.cardRef}
         onPointerMove={glow.onPointerMove}
         onPointerLeave={glow.onPointerLeave}
-        className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-5 py-7"
+        className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-2.5 pt-5 pb-2.5 min-[1024px]:px-5 min-[1024px]:py-7"
       >
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 overflow-hidden">
             <LazyImage
               alt=""
               src={media(image)}
-              className="absolute top-[-22.93%] left-0 h-[145.85%] w-full max-w-none"
+              className="absolute inset-0 size-full max-w-none object-cover"
             />
           </div>
           <div
@@ -83,19 +89,21 @@ export function PartnerCta({
           </p>
         </div>
 
-        <div className="relative flex flex-col items-start gap-10">
+        <div className="relative flex flex-col items-center gap-10 text-center min-[1024px]:items-start min-[1024px]:text-left">
           <div className="flex flex-col gap-4 text-white">
             <h2
               id="partner-cta-heading"
-              className="font-display text-[54px] leading-[1.1] font-medium tracking-[-1.755px] whitespace-pre"
+              className="font-display text-[40px] leading-[1.1] font-medium tracking-[-1px] min-[1024px]:text-[54px] min-[1024px]:tracking-[-1.755px]"
             >
               {title}
             </h2>
-            <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] whitespace-nowrap">
+            <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty min-[1024px]:whitespace-nowrap">
               {body}
             </p>
           </div>
-          <PrimaryButton href={href}>{action}</PrimaryButton>
+          <PrimaryButton href={href} className="w-full min-[1024px]:w-fit">
+            {action}
+          </PrimaryButton>
         </div>
       </div>
     </section>
