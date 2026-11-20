@@ -50,7 +50,7 @@ const fieldType = "font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15
 const messageType =
   "pointer-events-none absolute top-full left-0 mt-1 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] whitespace-nowrap";
 
-export function SubscribeForm() {
+export function SubscribeForm({ className }: { className?: string }) {
   const [state, formAction, pending] = useActionState(subscribe, initialState);
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
@@ -68,8 +68,11 @@ export function SubscribeForm() {
   const resting = !invalid && !success && !focused && !filled;
 
   return (
-    <form action={formAction} noValidate className="relative z-10 w-[400px]">
-      <style>{sweepStyles}</style>
+    <form
+      action={formAction}
+      noValidate
+      className={`relative z-10 ${className ?? "w-[400px]"}`}
+    >      <style>{sweepStyles}</style>
       <div
         className={`${resting ? "group bg-[rgba(215,215,215,0.75)]" : "bg-[#D7D7D7]"} relative flex items-center justify-between overflow-hidden rounded-full border border-solid p-1 backdrop-blur-[20px] ${border}`}
       >
