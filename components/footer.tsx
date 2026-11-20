@@ -41,29 +41,31 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="w-[1440px] px-5 py-5">
-      <div className="flex w-full flex-col items-center gap-[120px] rounded-[16px] bg-[rgba(78,78,78,0.5)] px-5 pt-[60px] pb-5">
-        <div className="flex w-full items-start justify-between">
-          <div className="flex flex-col gap-5">
-            <p className={headingClass}>Quick Links</p>
-            <nav aria-label="Footer" className="flex flex-col gap-2">
-              {quickLinks.map((link) => (
-                <a key={link.label} href={link.href} className={linkClass}>
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-          </div>
+    <footer className="w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:py-5">
+      <div className="flex w-full flex-col items-center gap-[60px] rounded-[16px] bg-[rgba(78,78,78,0.5)] px-2.5 pt-10 pb-5 min-[1024px]:gap-[120px] min-[1024px]:px-5 min-[1024px]:pt-[60px]">
+        <div className="flex w-full flex-col gap-5 min-[1024px]:flex-row min-[1024px]:items-start min-[1024px]:justify-between min-[1024px]:gap-0">
+          <div className="flex w-full justify-between gap-5 min-[1024px]:contents">
+            <div className="flex flex-col gap-5">
+              <p className={headingClass}>Quick Links</p>
+              <nav aria-label="Footer" className="flex flex-col gap-2">
+                {quickLinks.map((link) => (
+                  <a key={link.label} href={link.href} className={linkClass}>
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
 
-          <div className="flex flex-col gap-5">
-            <p className={headingClass}>Product Center</p>
-            <nav aria-label="Product center" className="flex flex-col gap-2">
-              {productLinks.map((link) => (
-                <a key={link.label} href={link.href} className={linkClass}>
-                  {link.label}
-                </a>
-              ))}
-            </nav>
+            <div className="flex flex-col gap-5">
+              <p className={headingClass}>Product Center</p>
+              <nav aria-label="Product center" className="flex flex-col gap-2">
+                {productLinks.map((link) => (
+                  <a key={link.label} href={link.href} className={linkClass}>
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+            </div>
           </div>
 
           <div className="flex flex-col gap-5">
@@ -78,9 +80,9 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5 min-[1024px]:gap-6">
             <p className={headingClass}>Address</p>
-            <p className={`${linkClass} whitespace-pre-line`}>
+            <p className={`${linkClass} text-pretty min-[1024px]:whitespace-pre-line`}>
               {`No. 22, Shagang East Road, Gankou Town,\nZhongshan City, Guangdong Province, China\n528447`}
             </p>
           </div>
@@ -117,17 +119,21 @@ export function Footer() {
             />
           </a>
 
-          <div className={`flex w-full items-center justify-between ${fineClass}`}>
-            <div className="flex gap-10">
+          <div
+            className={`flex w-full flex-col items-center gap-2 text-center min-[1024px]:flex-row min-[1024px]:justify-between min-[1024px]:gap-0 min-[1024px]:text-left ${fineClass}`}
+          >
+            <div className="flex flex-col items-center gap-2 min-[1024px]:flex-row min-[1024px]:gap-10">
               <a href="#terms">Terms and Conditions</a>
               <a href="#privacy">Privacy Policy</a>
             </div>
-            <p>Copyright © 2026 by ACE Amusement International Co., Ltd.</p>
+            <p className="whitespace-nowrap">
+              Copyright © 2026 by ACE Amusement International Co., Ltd.
+            </p>
             <a
               href="https://pillandpillow.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-right"
+              className="min-[1024px]:text-right"
             >
               Site by Pill and Pillow
             </a>
