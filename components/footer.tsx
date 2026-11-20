@@ -1,4 +1,3 @@
-import { LazyImage } from "@/components/lazy-visual";
 import { media } from "@/lib/media";
 
 const headingClass =
@@ -43,7 +42,7 @@ const socials = [
 export function Footer() {
   return (
     <footer className="w-[1440px] px-5 py-5">
-      <div className="flex w-full flex-col items-center gap-20 rounded-[16px] bg-[rgba(78,78,78,0.5)] px-10 pt-20 pb-10">
+      <div className="flex w-full flex-col items-center gap-[120px] rounded-[16px] bg-[rgba(78,78,78,0.5)] px-5 pt-[60px] pb-5">
         <div className="flex w-full items-start justify-between">
           <div className="flex flex-col gap-5">
             <p className={headingClass}>Quick Links</p>
@@ -107,12 +106,14 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center gap-[60px]">
-          <a href="/" aria-label="Ace Amusement home" className="relative h-[91.594px] w-[128.725px] overflow-hidden">
-            <LazyImage
+        <div className="flex w-full flex-col items-center gap-10">
+          <a href="/" aria-label="Ace Amusement home" className="block h-[100px] w-[106px] shrink-0">
+            <img
               alt=""
-              src={media("/ace/logo.webp")}
-              className="absolute top-0 left-0 h-full w-[294.09%] max-w-none"
+              src={media("/ace/footer-logo.png")}
+              width={106}
+              height={100}
+              className="size-full object-contain"
             />
           </a>
 
