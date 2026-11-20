@@ -14,7 +14,7 @@ export function FeaturedVideo() {
   const [titleLine, titleRest] = featuredVideo.title.split("\n");
 
   return (
-    <section className="w-[1440px] px-5 pt-5" aria-labelledby={titleId}>
+    <section className="w-[1440px] px-5 py-5" aria-labelledby={titleId}>
       <div className="relative w-full">
         <div className="relative z-0 aspect-[3/2] w-[880px]">
           <button

@@ -16,13 +16,13 @@ export function Marquee({
   const label = items.filter((item, index) => items.indexOf(item) === index).join(", ");
 
   return (
-    <div className="h-[35px] w-[1440px] overflow-hidden" aria-label={label}>
-      <div className="ace-ticker flex w-max items-end">
+    <div className="flex h-[35px] w-[1440px] items-center overflow-hidden" aria-label={label}>
+      <div className="ace-ticker flex w-max items-center">
         {[0, 1].map((copy) => (
           <p
             key={copy}
             aria-hidden={copy === 1}
-            className="flex shrink-0 items-start gap-7 py-[10px] pr-7 font-mono text-[12px] leading-[1.25] font-[470] tracking-[0.78px] whitespace-nowrap text-white uppercase"
+            className="flex shrink-0 items-center gap-7 pr-7 font-mono text-[12px] leading-[1.25] font-[470] tracking-[0.78px] whitespace-nowrap text-white uppercase"
           >
             {items.map((item, index) => (
               <span key={`${copy}-${index}`} className="flex gap-7">
