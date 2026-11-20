@@ -17,6 +17,15 @@ import {
 const slides = ["01", "02", "03"] as const;
 const MACHINE_WIDTH = 1.4;
 
+/** Desktop hero card design height — below this, copy centers vertically. */
+const DESKTOP_CARD_H = 860;
+/** Machine in the 1400×860 card — right-anchored % size so it keeps place and eases off the copy when short. */
+const DESKTOP_MACHINE = {
+  right: 1400 - 338.94 - 1014.01,
+  topPct: (58.17 / DESKTOP_CARD_H) * 100,
+  sizePct: (1014.01 / DESKTOP_CARD_H) * 100,
+} as const;
+
 /** Wider, softer bloom tuned for the tall mobile hero card. */
 const mobileHeroGradientFollow: GradientFollowConfig = {
   gx: 50,
@@ -218,28 +227,63 @@ function MobileMachineSlot() {
 
 export function Hero() {
   const [active, setActive] = useState(0);
+  const [desktopCompact, setDesktopCompact] = useState(false);
   const desktopGlow = useGradientFollow(heroGradientFollow);
   const mobileGlow = useGradientFollow(mobileHeroGradientFollow);
 
+  useEffect(() => {
+    const card = desktopGlow.cardRef.current;
+    if (!card) return;
+
+    const sync = () => {
+      setDesktopCompact(card.clientHeight < DESKTOP_CARD_H - 0.5);
+    };
+
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [desktopGlow.cardRef]);
+
   return (
     <section className="w-[412px] bg-black min-[1024px]:w-[1440px]">
-      {/* Desktop */}
-      <div className="relative hidden h-[900px] w-[1440px] min-[1024px]:block">
+      {/* Desktop — 900 design-px tall, or 100dvh when a flat viewport would clip the card */}
+      <div
+        className="relative hidden w-[1440px] min-[1024px]:block"
+        style={{ height: "min(900px, calc(100dvh * 1440px / 100cqw))" }}
+      >
         <HeroBackdrop
           cardRef={desktopGlow.cardRef}
           gradientRef={desktopGlow.gradientRef}
           onPointerMove={desktopGlow.onPointerMove}
           onPointerLeave={desktopGlow.onPointerLeave}
-          className="absolute top-5 left-5 h-[860px] w-[1400px] overflow-hidden rounded-[16px]"
+          className="absolute inset-5 overflow-hidden rounded-[16px]"
         >
-          <LazyImage
-            priority
-            alt=""
-            src={media("/ace/machine.webp?v=6")}
-            className="pointer-events-none absolute top-[58.17px] left-[338.94px] h-[1014.01px] w-[1014.03px] max-w-none"
-          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute"
+            style={{
+              right: DESKTOP_MACHINE.right,
+              top: `${DESKTOP_MACHINE.topPct}%`,
+              height: `${DESKTOP_MACHINE.sizePct}%`,
+              aspectRatio: "1 / 1",
+            }}
+          >
+            <LazyImage
+              priority
+              alt=""
+              src={media("/ace/machine.webp?v=6")}
+              className="size-full max-w-none"
+            />
+          </div>
 
-          <div className="absolute top-[271.5px] left-0 flex w-[664.711px] flex-col gap-10 px-5">
+          <div
+            className={
+              desktopCompact
+                ? "absolute top-1/2 left-0 z-10 flex w-[664.711px] -translate-y-1/2 flex-col gap-10 px-5"
+                : "absolute top-[271.5px] left-0 z-10 flex w-[664.711px] flex-col gap-10 px-5"
+            }
+          >
             <HeroCopy
               titleClassName="w-[624.711px] text-[76px] leading-[0.9] tracking-[-2.28px]"
               bodyClassName="w-[495.54px]"
@@ -250,7 +294,7 @@ export function Hero() {
           </div>
         </HeroBackdrop>
 
-        <div className="absolute top-[382px] left-[1328px] flex w-[112px] justify-center">
+        <div className="absolute top-1/2 left-[1328px] flex w-[112px] -translate-y-1/2 justify-center">
           <HeroPager active={active} onSelect={setActive} orientation="vertical" />
         </div>
       </div>
