@@ -14,15 +14,15 @@ import {
 
 const cardImage: Record<string, { frame: string; crop: string }> = {
   "skull-of-shadow": {
-    frame: "h-[315px] w-[287.973px]",
+    frame: "aspect-[3413/3733] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[287.973px]",
     crop: "top-[1.74%] left-[-4.86%] h-[98.26%] w-[107.48%]",
   },
   "ace-shooter-promax": {
-    frame: "h-[315px] w-[281.382px]",
+    frame: "aspect-[279/312.333] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[281.382px]",
     crop: "top-[1.3%] left-[-6.61%] h-[98.82%] w-[115.33%]",
   },
   "galaxy-rangers": {
-    frame: "h-[315px] w-[281.382px]",
+    frame: "aspect-[279/312.333] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[281.382px]",
     crop: "top-[3.14%] left-[-14.63%] h-[96.86%] w-[129.26%]",
   },
   "wild-hunting": {
@@ -34,11 +34,11 @@ const cardImage: Record<string, { frame: string; crop: string }> = {
     crop: "top-[-1.89%] left-[-9.85%] h-[99.54%] w-[119.69%]",
   },
   "speedy-toss": {
-    frame: "h-[315px] w-[259.961px]",
+    frame: "aspect-[279/315] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[259.961px]",
     crop: "top-[-2.26%] left-[-11.95%] h-[102.26%] w-[123.91%]",
   },
   "crossbow-fishing": {
-    frame: "h-[315px] w-[287.477px]",
+    frame: "aspect-[279/315] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[287.477px]",
     crop: "top-0 left-[-3.09%] h-[96.27%] w-[105.48%]",
   },
   "jet-ski-racer": {
@@ -100,12 +100,10 @@ function CatalogCard({ product }: { product: Product }) {
     <li className="relative z-0 hover:z-10" onMouseMove={tilt} onMouseLeave={rest}>
       <div
         ref={face}
-        className="group relative flex h-full origin-center flex-col items-start justify-end gap-10 rounded-[16px] bg-white px-5 pt-10 pb-5"
+        className="group relative flex h-full origin-center flex-col items-start justify-end gap-10 rounded-[16px] bg-white px-2.5 pt-5 pb-2.5 min-[1024px]:px-5 min-[1024px]:pt-10 min-[1024px]:pb-5"
       >
         <div className="flex w-full flex-1 items-end">
-          <div
-            className={`relative shrink-0 ${cardImage[product.id].frame}`}
-          >
+          <div className={`relative shrink-0 ${cardImage[product.id].frame}`}>
             <div className="absolute inset-0 overflow-hidden">
               <LazyImage
                 alt=""
@@ -115,14 +113,16 @@ function CatalogCard({ product }: { product: Product }) {
             </div>
           </div>
         </div>
-        <div className="flex w-full items-center justify-between">
-          <h3 className="min-w-0 flex-1 font-display text-[18px] leading-[1.25] font-medium tracking-[-0.45px] text-black capitalize">
-            {product.name}
+        <div className="flex w-full items-center justify-between gap-2">
+          <h3 className="min-w-0 flex-1 font-display text-[12px] leading-[1.25] font-medium tracking-[-0.3px] text-black capitalize min-[1024px]:text-[18px] min-[1024px]:tracking-[-0.45px]">
+            <a href={productPath(product.id)} className="min-[1024px]:pointer-events-none">
+              {product.name}
+            </a>
           </h3>
           <a
             href={productPath(product.id)}
             aria-label={`Open ${product.name}`}
-            className="relative flex size-[30px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[rgba(78,78,78,0.25)]"
+            className="relative hidden size-[30px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-[rgba(78,78,78,0.25)] min-[1024px]:flex"
           >
             <span
               aria-hidden
@@ -143,30 +143,147 @@ function CatalogCard({ product }: { product: Product }) {
 const kickerClass =
   "font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] text-black uppercase";
 
+const mobileKickerClass =
+  "font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-black uppercase";
+
+function FeaturedVisual({ active }: { active: Product }) {
+  const glow = useGradientFollow(featuredGradientFollow);
+
+  return (
+    <div
+      ref={glow.cardRef}
+      onPointerMove={glow.onPointerMove}
+      onPointerLeave={glow.onPointerLeave}
+      className="relative aspect-[828/580] w-full overflow-hidden rounded-[16px] min-[1024px]:aspect-auto min-[1024px]:h-[580px]"
+    >
+      <div
+        ref={glow.gradientRef}
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), #7dae95 var(--core), rgba(125, 174, 149, var(--mid)) var(--mid-at), rgba(125, 174, 149, 0) var(--fade)), linear-gradient(to bottom, rgba(45, 45, 45, 0.25) 11.058%, #7dae95 100%)",
+          ...gradientFollowVars(featuredGradientFollow),
+        }}
+      />
+      {active.scene === "combat" ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-cover bg-center mix-blend-multiply opacity-70"
+          style={{ backgroundImage: `url(${media("/ace/air-combat-bg.webp?v=2")})` }}
+        />
+      ) : null}
+      <div className="ace-product-in pointer-events-none relative flex h-full items-center justify-center">
+        {active.scene === "combat" ? (
+          <div className="relative aspect-[556.468/465.523] w-[70%] min-[1024px]:aspect-auto min-[1024px]:h-[465.523px] min-[1024px]:w-[556.468px]">
+            <div className="absolute top-[5.3%] right-[1.46%] left-[3.84%] aspect-[572.365/478.822] overflow-hidden">
+              <LazyImage
+                alt={active.name}
+                src={media(active.image)}
+                className="absolute top-[-13.2%] left-[-2.41%] h-[125.31%] w-[104.83%] max-w-none"
+              />
+            </div>
+          </div>
+        ) : (
+          <LazyImage
+            key={active.id}
+            alt={active.name}
+            src={media(active.image)}
+            className="h-auto w-[70%] min-[1024px]:max-h-[460px] min-[1024px]:w-auto min-[1024px]:max-w-[680px]"
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FeaturedPanel({
+  product,
+  layout,
+}: {
+  product: Product;
+  layout: "desktop" | "mobile";
+}) {
+  const mobile = layout === "mobile";
+
+  return (
+    <>
+      <div className={`flex flex-col ${mobile ? "gap-5" : "gap-7"}`}>
+        <h3 className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize">
+          {product.name}
+        </h3>
+        {product.stats && product.stats.length > 0 ? (
+          <div className={`flex flex-col ${mobile ? "gap-4" : "gap-5"}`}>
+            <p className={kickerClass}>Stats</p>
+            <ul className="flex flex-col gap-2">
+              {product.stats.map((stat) => (
+                <li
+                  key={stat}
+                  className="flex h-[17px] items-center gap-3 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-black"
+                >
+                  <span aria-hidden className="size-1.5 shrink-0 bg-black" />
+                  {stat}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </div>
+      <div
+        className={
+          mobile
+            ? "flex flex-col items-stretch gap-10"
+            : "flex items-end gap-10"
+        }
+      >
+        {product.body ? (
+          <p className="flex-1 font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
+            {product.body}
+          </p>
+        ) : mobile ? null : (
+          <span className="flex-1" />
+        )}
+        <SecondaryButton
+          href={productPath(product.id)}
+          color="outline"
+          className={
+            mobile
+              ? "w-full [&>span.relative]:w-full [&>span.relative]:justify-between"
+              : "shrink-0"
+          }
+        >
+          View
+        </SecondaryButton>
+      </div>
+    </>
+  );
+}
+
 export function Products() {
   const [activeId, setActiveId] = useState<Product["id"]>("air-combat");
   const active = featuredProducts.find((product) => product.id === activeId) ?? featuredProducts[0];
-  const glow = useGradientFollow(featuredGradientFollow);
 
   return (
     <section
       id="products"
-      className="w-[1440px] px-5 pt-20 pb-5"
+      className="w-[412px] px-2.5 pt-5 pb-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:pt-20 min-[1024px]:pb-5"
       aria-labelledby="products-heading"
     >
-      <div className="flex items-end justify-between">
+      <div className="flex items-end justify-center min-[1024px]:justify-between">
         <h2
           id="products-heading"
-          className="font-display text-[60px] leading-[1.1] font-medium tracking-[-1.95px] text-white"
+          className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-white capitalize min-[1024px]:text-[60px] min-[1024px]:leading-[1.1] min-[1024px]:tracking-[-1.95px] min-[1024px]:normal-case"
         >
           Core Products
         </h2>
-        <PrimaryButton href="#products" color="gray">
-          All Products
-        </PrimaryButton>
+        <div className="hidden min-[1024px]:block">
+          <PrimaryButton href="#products" color="gray">
+            All Products
+          </PrimaryButton>
+        </div>
       </div>
 
-      <div className="mt-10 grid grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-x-5">
+      {/* Desktop tabs + visual */}
+      <div className="mt-10 hidden grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] gap-x-5 min-[1024px]:grid">
         <div
           className="grid h-[580px] gap-[10px] transition-[grid-template-rows] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
           style={{
@@ -210,96 +327,79 @@ export function Products() {
                   inert={!open}
                   className="flex min-h-0 flex-1 flex-col justify-between overflow-hidden px-5 pt-5 pb-7"
                 >
-                  <div className="flex flex-col gap-7">
-                    <h3 className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize">
-                      {product.name}
-                    </h3>
-                    {product.stats && product.stats.length > 0 ? (
-                      <div className="flex flex-col gap-5">
-                        <p className={kickerClass}>Stats</p>
-                        <ul className="flex flex-col gap-2">
-                          {product.stats.map((stat) => (
-                            <li
-                              key={stat}
-                              className="flex h-[17px] items-center gap-3 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-black"
-                            >
-                              <span aria-hidden className="size-1.5 shrink-0 bg-black" />
-                              {stat}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="flex items-end gap-10">
-                    {product.body ? (
-                      <p className="flex-1 font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
-                        {product.body}
-                      </p>
-                    ) : (
-                      <span className="flex-1" />
-                    )}
-                    <SecondaryButton href={productPath(product.id)} color="outline" className="shrink-0">
-                      View
-                    </SecondaryButton>
-                  </div>
+                  <FeaturedPanel product={product} layout="desktop" />
                 </div>
               </div>
             );
           })}
         </div>
 
-        <div
-          ref={glow.cardRef}
-          onPointerMove={glow.onPointerMove}
-          onPointerLeave={glow.onPointerLeave}
-          className="relative h-[580px] overflow-hidden rounded-[16px]"
-        >
-          <div
-            ref={glow.gradientRef}
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage:
-                "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), #7dae95 var(--core), rgba(125, 174, 149, var(--mid)) var(--mid-at), rgba(125, 174, 149, 0) var(--fade)), linear-gradient(to bottom, rgba(45, 45, 45, 0.25) 11.058%, #7dae95 100%)",
-              ...gradientFollowVars(featuredGradientFollow),
-            }}
-          />
-          {active.scene === "combat" ? (
-            <LazyImage
-              alt=""
-              src={media("/ace/air-combat-bg.webp")}
-              restOpacity={0.7}
-              className="pointer-events-none absolute top-[-9.31%] left-[-17.38%] h-[109.31%] w-[136.12%] max-w-none mix-blend-multiply"
-            />
-          ) : null}
-          <div className="ace-product-in pointer-events-none relative flex h-full items-center justify-center px-20 py-[100px]">
-            {active.scene === "combat" ? (
-              <div className="relative h-[465.523px] w-[556.468px]">
-                <div className="absolute top-[24.65px] right-[8.12px] left-[21.35px] aspect-[572.365/478.822] overflow-hidden">
-                  <LazyImage
-                    alt={active.name}
-                    src={media(active.image)}
-                    className="absolute top-[-13.2%] left-[-2.41%] h-[125.31%] w-[104.83%] max-w-none"
-                  />
+        <FeaturedVisual active={active} />
+      </div>
+
+      {/* Mobile: visual above, accordion below */}
+      <div className="mt-5 flex flex-col gap-2.5 min-[1024px]:hidden">
+        <FeaturedVisual active={active} />
+
+        <div className="flex flex-col gap-1" role="tablist" aria-label="Core products">
+          {featuredProducts.map((product) => {
+            const open = product.id === active.id;
+            const panelId = `${product.id}-mobile-panel`;
+            const tabId = `${product.id}-mobile-tab`;
+
+            return (
+              <div
+                key={product.id}
+                className={
+                  open
+                    ? "grid overflow-hidden rounded-[16px] bg-[#36f592] transition-[grid-template-rows,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                    : "grid overflow-hidden rounded-[16px] bg-[rgba(54,245,146,0.75)] transition-[grid-template-rows,background-color] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                }
+                style={{ gridTemplateRows: open ? "auto 1fr" : "auto 0fr" }}
+              >
+                <button
+                  id={tabId}
+                  type="button"
+                  role="tab"
+                  aria-selected={open}
+                  aria-controls={panelId}
+                  onClick={() => setActiveId(product.id)}
+                  className={`w-full px-2.5 text-left transition-[padding] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${open ? "pt-5 pb-0" : "py-5"}`}
+                >
+                  <span className={mobileKickerClass}>{product.kicker}</span>
+                </button>
+                <div
+                  id={panelId}
+                  role="tabpanel"
+                  aria-labelledby={tabId}
+                  aria-hidden={!open}
+                  inert={!open}
+                  className="min-h-0 overflow-hidden"
+                >
+                  <div
+                    className={`flex flex-col gap-5 px-2.5 pt-5 pb-2.5 transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${open ? "opacity-100" : "opacity-0"}`}
+                  >
+                    <FeaturedPanel product={product} layout="mobile" />
+                  </div>
                 </div>
               </div>
-            ) : (
-              <LazyImage
-                key={active.id}
-                alt={active.name}
-                src={media(active.image)}
-                className="max-h-[460px] w-auto max-w-[680px]"
-              />
-            )}
-          </div>
+            );
+          })}
         </div>
       </div>
 
-      <ul className="mt-10 grid grid-cols-4 gap-5">
+      <ul className="mt-2.5 grid grid-cols-2 gap-1 min-[1024px]:mt-10 min-[1024px]:grid-cols-4 min-[1024px]:gap-5">
         {catalogProducts.map((product) => (
           <CatalogCard key={product.id} product={product} />
         ))}
       </ul>
+
+      <div className="mt-5 min-[1024px]:hidden">
+        <PrimaryButton href="#products" color="gray" className="w-full">
+          All Products
+        </PrimaryButton>
+      </div>
+
       <style>{`
         .ace-product-in { animation: ace-product-in 400ms ease-out; }
         @keyframes ace-product-in {
