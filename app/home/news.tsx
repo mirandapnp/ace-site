@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { LazyImage } from "@/components/lazy-visual";
 import { SecondaryButton } from "@/components/secondary-button";
-import { newsStories } from "@/content/news";
+import { newsStories, type NewsStory } from "@/content/news";
 import { media } from "@/lib/media";
 
-const pageSize = 3;
+const DESKTOP_PAGE_SIZE = 3;
+const MOBILE_PAGE_SIZE = 1;
 
 const sweepStyles = `
 .ace-sweep-out {
@@ -39,6 +40,7 @@ const sweepStyles = `
 }
 .ace-news-track {
   display: flex;
+  align-items: stretch;
   transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ace-news-track.is-dragging {
@@ -56,11 +58,27 @@ const sweepStyles = `
 const chevron =
   "M5.00092 0.000611636L0 5.00153L4.99794 10L7.05041 9.99939L2.05255 5.00084L7.05339 0L5.00092 0.000611636Z";
 
-function storiesOn(index: number) {
+function useNewsPageSize() {
+  const [pageSize, setPageSize] = useState(DESKTOP_PAGE_SIZE);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const sync = () =>
+      setPageSize(mediaQuery.matches ? DESKTOP_PAGE_SIZE : MOBILE_PAGE_SIZE);
+    sync();
+    mediaQuery.addEventListener("change", sync);
+    return () => mediaQuery.removeEventListener("change", sync);
+  }, []);
+
+  return pageSize;
+}
+
+function storiesOn(index: number, pageSize: number) {
   return newsStories.slice(index * pageSize, index * pageSize + pageSize);
 }
 
 export function News() {
+  const pageSize = useNewsPageSize();
   const [page, setPage] = useState(0);
   const [offset, setOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -82,6 +100,12 @@ export function News() {
   });
 
   useEffect(() => () => cancelAnimationFrame(settleFrame.current), []);
+
+  useEffect(() => {
+    setPage(0);
+    setOffset(0);
+    setDragging(false);
+  }, [pageSize]);
 
   function showPage(next: number) {
     if (next < 0 || next >= pageCount) return;
@@ -169,16 +193,19 @@ export function News() {
   }
 
   return (
-    <section className="w-[1440px] px-5 pt-[60px] pb-5" aria-labelledby="news-heading">
-      <div className="flex items-center justify-between">
+    <section
+      className="flex w-[412px] flex-col gap-5 px-2.5 pt-5 pb-2.5 min-[1024px]:block min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:pt-[60px] min-[1024px]:pb-5"
+      aria-labelledby="news-heading"
+    >
+      <style>{sweepStyles}</style>
+      <div className="flex items-center justify-center min-[1024px]:justify-between">
         <h2
           id="news-heading"
-          className="w-[620px] font-display text-[40px] leading-none font-medium tracking-[-1px] text-white capitalize"
+          className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-white capitalize min-[1024px]:w-[620px] min-[1024px]:text-[40px] min-[1024px]:leading-none min-[1024px]:tracking-[-1px]"
         >
           ACE News
         </h2>
-        <div className="flex items-center gap-4">
-          <style>{sweepStyles}</style>
+        <div className="hidden items-center gap-4 min-[1024px]:flex">
           <ArrowButton
             label="Previous stories"
             direction="l"
@@ -196,7 +223,7 @@ export function News() {
 
       <div
         ref={viewportRef}
-        className={`ace-news-viewport mt-5 overflow-hidden${dragging ? " is-dragging" : ""}`}
+        className={`ace-news-viewport overflow-hidden min-[1024px]:mt-5${dragging ? " is-dragging" : ""}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={finishDrag}
@@ -212,19 +239,34 @@ export function News() {
         >
           {Array.from({ length: pageCount }, (_, index) => (
             <div
-              key={index}
-              className="flex min-w-0 shrink-0 flex-col"
+              key={`${pageSize}-${index}`}
+              className="flex min-w-0 shrink-0 flex-col self-stretch"
               style={{ width: `${100 / pageCount}%` }}
               inert={index === page ? undefined : true}
             >
               <StoryRow
-                stories={storiesOn(index)}
+                stories={storiesOn(index, pageSize)}
                 concealed={index !== page}
-                className="h-full min-h-full grow"
+                className="h-full min-h-0 flex-1"
               />
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-4 min-[1024px]:hidden">
+        <ArrowButton
+          label="Previous stories"
+          direction="l"
+          disabled={atStart}
+          onClick={() => showPage(page - 1)}
+        />
+        <ArrowButton
+          label="Next stories"
+          direction="r"
+          disabled={atEnd}
+          onClick={() => showPage(page + 1)}
+        />
       </div>
     </section>
   );
@@ -235,27 +277,30 @@ function StoryRow({
   className,
   concealed = false,
 }: {
-  stories: ReturnType<typeof storiesOn>;
+  stories: NewsStory[];
   className?: string;
   concealed?: boolean;
 }) {
   return (
-    <div aria-hidden={concealed || undefined} className={`grid grid-cols-3 items-stretch gap-5 ${className ?? ""}`}>
+    <div
+      aria-hidden={concealed || undefined}
+      className={`grid grid-cols-1 items-stretch gap-5 min-[1024px]:grid-cols-3 ${className ?? ""}`}
+    >
       {stories.map((story) => (
         <article
           key={story.id}
           className="flex h-full flex-col overflow-hidden rounded-[16px] bg-[rgba(78,78,78,0.5)]"
         >
-          <div className="relative aspect-[4/3] w-full">
+          <div className="relative aspect-[3/2] w-full min-[1024px]:aspect-[4/3]">
             <LazyImage
               alt=""
               src={media(story.image)}
               className="absolute inset-0 size-full object-cover"
             />
           </div>
-          <div className="flex flex-1 flex-col p-5">
+          <div className="flex flex-1 flex-col px-2.5 pt-5 pb-2.5 min-[1024px]:p-5">
             <div className="flex flex-col gap-3">
-              <h3 className="font-display text-[24px] leading-[1.25] font-medium tracking-[-0.6px] text-white capitalize">
+              <h3 className="font-display text-[18px] leading-[1.25] font-medium tracking-[-0.45px] text-white capitalize min-[1024px]:text-[24px] min-[1024px]:tracking-[-0.6px]">
                 {story.title}
               </h3>
               <p className="flex w-fit items-center gap-1 rounded-full bg-white px-[9px] py-[5px] font-display text-[10px] leading-[1.25] font-medium tracking-[-0.25px] text-[#EC268E] capitalize">
@@ -263,12 +308,17 @@ function StoryRow({
                 <span aria-hidden className="h-2 w-px bg-[#EC268E]" />
                 <span>{story.date}</span>
               </p>
-              <p className="line-clamp-2 font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-white">
+              <p className="line-clamp-2 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-pretty text-white min-[1024px]:text-[14px] min-[1024px]:font-[485] min-[1024px]:tracking-[0.175px]">
                 {story.body}
               </p>
             </div>
             <div className="mt-auto pt-10">
-              <SecondaryButton href={story.href} color="black" external>
+              <SecondaryButton
+                href={story.href}
+                color="black"
+                external
+                className="w-full [&>span]:w-full [&>span]:justify-between min-[1024px]:w-auto min-[1024px]:[&>span]:w-auto min-[1024px]:[&>span]:justify-start"
+              >
                 Read more
               </SecondaryButton>
             </div>
@@ -301,14 +351,23 @@ function ArrowButton({
       className={`relative size-10 ${disabled ? "" : "group"}`}
     >
       <ArrowFace direction={direction} tone="hover" />
-      <span aria-hidden className="ace-sweep-out ace-arrow-sweep pointer-events-none absolute top-0 left-0">
+      <span
+        aria-hidden
+        className="ace-sweep-out ace-arrow-sweep pointer-events-none absolute top-0 left-0"
+      >
         <ArrowFace direction={direction} tone="rest" />
       </span>
     </button>
   );
 }
 
-function ArrowFace({ direction, tone }: { direction: "l" | "r"; tone: "rest" | "hover" }) {
+function ArrowFace({
+  direction,
+  tone,
+}: {
+  direction: "l" | "r";
+  tone: "rest" | "hover";
+}) {
   const hover = tone === "hover";
 
   return (
@@ -343,7 +402,9 @@ function ArrowFace({ direction, tone }: { direction: "l" | "r"; tone: "rest" | "
         d={chevron}
         fill={hover ? "black" : "white"}
         transform={
-          direction === "l" ? "translate(16.473 15)" : "translate(23.527 25) scale(-1 -1)"
+          direction === "l"
+            ? "translate(16.473 15)"
+            : "translate(23.527 25) scale(-1 -1)"
         }
       />
     </svg>
