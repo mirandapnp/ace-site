@@ -1,4 +1,5 @@
 import { Header } from "@/components/header";
+import { Marquee } from "@/components/marquee";
 import { PartnerCta } from "@/components/partner-cta";
 import { ScaleFrame } from "@/components/scale-frame";
 import { Exhibitions } from "./home/exhibitions";
@@ -19,6 +20,7 @@ export default function Home() {
         <Network />
         <Products />
         <FeaturedVideo />
+        <Marquee />
         <Exhibitions />
         <News />
         <PartnerCta />

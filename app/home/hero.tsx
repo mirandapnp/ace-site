@@ -2,22 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LazyImage, LazyVideo } from "@/components/lazy-visual";
+import { Marquee } from "@/components/marquee";
 import { PageNumber } from "@/components/page-number";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
 
 const slides = ["01", "02", "03"] as const;
-
-const ticker = [
-  "Global Arcade Logistics",
-  "Rapid ROI",
-  "Global Arcade Logistics",
-  "Zero-Downtime Engineering",
-  "Rapid ROI",
-  "Global Arcade Logistics",
-  "Zero-Downtime Engineering",
-];
 
 export function Hero() {
   const [active, setActive] = useState(0);
@@ -106,34 +97,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="h-[35px] overflow-hidden" aria-label="Global Arcade Logistics, Rapid ROI, Zero-Downtime Engineering">
-        <style>{`
-          @keyframes ace-ticker {
-            from { transform: translate3d(0, 0, 0); }
-            to { transform: translate3d(-50%, 0, 0); }
-          }
-          .ace-ticker { animation: ace-ticker 100s linear infinite; }
-          @media (prefers-reduced-motion: reduce) {
-            .ace-ticker { animation: none; }
-          }
-        `}</style>
-        <div className="ace-ticker flex w-max items-end">
-          {[0, 1].map((copy) => (
-            <p
-              key={copy}
-              aria-hidden={copy === 1}
-              className="flex shrink-0 items-start gap-7 py-[10px] pr-7 font-mono text-[12px] leading-[1.25] font-[470] tracking-[0.78px] whitespace-nowrap text-white uppercase"
-            >
-              {ticker.map((item, index) => (
-                <span key={`${copy}-${index}`} className="flex gap-7">
-                  <span>{item}</span>
-                  <span aria-hidden>/</span>
-                </span>
-              ))}
-            </p>
-          ))}
-        </div>
-      </div>
+      <Marquee />
     </section>
   );
 }
