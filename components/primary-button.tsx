@@ -44,12 +44,18 @@ export function PrimaryButton({
   href,
   children,
   color = "yellow",
+  className = "",
 }: {
   href: string;
   children: React.ReactNode;
   color?: "yellow" | "gray";
+  className?: string;
 }) {
   const yellow = color === "yellow";
+  const wide = /\bw-full\b/.test(className);
+  const rowClass = wide
+    ? "relative flex w-full items-center justify-between p-2"
+    : "relative flex items-center gap-3 p-2";
 
   return (
     <>
@@ -58,11 +64,11 @@ export function PrimaryButton({
         href={href}
         className={
           yellow
-            ? "group relative flex w-fit items-center overflow-hidden rounded-[12px] border border-[#fff645] bg-[rgba(255,246,69,0.75)] backdrop-blur-[50px]"
-            : "group relative flex w-fit items-center overflow-hidden rounded-[12px] bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px]"
+            ? `group relative flex items-center overflow-hidden rounded-[12px] border border-[#fff645] bg-[rgba(255,246,69,0.75)] backdrop-blur-[50px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
+            : `group relative flex items-center overflow-hidden rounded-[12px] bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
         }
       >
-        <span className="relative flex items-center gap-3 p-2">
+        <span className={rowClass}>
           <span className={yellow ? `${labelClass} text-black` : `${labelClass} text-white`}>
             {children}
           </span>
@@ -84,7 +90,7 @@ export function PrimaryButton({
         {yellow ? (
           <span
             aria-hidden
-            className="ace-sweep-out absolute inset-0 flex items-center gap-3 bg-[#fff645] p-2 backdrop-blur-[20px]"
+            className={`ace-sweep-out absolute inset-0 flex items-center bg-[#fff645] p-2 backdrop-blur-[20px] ${wide ? "justify-between" : "gap-3"}`}
           >
             <span className={`${labelClass} text-black`}>{children}</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(78,78,78,0.75)]">
@@ -94,7 +100,7 @@ export function PrimaryButton({
         ) : (
           <span
             aria-hidden
-            className="ace-sweep-in absolute inset-0 flex items-center gap-3 bg-[#fff645] p-2"
+            className={`ace-sweep-in absolute inset-0 flex items-center bg-[#fff645] p-2 ${wide ? "justify-between" : "gap-3"}`}
           >
             <span className={`${labelClass} text-black`}>{children}</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#4e4e4e]">
