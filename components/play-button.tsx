@@ -29,11 +29,13 @@ const sweepStyles = `
 const faceClass =
   "absolute inset-0 flex items-center justify-center rounded-full border border-solid border-[rgba(215,215,215,0.25)] backdrop-blur-[20px]";
 
-export function PlayButtonFace() {
+export function PlayButtonFace({ className = "" }: { className?: string }) {
   return (
     <>
       <style>{sweepStyles}</style>
-      <span className="group/play relative block size-[72px] shrink-0">
+      <span
+        className={`group/play relative block size-[72px] shrink-0${className ? ` ${className}` : ""}`}
+      >
         <span className={`${faceClass} bg-[rgba(78,78,78,0.25)]`}>
           <img
             alt=""
