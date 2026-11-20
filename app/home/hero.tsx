@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LazyImage, LazyVideo } from "@/components/lazy-visual";
+import { PageNumber } from "@/components/page-number";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
@@ -82,29 +83,23 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="absolute top-[394px] left-[1328px] flex w-[112px] justify-center">
-          <div className="flex w-10 flex-col items-center" role="tablist" aria-label="Featured machines">
+        <div className="absolute top-[382px] left-[1328px] flex w-[112px] justify-center">
+          <div className="flex w-8 flex-col items-center" role="tablist" aria-label="Featured machines">
             {slides.map((label, index) => (
               <div key={label} className="flex w-full flex-col items-center">
                 {index > 0 ? (
                   <span
                     aria-hidden
-                    className="h-10 w-0.5 shrink-0 bg-[rgba(215,215,215,0.75)]"
+                    className="h-5 w-px shrink-0 bg-[rgba(215,215,215,0.75)]"
                   />
                 ) : null}
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={active === index}
+                <PageNumber
+                  active={active === index}
                   onClick={() => setActive(index)}
-                  className={
-                    active === index
-                      ? "flex size-10 items-center justify-center rounded-[8px] border border-[#fff645] bg-[rgba(78,78,78,0.75)] font-mono text-[12px] leading-[1.25] font-[470] tracking-[0.78px] text-[#fff645] uppercase"
-                      : "flex size-10 items-center justify-center rounded-[8px] border border-[rgba(215,215,215,0.75)] bg-[rgba(78,78,78,0.5)] font-mono text-[12px] leading-[1.25] font-[470] tracking-[0.78px] text-white uppercase"
-                  }
+                  aria-label={`Featured machine ${label}`}
                 >
                   {label}
-                </button>
+                </PageNumber>
               </div>
             ))}
           </div>
