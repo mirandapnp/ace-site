@@ -22,9 +22,9 @@ const sweepStyles = `
   -webkit-mask-position: 0 0;
   mask-position: 0 0;
 }
-.ace-arrow-face {
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 33.333%, #000 66.666%, #000 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, transparent 33.333%, #000 66.666%, #000 100%);
+.ace-arrow-hover {
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 33.333%, transparent 66.666%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, #000 33.333%, transparent 66.666%, transparent 100%);
   -webkit-mask-size: 300% 100%;
   mask-size: 300% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -33,22 +33,22 @@ const sweepStyles = `
   mask-position: 100% 0;
   transition: mask-position 700ms cubic-bezier(0.22, 1, 0.36, 1), -webkit-mask-position 700ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.ace-arrow:hover:not(:disabled) > .ace-arrow-face {
+.ace-arrow:hover:not(:disabled) > .ace-arrow-hover {
   -webkit-mask-position: 0 0;
   mask-position: 0 0;
 }
 @media (prefers-reduced-motion: reduce) {
   .ace-field-sweep,
-  .ace-arrow-face {
+  .ace-arrow-hover {
     transition: none;
   }
 }
 `;
 
-const fieldType = "font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px]";
+const fieldType = "font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px]";
 
 const messageType =
-  "pointer-events-none absolute top-full left-0 mt-1 font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] whitespace-nowrap";
+  "pointer-events-none absolute top-full left-0 mt-1 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] whitespace-nowrap";
 
 export function SubscribeForm() {
   const [state, formAction, pending] = useActionState(subscribe, initialState);
@@ -88,7 +88,7 @@ export function SubscribeForm() {
           spellCheck={false}
           readOnly={success}
           value={value}
-          placeholder="Enter your email to subscribe"
+          placeholder="Enter your email to subscribe to updates"
           aria-invalid={invalid}
           aria-describedby={invalid || success ? "exhibition-email-status" : undefined}
           onChange={(event) => setValue(event.target.value)}
@@ -100,22 +100,22 @@ export function SubscribeForm() {
           type="submit"
           aria-label="Subscribe"
           disabled={pending || success}
-          className="ace-arrow relative z-10 size-[35px] shrink-0 overflow-hidden rounded-full"
+          className="ace-arrow relative z-10 size-[35px] shrink-0 overflow-hidden rounded-full border-0 bg-[#FFF645] p-0"
         >
-          <span className="absolute inset-0 flex items-center justify-center rounded-full bg-black">
-            <img alt="" src={media("/ace/view-arrow.svg")} width={7.49553} height={7.5} />
+          <span className="relative flex size-full items-center justify-center">
+            <img alt="" src={media("/ace/enquire-arrow.svg")} width={7.49553} height={7.5} />
           </span>
           <span
             aria-hidden
-            className="ace-arrow-face pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-[#FFF645]"
+            className="ace-arrow-hover pointer-events-none absolute inset-0 flex items-center justify-center rounded-full bg-black"
           >
-            <img alt="" src={media("/ace/enquire-arrow.svg")} width={7.49553} height={7.5} />
+            <img alt="" src={media("/ace/view-arrow.svg")} width={7.49553} height={7.5} />
           </span>
         </button>
       </div>
       {invalid ? (
         <p id="exhibition-email-status" role="alert" className={`${messageType} text-[#FF4B4B]`}>
-          Invalid email format.
+          Please enter a valid email.
         </p>
       ) : null}
       {success ? (
