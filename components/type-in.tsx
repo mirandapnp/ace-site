@@ -55,14 +55,16 @@ export function TypeIn({ text, className }: { text: string; className?: string }
   const typing = shown.length > 0 && shown.length < text.length;
 
   return (
-    <p ref={ref} className={className} aria-label={text}>
-      <span aria-hidden>{shown}</span>
-      {typing ? (
-        <span
-          aria-hidden
-          className="ace-blink ml-[0.1em] inline-block h-[1em] w-[0.55em] bg-current align-[-0.1em]"
-        />
-      ) : null}
+    <p ref={ref} className={`relative w-fit ${className ?? ""}`} aria-label={text}>
+      <span aria-hidden className="invisible whitespace-pre">
+        {text}
+      </span>
+      <span aria-hidden className="absolute inset-0 whitespace-pre">
+        {shown}
+        {typing ? (
+          <span className="ace-blink ml-[0.1em] inline-block h-[1em] w-[0.55em] bg-current align-[-0.1em]" />
+        ) : null}
+      </span>
     </p>
   );
 }
