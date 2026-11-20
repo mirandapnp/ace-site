@@ -5,7 +5,7 @@ import { media } from "@/lib/media";
 export function Network() {
   return (
     <section className="w-[1440px] px-5 pt-5" aria-labelledby="network-heading">
-      <div className="relative flex h-[500px] w-full flex-col items-center justify-center gap-10 overflow-hidden rounded-[16px] py-[120px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
+      <div className="relative flex h-[540px] w-full flex-col items-center justify-center gap-10 overflow-hidden rounded-[16px] py-[120px] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 overflow-hidden opacity-60">
             <LazyImage
@@ -26,7 +26,7 @@ export function Network() {
         <div className="relative flex flex-col items-center gap-5 text-center text-white">
           <h2
             id="network-heading"
-            className="font-display text-[60px] leading-[1.1] font-medium tracking-[-1.95px] whitespace-nowrap [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)]"
+            className="font-display text-[54px] leading-[1.1] font-medium tracking-[-1.755px] whitespace-nowrap [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)]"
           >
             A Global Network of Fun.
           </h2>

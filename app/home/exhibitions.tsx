@@ -5,7 +5,7 @@ import { SubscribeForm } from "./subscribe-form";
 export function Exhibitions() {
   return (
     <section className="w-[1440px] px-5 pt-5" aria-labelledby="exhibitions-heading">
-      <div className="relative flex h-[500px] w-full flex-col items-center justify-center gap-10 overflow-hidden rounded-[16px]">
+      <div className="relative flex h-[540px] w-full flex-col items-center justify-center gap-10 overflow-hidden rounded-[16px] py-[120px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 overflow-hidden">
             <LazyImage
@@ -26,7 +26,7 @@ export function Exhibitions() {
         <div className="relative flex flex-col items-center gap-4 text-center text-white">
           <h2
             id="exhibitions-heading"
-            className="font-display text-[60px] leading-[1.1] font-medium tracking-[-1.95px] whitespace-nowrap [text-shadow:0px_4px_12px_rgba(0,0,0,0.8)]"
+            className="font-display text-[54px] leading-[1.1] font-medium tracking-[-1.755px] whitespace-nowrap [text-shadow:0px_4px_12px_rgba(0,0,0,0.8)]"
           >
             Meet Us at Exhibitions!
           </h2>
