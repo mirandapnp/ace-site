@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LazyImage, LazyVideo } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
+import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
 
 const slides = ["01", "02", "03"] as const;
@@ -61,12 +62,10 @@ export function Hero() {
           <div className="absolute top-[271.5px] left-0 flex w-[664.711px] flex-col gap-10 px-5">
             <div className="flex flex-col gap-7">
               <div className="flex flex-col gap-4">
-                <div className="flex w-fit items-center gap-[10px] rounded-full bg-[rgba(78,78,78,0.25)] px-3 py-1.5">
-                  <span className="size-1.5 shrink-0 bg-[#fff645]" />
-                  <span className="font-mono text-[12px] leading-[1.25] font-[470] tracking-[0.78px] text-[#fff645] uppercase [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)]">
-                    The Latest Games
-                  </span>
-                </div>
+                <TypeIn
+                  text="The Latest Games"
+                  className="font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-[#fff645] uppercase [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)]"
+                />
                 <h1 className="w-[624.711px] font-display text-[76px] leading-[0.9] font-medium tracking-[-2.28px] text-white capitalize [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)]">
                   Cold Trigger
                 </h1>
