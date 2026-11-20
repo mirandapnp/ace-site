@@ -98,18 +98,20 @@ export function PartnerCta({
 }) {
   return (
     <section className="w-[1440px] px-5 pt-5" aria-labelledby="partner-cta-heading">
-      <div className="relative flex h-[600px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-5 py-7">
+      <div className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-5 py-7">
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          <LazyImage
-            alt=""
-            src={media(image)}
-            className="absolute inset-0 size-full object-cover"
-          />
+          <div className="absolute inset-0 overflow-hidden">
+            <LazyImage
+              alt=""
+              src={media(image)}
+              className="absolute top-[-22.93%] left-0 h-[145.85%] w-full max-w-none"
+            />
+          </div>
           <div
             className="absolute inset-0"
             style={{
               backgroundImage:
-                "linear-gradient(178.14deg, rgba(0, 0, 0, 0.71) 0%, rgba(0, 0, 0, 0.28) 45.55%, rgba(54, 245, 146, 0.23) 89.19%), linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4))",
+                "linear-gradient(178.02deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.2) 45.55%, rgba(54, 245, 146, 0.25) 89.19%), linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4))",
             }}
           />
         </div>
@@ -126,11 +128,11 @@ export function PartnerCta({
           <div className="flex flex-col gap-4 text-white">
             <h2
               id="partner-cta-heading"
-              className="font-display text-[54px] leading-[1.1] font-medium tracking-[-1.755px]"
+              className="font-display text-[54px] leading-[1.1] font-medium tracking-[-1.755px] whitespace-pre"
             >
               {title}
             </h2>
-            <p className="w-[500px] font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty">
+            <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] whitespace-nowrap">
               {body}
             </p>
           </div>
