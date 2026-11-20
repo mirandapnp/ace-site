@@ -16,7 +16,7 @@ export function FeaturedVideo() {
   return (
     <section className="w-[1440px] px-5 py-5" aria-labelledby={titleId}>
       <div className="relative w-full">
-        <div className="relative z-0 aspect-[3/2] w-[880px]">
+        <div className="relative z-0 h-[540px] w-[880px]">
           <button
             type="button"
             onClick={() => setOpen(true)}
@@ -42,36 +42,38 @@ export function FeaturedVideo() {
           </button>
         </div>
 
-        <div className="absolute inset-y-0 right-0 z-10 flex w-[560px] flex-col overflow-hidden rounded-[16px] bg-[#EC268E] p-5 shadow-[-6px_2px_12px_rgba(0,0,0,0.3)]">
-          <p className="font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-black uppercase">
-            {featuredVideo.eyebrow}
-          </p>
-          <div className="mt-5 flex min-h-0 flex-1 flex-col justify-between">
-            <div className="flex flex-col gap-5">
-              <h2
-                id={titleId}
-                className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize"
-              >
-                {titleLine}
-                <br />
-                {titleRest}
-              </h2>
-              <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
-                {featuredVideo.body}
-              </p>
-            </div>
-            <div className="flex items-start gap-5">
-              <SecondaryButton href={featuredVideo.productHref} color="black">
-                View product
-              </SecondaryButton>
-              <SecondaryButton
-                href={featuredVideo.channelHref}
-                color="outline"
-                arrow={false}
-                external
-              >
-                Explore all videos
-              </SecondaryButton>
+        <div className="absolute inset-y-0 right-0 z-10 w-[560px] shadow-[-6px_2px_24px_rgba(0,0,0,0.2)]">
+          <div className="flex size-full flex-col overflow-hidden rounded-[16px] bg-[#EC268E] p-5">
+            <p className="font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-black uppercase">
+              {featuredVideo.eyebrow}
+            </p>
+            <div className="mt-5 flex min-h-0 flex-1 flex-col justify-between">
+              <div className="flex flex-col gap-5">
+                <h2
+                  id={titleId}
+                  className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize"
+                >
+                  {titleLine}
+                  <br />
+                  {titleRest}
+                </h2>
+                <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
+                  {featuredVideo.body}
+                </p>
+              </div>
+              <div className="flex items-start gap-5">
+                <SecondaryButton href={featuredVideo.productHref} color="black">
+                  View product
+                </SecondaryButton>
+                <SecondaryButton
+                  href={featuredVideo.channelHref}
+                  color="outline"
+                  arrow={false}
+                  external
+                >
+                  Explore all videos
+                </SecondaryButton>
+              </div>
             </div>
           </div>
         </div>
