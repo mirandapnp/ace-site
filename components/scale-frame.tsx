@@ -6,7 +6,7 @@ const DESKTOP_FRAME = 1440;
 const MOBILE_FRAME = 412;
 
 function frameForViewport() {
-  return window.matchMedia("(min-width: 960px)").matches
+  return window.matchMedia("(min-width: 1024px)").matches
     ? DESKTOP_FRAME
     : MOBILE_FRAME;
 }
@@ -15,7 +15,7 @@ export function ScaleFrame({ children }: { children: React.ReactNode }) {
   const [frameWidth, setFrameWidth] = useState(DESKTOP_FRAME);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 960px)");
+    const media = window.matchMedia("(min-width: 1024px)");
     const sync = () => setFrameWidth(frameForViewport());
     sync();
     media.addEventListener("change", sync);

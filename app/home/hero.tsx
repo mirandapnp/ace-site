@@ -44,10 +44,10 @@ function HeroCopy({
 
   return (
     <div
-      className={`flex flex-col gap-5 min-[960px]:gap-7 ${centered ? "items-center text-center" : ""}`}
+      className={`flex flex-col gap-5 min-[1024px]:gap-7 ${centered ? "items-center text-center" : ""}`}
     >
       <div
-        className={`flex flex-col gap-2 min-[960px]:gap-4 ${centered ? "items-center" : ""}`}
+        className={`flex flex-col gap-2 min-[1024px]:gap-4 ${centered ? "items-center" : ""}`}
       >
         <TypeIn
           text="The Latest Games"
@@ -222,9 +222,9 @@ export function Hero() {
   const mobileGlow = useGradientFollow(mobileHeroGradientFollow);
 
   return (
-    <section className="w-[412px] bg-black min-[960px]:w-[1440px]">
+    <section className="w-[412px] bg-black min-[1024px]:w-[1440px]">
       {/* Desktop */}
-      <div className="relative hidden h-[900px] w-[1440px] min-[960px]:block">
+      <div className="relative hidden h-[900px] w-[1440px] min-[1024px]:block">
         <HeroBackdrop
           cardRef={desktopGlow.cardRef}
           gradientRef={desktopGlow.gradientRef}
@@ -257,7 +257,7 @@ export function Hero() {
 
       {/* Mobile — slider + numbers fill 100vh in design space */}
       <div
-        className="flex flex-col items-center gap-5 px-2.5 pt-2.5 min-[960px]:hidden"
+        className="flex flex-col items-center gap-5 px-2.5 pt-2.5 min-[1024px]:hidden"
         style={{ height: "calc(100dvh * 412px / 100cqw)" }}
       >
         <HeroBackdrop

@@ -11,7 +11,7 @@ const links = [
 export function Header() {
   return (
     <>
-      <header className="absolute top-0 left-0 z-20 hidden w-[1440px] items-center justify-between p-5 min-[960px]:flex">
+      <header className="absolute top-0 left-0 z-20 hidden w-[1440px] items-center justify-between p-5 min-[1024px]:flex">
         <a href="/" className="flex items-center gap-3">
           <span className="relative h-9 w-[50.594px] shrink-0 overflow-hidden">
             <LazyImage
@@ -53,7 +53,7 @@ export function Header() {
         </div>
       </header>
 
-      <header className="absolute top-0 left-0 z-20 flex w-[412px] items-center justify-between rounded-b-[12px] px-2 py-3 backdrop-blur-[20px] min-[960px]:hidden">
+      <header className="absolute top-0 left-0 z-20 flex w-[412px] items-center justify-between rounded-b-[12px] px-2 py-3 backdrop-blur-[20px] min-[1024px]:hidden">
         <button type="button" aria-label="Language" className="size-[35px] shrink-0">
           <img alt="" src={media("/ace/language.svg")} width={35} height={35} />
         </button>
