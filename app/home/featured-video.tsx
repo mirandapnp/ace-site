@@ -28,6 +28,14 @@ export function FeaturedVideo() {
               src={media(featuredVideo.thumbnail)}
               className="absolute inset-0 size-full object-cover"
             />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[rgba(31,31,31,0.1)]"
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-0 backdrop-blur-[4px] transition-opacity duration-[350ms] ease-out group-hover:opacity-100 motion-reduce:transition-none"
+            />
             <span className="absolute inset-0 flex items-center justify-center">
               <PlayButtonFace />
             </span>
