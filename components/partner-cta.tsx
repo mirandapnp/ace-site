@@ -32,7 +32,7 @@ export function PartnerCta({
   image?: string;
 }) {
   return (
-    <section className="w-[1440px] px-5 pt-5" aria-labelledby="partner-cta-heading">
+    <section className="w-[1440px] px-5 py-5" aria-labelledby="partner-cta-heading">
       <div className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-5 py-7">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 overflow-hidden">
