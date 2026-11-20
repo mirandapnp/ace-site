@@ -1,4 +1,5 @@
 import { Header } from "@/components/header";
+import { PartnerCta } from "@/components/partner-cta";
 import { ScaleFrame } from "@/components/scale-frame";
 import { Exhibitions } from "./home/exhibitions";
 import { Hero } from "./home/hero";
@@ -18,6 +19,7 @@ export default function Home() {
         <Products />
         <Exhibitions />
         <News />
+        <PartnerCta />
       </ScaleFrame>
     </div>
   );

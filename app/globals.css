@@ -39,8 +39,28 @@ body {
   animation: ace-ticker 100s linear infinite;
 }
 
+/* partner blink */
+@keyframes ace-blink {
+  0%,
+  46% {
+    opacity: 1;
+  }
+  50%,
+  96% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ace-blink {
+  animation: ace-blink 1.2s step-end infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .ace-ticker {
+  .ace-ticker,
+  .ace-blink {
     animation: none;
   }
 }
