@@ -13,29 +13,29 @@ import {
 } from "@/lib/use-gradient-follow";
 
 /**
- * Per-machine display height (css px), sized from the opaque subject bounds
- * so transparent padding doesn’t shrink some cabinets. Target: max subject
- * side ≈ 224 / 280 so tall/slim and short/wide keep their proportions but
- * share one visual scale.
+ * Per-machine display size (css px), from opaque subject bounds so transparent
+ * padding doesn’t shrink some cabinets. Shared scale: max subject side ≈ 170
+ * (mobile, width-driven so narrow cards don’t clamp unevenly) / 280 (desktop,
+ * height-driven). Tall/slim vs short/wide keep their proportions.
  */
-const cardMachineHeight: Record<
+const cardMachineSize: Record<
   string,
-  { mobile: number; desktop: number }
+  { mobileW: number; desktopH: number }
 > = {
-  "pop-shot-circus": { mobile: 240, desktop: 301 },
-  "cold-trigger": { mobile: 240, desktop: 299 },
-  "racing-xtreme": { mobile: 232, desktop: 290 },
-  "bikers-madness": { mobile: 234, desktop: 292 },
-  "thunder-jets": { mobile: 220, desktop: 275 },
-  "dragon-kingdom-vr": { mobile: 234, desktop: 292 },
-  "medal-master": { mobile: 207, desktop: 259 },
-  "hoop-hustle": { mobile: 231, desktop: 289 },
+  "pop-shot-circus": { mobileW: 153, desktopH: 301 },
+  "cold-trigger": { mobileW: 182, desktopH: 299 },
+  "racing-xtreme": { mobileW: 163, desktopH: 290 },
+  "bikers-madness": { mobileW: 162, desktopH: 292 },
+  "thunder-jets": { mobileW: 186, desktopH: 275 },
+  "dragon-kingdom-vr": { mobileW: 150, desktopH: 292 },
+  "medal-master": { mobileW: 186, desktopH: 259 },
+  "hoop-hustle": { mobileW: 144, desktopH: 289 },
 };
 
 const cardMachineStage =
-  "relative flex h-[242px] w-full items-end justify-center min-[1024px]:h-[302px]";
+  "relative flex h-[184px] w-full items-end justify-center min-[1024px]:h-[302px]";
 const cardMachineImage =
-  "w-auto max-w-full object-contain object-bottom drop-shadow-[2px_6px_20px_rgba(0,0,0,0.12)]";
+  "object-contain object-bottom drop-shadow-[2px_6px_20px_rgba(0,0,0,0.12)]";
 
 function CatalogCard({ product }: { product: Product }) {
   const face = useRef<HTMLDivElement>(null);
@@ -97,15 +97,15 @@ function CatalogCard({ product }: { product: Product }) {
             className={cardMachineStage}
             style={
               {
-                ["--machine-h-mobile" as string]: `${cardMachineHeight[product.id].mobile}px`,
-                ["--machine-h-desktop" as string]: `${cardMachineHeight[product.id].desktop}px`,
+                ["--machine-w-mobile" as string]: `${cardMachineSize[product.id].mobileW}px`,
+                ["--machine-h-desktop" as string]: `${cardMachineSize[product.id].desktopH}px`,
               } as CSSProperties
             }
           >
             <LazyImage
               alt=""
               src={media(product.image)}
-              className={`${cardMachineImage} h-[var(--machine-h-mobile)] min-[1024px]:h-[var(--machine-h-desktop)]`}
+              className={`${cardMachineImage} h-auto w-[var(--machine-w-mobile)] min-[1024px]:h-[var(--machine-h-desktop)] min-[1024px]:w-auto`}
             />
           </div>
         </div>
