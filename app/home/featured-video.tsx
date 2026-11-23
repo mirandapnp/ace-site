@@ -31,7 +31,7 @@ export function FeaturedVideo() {
             </p>
             <div className="mt-5 flex min-h-0 flex-1 flex-col justify-between">
               <div className="flex flex-col gap-5">
-                <h2 className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize">
+                <h2 className="type-h4-panel text-black capitalize">
                   {titleLine}
                   <br />
                   {titleRest}
@@ -70,7 +70,7 @@ export function FeaturedVideo() {
           </p>
           <div className="mt-2.5 flex flex-col gap-10">
             <div className="flex flex-col gap-5">
-              <h2 className="font-display text-[24px] leading-[1.25] font-medium tracking-[-0.6px] text-black capitalize">
+              <h2 className="type-h5 text-[24px] tracking-[-0.6px] text-black capitalize">
                 {titleLine}
                 <br />
                 {titleRest}

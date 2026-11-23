@@ -29,7 +29,7 @@ export function Exhibitions() {
         <div className="relative flex w-full flex-col items-center gap-5 text-center text-white min-[1024px]:w-auto min-[1024px]:gap-4">
           <h2
             id="exhibitions-heading"
-            className="w-full font-display text-[40px] leading-none font-medium tracking-[-1px] text-pretty capitalize [text-shadow:0px_4px_12px_rgba(0,0,0,0.8)] min-[1024px]:w-auto min-[1024px]:text-[54px] min-[1024px]:leading-[1.1] min-[1024px]:tracking-[-1.755px] min-[1024px]:whitespace-nowrap"
+            className="type-h2 w-full text-pretty capitalize [text-shadow:0px_4px_12px_rgba(0,0,0,0.8)] min-[1024px]:w-auto min-[1024px]:whitespace-nowrap"
           >
             Meet Us at Exhibitions!
           </h2>

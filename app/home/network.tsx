@@ -31,7 +31,7 @@ export function Network() {
           <div className="flex w-full flex-col items-center gap-5 text-center text-white min-[1024px]:w-auto">
             <h2
               id="network-heading"
-              className="font-display text-[40px] leading-none font-medium tracking-[-1px] text-pretty capitalize [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] min-[1024px]:text-[54px] min-[1024px]:leading-[1.1] min-[1024px]:tracking-[-1.755px] min-[1024px]:whitespace-nowrap"
+              className="type-h2 text-pretty capitalize [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] min-[1024px]:whitespace-nowrap"
             >
               A Global Network of Fun.
             </h2>

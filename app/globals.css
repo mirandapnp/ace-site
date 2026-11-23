@@ -13,6 +13,101 @@
   --font-display: var(--font-gt-flexa);
 }
 
+/*
+  Display type scale — GT Flexa Extended Medium
+  Mobile (<1024) / Desktop (≥1024)
+
+  h1  Hero                         40 / 72
+  h2  Banner sections              40 / 54
+  h3  Page sections                32 / 54
+  h4  Compact sections             32 / 40
+  h5  Card titles                  18 / 24
+  h6  Compact card titles          12 / 18
+
+  Pair with color, shadow, and casing at the call site.
+  Use .type-h4-panel for in-panel titles that stay 32 at all sizes.
+*/
+@layer components {
+  .type-h1,
+  .type-h2,
+  .type-h3,
+  .type-h4,
+  .type-h4-panel,
+  .type-h5,
+  .type-h6 {
+    font-family: var(--font-display), Arial, Helvetica, sans-serif;
+    font-weight: 500;
+  }
+
+  .type-h1 {
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -1px; /* -2.5% */
+  }
+
+  .type-h2 {
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -1px; /* -2.5% */
+  }
+
+  .type-h3,
+  .type-h4,
+  .type-h4-panel {
+    font-size: 32px;
+    line-height: 1.25;
+    letter-spacing: -0.96px; /* -3% */
+  }
+
+  .type-h5 {
+    font-size: 18px;
+    line-height: 1.25;
+    letter-spacing: -0.45px; /* -2.5% */
+  }
+
+  .type-h6 {
+    font-size: 12px;
+    line-height: 1.25;
+    letter-spacing: -0.3px; /* -2.5% */
+  }
+
+  @media (min-width: 1024px) {
+    .type-h1 {
+      font-size: 72px;
+      line-height: 0.9;
+      letter-spacing: -2.16px; /* -3% */
+    }
+
+    .type-h2 {
+      font-size: 54px;
+      line-height: 1.1;
+      letter-spacing: -1.755px; /* -3.25% */
+    }
+
+    .type-h3 {
+      font-size: 54px;
+      line-height: 1.1;
+      letter-spacing: -1.755px; /* -3.25% */
+    }
+
+    .type-h4 {
+      font-size: 40px;
+      line-height: 1;
+      letter-spacing: -1px; /* -2.5% */
+    }
+
+    .type-h5 {
+      font-size: 24px;
+      letter-spacing: -0.6px; /* -2.5% */
+    }
+
+    .type-h6 {
+      font-size: 18px;
+      letter-spacing: -0.45px; /* -2.5% */
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

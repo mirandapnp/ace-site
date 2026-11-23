@@ -18,8 +18,9 @@ const cardImage: Record<string, { frame: string; crop: string }> = {
     crop: "inset-0 size-full object-contain",
   },
   "cold-trigger": {
-    frame: "aspect-[246/310] w-[74%] min-[1024px]:aspect-auto min-[1024px]:h-[310px] min-[1024px]:w-[246px]",
-    crop: "inset-0 size-full object-contain",
+    frame:
+      "aspect-[246/310] w-[84%] overflow-hidden min-[1024px]:aspect-auto min-[1024px]:h-[310px] min-[1024px]:w-[280px]",
+    crop: "top-[-2.42%] left-[-16.19%] h-[105.55%] w-[132.85%] max-w-none",
   },
   "racing-xtreme": {
     frame: "aspect-[251/295] w-[75%] min-[1024px]:aspect-auto min-[1024px]:h-[295px] min-[1024px]:w-[251px]",
@@ -112,7 +113,7 @@ function CatalogCard({ product }: { product: Product }) {
           </div>
         </div>
         <div className="flex w-full items-center justify-between gap-2">
-          <h3 className="min-w-0 flex-1 font-display text-[12px] leading-[1.25] font-medium tracking-[-0.3px] text-black capitalize min-[1024px]:text-[18px] min-[1024px]:tracking-[-0.45px]">
+          <h3 className="type-h6 min-w-0 flex-1 text-black capitalize">
             <a href={productPath(product.id)} className="min-[1024px]:pointer-events-none">
               {product.name}
             </a>
@@ -212,7 +213,7 @@ function FeaturedPanel({
   return (
     <>
       <div className={`flex flex-col ${mobile ? "gap-5" : "gap-7"}`}>
-        <h3 className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-black capitalize">
+        <h3 className="type-h4-panel text-black capitalize">
           {product.name}
         </h3>
         {product.stats && product.stats.length > 0 ? (
@@ -275,7 +276,7 @@ export function Products() {
       <div className="flex items-end justify-center min-[1024px]:justify-between">
         <h2
           id="products-heading"
-          className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-white capitalize min-[1024px]:text-[60px] min-[1024px]:leading-[1.1] min-[1024px]:tracking-[-1.95px] min-[1024px]:normal-case"
+          className="type-h3 text-white capitalize min-[1024px]:normal-case"
         >
           Core Products
         </h2>

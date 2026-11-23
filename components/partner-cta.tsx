@@ -84,7 +84,7 @@ export function PartnerCta({
           <div className="flex flex-col gap-4 text-white">
             <h2
               id="partner-cta-heading"
-              className="font-display text-[40px] leading-[1.1] font-medium tracking-[-1px] min-[1024px]:text-[54px] min-[1024px]:tracking-[-1.755px]"
+              className="type-h2"
             >
               {title}
             </h2>

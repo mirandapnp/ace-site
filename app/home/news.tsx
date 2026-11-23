@@ -201,7 +201,7 @@ export function News() {
       <div className="flex items-center justify-center min-[1024px]:justify-between">
         <h2
           id="news-heading"
-          className="font-display text-[32px] leading-[1.25] font-medium tracking-[-0.96px] text-white capitalize min-[1024px]:w-[620px] min-[1024px]:text-[40px] min-[1024px]:leading-none min-[1024px]:tracking-[-1px]"
+          className="type-h4 text-white capitalize min-[1024px]:w-[620px]"
         >
           ACE News
         </h2>
@@ -300,7 +300,7 @@ function StoryRow({
           </div>
           <div className="flex flex-1 flex-col px-2.5 pt-5 pb-2.5 min-[1024px]:p-5">
             <div className="flex flex-col gap-3">
-              <h3 className="font-display text-[18px] leading-[1.25] font-medium tracking-[-0.45px] text-white capitalize min-[1024px]:text-[24px] min-[1024px]:tracking-[-0.6px]">
+              <h3 className="type-h5 text-white capitalize">
                 {story.title}
               </h3>
               <p className="flex w-fit items-center gap-1 rounded-full bg-white px-[9px] py-[5px] font-display text-[10px] leading-[1.25] font-medium tracking-[-0.25px] text-[#EC268E] capitalize">

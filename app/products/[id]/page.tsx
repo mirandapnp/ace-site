@@ -35,7 +35,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       >
         Home
       </a>
-      <h1 className="mt-10 font-display text-[48px] leading-none font-medium tracking-[-1.2px] text-white">
+      <h1 className="type-h2 mt-10 text-white">
         {product.name}
       </h1>
       {product.body ? (

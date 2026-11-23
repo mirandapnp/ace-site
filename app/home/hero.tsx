@@ -63,7 +63,7 @@ function HeroCopy({
           className={`font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-[#fff645] uppercase [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] ${centered ? "text-center" : ""}`}
         />
         <h1
-          className={`font-display font-medium capitalize text-white [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] ${titleClassName}`}
+          className={`type-h1 capitalize text-white [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] ${titleClassName}`}
         >
           Cold Trigger
         </h1>
@@ -285,7 +285,7 @@ export function Hero() {
             }
           >
             <HeroCopy
-              titleClassName="w-[624.711px] text-[76px] leading-[0.9] tracking-[-2.28px]"
+              titleClassName="w-[624.711px]"
               bodyClassName="w-[495.54px]"
             />
             <PrimaryButton href="#products" color="gray">
@@ -313,10 +313,7 @@ export function Hero() {
           className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[16px] pt-2.5"
         >
           <div className="relative z-10 flex w-full shrink-0 flex-col gap-5 px-2.5 pt-10">
-            <HeroCopy
-              align="center"
-              titleClassName="text-[40px] leading-none tracking-[-1px]"
-            />
+            <HeroCopy align="center" />
             <PrimaryButton href="#products" color="gray" className="w-full">
               View Machine
             </PrimaryButton>
