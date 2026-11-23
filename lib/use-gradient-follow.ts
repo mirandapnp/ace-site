@@ -59,7 +59,11 @@ export const partnerCtaGradientFollow: GradientFollowConfig = {
   fade: 57.4,
   rangeX: 42,
   rangeY: 38,
-  scaleBoost: 0.04,
+  // Grow ~25% on hover so the wash reads more diffused while following.
+  scaleBoost: 0.25,
+  fadeBoost: 14,
+  // Tighten the bright core on hover (5.3 → ~2.12: −20% then another −50%).
+  coreBoost: -3.18,
 };
 
 /** Mobile rest sits slightly further right, matching Figma’s mobile radial. */
