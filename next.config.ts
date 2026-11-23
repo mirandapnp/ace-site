@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     agentFeedback: true,
   },
+  transpilePackages: ["@figma/expressive-components"],
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
