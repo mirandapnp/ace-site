@@ -86,10 +86,15 @@ export function gradientFollowVars(config: GradientFollowConfig) {
 }
 
 export type GradientFollowMotion = {
-  /** Lerp while the pointer is over the card. Default 0.16. */
+  /** Lerp while tracking after the glow has engaged. Default 0.16. */
   followEase?: number;
   /** Lerp while resetting after leave. Default matches followEase. */
   leaveEase?: number;
+  /**
+   * Lerp used as the pointer first engages — keeps the glow drifting
+   * out from rest instead of snapping under the cursor. Default 0.045.
+   */
+  enterEase?: number;
 };
 
 export function useGradientFollow(
@@ -115,10 +120,21 @@ export function useGradientFollow(
       const cfg = configRef.current;
       const follow = motionRef.current.followEase ?? 0.16;
       const leave = motionRef.current.leaveEase ?? follow;
-      const ease = hoverTarget.current > 0 ? follow : leave;
+      const enter = motionRef.current.enterEase ?? 0.045;
+
+      // Blend enter → follow as engagement rises so the first move
+      // drifts from the resting spot instead of leaping to the pointer.
+      const engaged = hover.current;
+      const ease =
+        hoverTarget.current > 0
+          ? enter + (follow - enter) * engaged
+          : leave;
+
       current.current.x += (target.current.x - current.current.x) * ease;
       current.current.y += (target.current.y - current.current.y) * ease;
-      hover.current += (hoverTarget.current - hover.current) * ease;
+      // Intensity rises on the soft enter curve so glow + travel start together.
+      const intensityEase = hoverTarget.current > 0 ? enter : leave;
+      hover.current += (hoverTarget.current - hover.current) * intensityEase;
       const node = gradientRef.current;
       if (node) {
         const h = hover.current;
@@ -194,11 +210,23 @@ export function useCtaGradientRise({
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    const enter = 0.04;
+    const follow = 0.08;
+    const leave = 0.06;
+
     let frame = 0;
     const tick = () => {
       // Slow ease — keeps the peak from popping in.
-      hoverAmount.current += (hoverTarget.current - hoverAmount.current) * 0.06;
-      currentX.current += (targetX.current - currentX.current) * 0.08;
+      const engaged = hoverAmount.current;
+      const intensityEase = hoverTarget.current > 0 ? enter : leave;
+      hoverAmount.current +=
+        (hoverTarget.current - hoverAmount.current) * intensityEase;
+      // Drift from rest toward the pointer; ramp to follow once engaged.
+      const posEase =
+        hoverTarget.current > 0
+          ? enter + (follow - enter) * engaged
+          : leave;
+      currentX.current += (targetX.current - currentX.current) * posEase;
       const node = gradientRef.current;
       if (node) {
         const h = hoverAmount.current;
