@@ -147,8 +147,9 @@ const mobileKickerClass =
 
 function FeaturedVisual({ active }: { active: Product }) {
   const glow = useGradientFollow(featuredGradientFollow, {
-    followEase: 0.12,
-    leaveEase: 0.045,
+    followEase: 0.08,
+    leaveEase: 0.04,
+    enterEase: 0.035,
   });
 
   return (

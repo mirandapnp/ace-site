@@ -35,15 +35,16 @@ export const heroGradientFollow: GradientFollowConfig = {
 
 export const featuredGradientFollow: GradientFollowConfig = {
   gx: 50,
-  gy: 78,
-  grx: 60.75,
-  gry: 47.25,
-  core: 5.4,
-  mid: 0.36,
-  midAt: 48,
-  fade: 86.4,
-  rangeX: 28,
-  rangeY: 22,
+  gy: 108, // rest sits 30% lower than the prior 78
+  // ~50% more diffused than the prior ellipse / stop distances.
+  grx: 91.125,
+  gry: 70.875,
+  core: 8.1,
+  mid: 0.28,
+  midAt: 72,
+  fade: 100,
+  rangeX: 22,
+  rangeY: 17,
 };
 
 /** Partner CTA / closing footer — green wash matches Figma radial size & opacity. */
