@@ -10,21 +10,21 @@ export function Network() {
     >
       <div className="relative flex h-[600px] w-full flex-col overflow-hidden rounded-[16px] p-2.5 shadow-[0px_4px_4px_rgba(0,0,0,0.25)] min-[1024px]:h-[540px] min-[1024px]:items-center min-[1024px]:justify-center min-[1024px]:gap-10 min-[1024px]:p-0 min-[1024px]:py-[120px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 overflow-hidden opacity-60">
+          <div className="absolute inset-0 overflow-hidden">
             <LazyImage
               alt=""
               src={media("/ace/network.webp")}
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full object-cover object-bottom"
             />
           </div>
+          <div className="absolute inset-0 bg-[rgba(18,18,18,0.4)]" />
           <div
-            className="absolute inset-0 opacity-[0.45]"
+            className="absolute inset-0 opacity-20"
             style={{
               backgroundImage:
-                "radial-gradient(ellipse 50% 279.72% at 50% 50%, rgba(179, 179, 179, 0) 0%, rgba(90, 90, 90, 0.25) 50%, rgba(45, 45, 45, 0.375) 75%, rgba(22, 22, 22, 0.4375) 87.5%, rgba(0, 0, 0, 0.5) 100%)",
+                "radial-gradient(ellipse 100% 100% at 50% 50%, rgba(35, 35, 35, 0) 0%, rgba(52, 52, 52, 1) 100%)",
             }}
           />
-          <div className="absolute inset-0 bg-[rgba(38,38,38,0.5)]" />
         </div>
 
         <div className="relative flex flex-1 items-center justify-center min-[1024px]:flex-none">
@@ -35,7 +35,7 @@ export function Network() {
             >
               A Global Network of Fun.
             </h2>
-            <p className="w-full font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty min-[1024px]:w-[879.314px]">
+            <p className="w-full font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] text-pretty min-[1024px]:w-[879.314px]">
               Our commitment to excellence has earned ACE Amusement a loyal global
               following.
               <br className="hidden min-[1024px]:inline" />{" "}

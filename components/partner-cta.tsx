@@ -56,20 +56,11 @@ export function PartnerCta({
               className="absolute inset-0 size-full max-w-none object-cover"
             />
           </div>
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(178.02deg, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.2) 45.55%, transparent 89.19%), linear-gradient(90deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4))",
-            }}
-          />
-          <div
-            className="absolute inset-x-0 bottom-0"
-            style={{
-              height: `${glow.restHeight}%`,
-              backgroundImage:
-                "linear-gradient(to top, rgba(54, 245, 146, 0.25) 0%, rgba(54, 245, 146, 0) 100%)",
-            }}
+          <div className="absolute inset-0 bg-[rgba(20,20,20,0.5)]" />
+          <LazyImage
+            alt=""
+            src={media("/ace/partner-cta-overlay.webp")}
+            className="absolute inset-0 size-full object-cover"
           />
           <div
             ref={glow.gradientRef}
@@ -97,7 +88,7 @@ export function PartnerCta({
             >
               {title}
             </h2>
-            <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty min-[1024px]:whitespace-nowrap">
+            <p className="font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] text-pretty min-[1024px]:whitespace-nowrap">
               {body}
             </p>
           </div>

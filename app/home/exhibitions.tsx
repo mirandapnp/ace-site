@@ -14,17 +14,17 @@ export function Exhibitions() {
             <LazyImage
               alt=""
               src={media("/ace/exhibitions.webp")}
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full object-cover opacity-80"
             />
           </div>
+          <div className="absolute inset-0 bg-[rgba(18,18,18,0.4)]" />
           <div
-            className="absolute inset-0 opacity-40"
+            className="absolute inset-0 opacity-20"
             style={{
               backgroundImage:
-                "radial-gradient(ellipse 48% 405% at 50% 50%, rgba(179,179,179,0) 0%, rgba(113,113,113,0.25) 50%, rgba(80,80,80,0.375) 75%, rgba(47,47,47,0.5) 100%)",
+                "radial-gradient(ellipse 100% 100% at 50% 50%, rgba(35, 35, 35, 0) 0%, rgba(52, 52, 52, 1) 100%)",
             }}
           />
-          <div className="absolute inset-0 bg-[rgba(24,24,24,0.6)]" />
         </div>
         <div className="relative flex w-full flex-col items-center gap-5 text-center text-white min-[1024px]:w-auto min-[1024px]:gap-4">
           <h2
@@ -33,16 +33,16 @@ export function Exhibitions() {
           >
             Meet Us at Exhibitions!
           </h2>
-          <p className="w-full font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty min-[1024px]:hidden">
+          <p className="w-full font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] text-pretty min-[1024px]:hidden">
             Keep up with Ace news and meet us at our exhibitions. Subscribe and
             stay posted.
           </p>
-          <p className="hidden font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] whitespace-nowrap min-[1024px]:block">
+          <p className="hidden font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] whitespace-nowrap min-[1024px]:block">
             Try our latest machines live, in person at the next exhibition. We
             look forward to meeting you!
           </p>
         </div>
-        <SubscribeForm className="w-full min-[1024px]:w-[400px]" />
+        <SubscribeForm className="relative z-10 w-full min-[1024px]:w-[400px]" />
       </div>
     </section>
   );

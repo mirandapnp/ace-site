@@ -8,77 +8,94 @@ export type Product = {
   scene?: "combat" | "cutout";
 };
 
-const airCombat = {
-  id: "air-combat",
-  name: "Air Combat",
-  image: "/ace/air-combat.webp",
-  kicker: "(01) New Machine technology",
-  stats: ["55’’ HD screen", "Dimensions: W199 x D137x H265 (cm)", "Power: 750W"],
-  body: "Unique qualifying gameplay, complete the points race to unlock the qualifying race, challenge the mileage leader board.",
+const wildFrontier = {
+  id: "wild-frontier",
+  name: "Wild Frontier",
+  image: "/ace/wild-frontier.webp",
+  kicker: "(01) Drive Racing Game",
+  stats: [
+    "2PL With Motion",
+    "Dimensions: W220*D314*H295 (cm)",
+    "Power: 4200W",
+  ],
+  body: "Buckle up and lock on! Meet Wild Frontier, our brand-new 2-player combat vehicle arcade game that throws you right into the driver's seat of a full-throttle shootout!",
   scene: "combat",
 } as const satisfies Product;
 
-const crossbowFishing = {
-  id: "crossbow-fishing",
-  name: "Crossbow Fishing",
-  image: "/ace/crossbow-fishing.webp",
-  kicker: "(02) Skill game machines",
+const coldTrigger = {
+  id: "cold-trigger",
+  name: "Cold Trigger",
+  image: "/ace/cold-trigger.webp",
+  kicker: "(02) Gun Shooting game",
   stats: [],
   body: "",
   scene: "cutout",
 } as const satisfies Product;
 
-const jetSkiRacer = {
-  id: "jet-ski-racer",
-  name: "Jet Ski Racer",
-  image: "/ace/jet-ski-racer.webp",
-  kicker: "(03) Racing machines",
+const dragonKingdomVr = {
+  id: "dragon-kingdom-vr",
+  name: "Dragon Kingdom VR",
+  image: "/ace/dragon-kingdom-vr.webp",
+  kicker: "(03) VR Game",
   stats: [],
   body: "",
   scene: "cutout",
 } as const satisfies Product;
 
-export const featuredProducts: readonly Product[] = [airCombat, crossbowFishing, jetSkiRacer];
+export const featuredProducts: readonly Product[] = [
+  wildFrontier,
+  coldTrigger,
+  dragonKingdomVr,
+];
 
 export const catalogProducts = [
   {
-    id: "skull-of-shadow",
-    name: "Skull of Shadow 4PL Water Shooting Game",
-    image: "/ace/skull-of-shadow.webp",
+    id: "pop-shot-circus",
+    name: "Pop Shot Circus",
+    image: "/ace/pop-shot-circus.webp",
   },
   {
-    id: "ace-shooter-promax",
-    name: "Ace Shooter Promax 2",
-    image: "/ace/ace-shooter-promax.webp",
+    id: "cold-trigger",
+    name: "Cold Trigger",
+    image: "/ace/cold-trigger.webp",
   },
   {
-    id: "galaxy-rangers",
-    name: "Galaxy Rangers 2",
-    image: "/ace/galaxy-rangers.webp",
+    id: "racing-xtreme",
+    name: "Racing Xtreme Upright Single 85\"",
+    image: "/ace/racing-xtreme.webp",
   },
   {
-    id: "wild-hunting",
-    name: "Wild Hunting 4PL",
-    image: "/ace/wild-hunting.webp",
+    id: "bikers-madness",
+    name: "Bikers Madness Upright Single 85\"",
+    image: "/ace/bikers-madness.webp",
   },
   {
-    id: "roll-n-win",
-    name: "Roll N Win",
-    image: "/ace/roll-n-win.webp",
+    id: "thunder-jets",
+    name: "Thunder Jets",
+    image: "/ace/thunder-jets.webp",
   },
   {
-    id: "speedy-toss",
-    name: "Speedy Toss",
-    image: "/ace/speedy-toss.webp",
+    id: "dragon-kingdom-vr",
+    name: "Dragon Kingdom VR",
+    image: "/ace/dragon-kingdom-vr.webp",
   },
-  crossbowFishing,
-  jetSkiRacer,
+  {
+    id: "medal-master",
+    name: "Medal Master",
+    image: "/ace/medal-master.webp",
+  },
+  {
+    id: "hoop-hustle",
+    name: "Hoop Hustle",
+    image: "/ace/hoop-hustle.webp",
+  },
 ] satisfies readonly Product[];
 
 export const products: readonly Product[] = [
   ...featuredProducts,
   ...catalogProducts.filter(
-    (product) => product.id !== crossbowFishing.id && product.id !== jetSkiRacer.id,
+    (product) =>
+      product.id !== coldTrigger.id && product.id !== dragonKingdomVr.id,
   ),
 ];
 

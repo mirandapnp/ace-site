@@ -13,37 +13,37 @@ import {
 } from "@/lib/use-gradient-follow";
 
 const cardImage: Record<string, { frame: string; crop: string }> = {
-  "skull-of-shadow": {
-    frame: "aspect-[3413/3733] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[287.973px]",
-    crop: "top-[1.74%] left-[-4.86%] h-[98.26%] w-[107.48%]",
+  "pop-shot-circus": {
+    frame: "aspect-[261/307] w-[78%] min-[1024px]:aspect-auto min-[1024px]:h-[307px] min-[1024px]:w-[261px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "ace-shooter-promax": {
-    frame: "aspect-[279/312.333] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[281.382px]",
-    crop: "top-[1.3%] left-[-6.61%] h-[98.82%] w-[115.33%]",
+  "cold-trigger": {
+    frame: "aspect-[246/310] w-[74%] min-[1024px]:aspect-auto min-[1024px]:h-[310px] min-[1024px]:w-[246px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "galaxy-rangers": {
-    frame: "aspect-[279/312.333] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[281.382px]",
-    crop: "top-[3.14%] left-[-14.63%] h-[96.86%] w-[129.26%]",
+  "racing-xtreme": {
+    frame: "aspect-[251/295] w-[75%] min-[1024px]:aspect-auto min-[1024px]:h-[295px] min-[1024px]:w-[251px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "wild-hunting": {
-    frame: "aspect-[945.271/1063.147] w-full",
-    crop: "top-[0.53%] left-[-6.4%] h-[99.47%] w-[111.87%]",
+  "bikers-madness": {
+    frame: "aspect-[279/311] w-[84%] min-[1024px]:aspect-auto min-[1024px]:h-[311px] min-[1024px]:w-[279px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "roll-n-win": {
-    frame: "aspect-[279/301.217] w-full",
-    crop: "top-[-1.89%] left-[-9.85%] h-[99.54%] w-[119.69%]",
+  "thunder-jets": {
+    frame: "aspect-[292/277] w-[88%] min-[1024px]:aspect-auto min-[1024px]:h-[277px] min-[1024px]:w-[292px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "speedy-toss": {
-    frame: "aspect-[279/315] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[259.961px]",
-    crop: "top-[-2.26%] left-[-11.95%] h-[102.26%] w-[123.91%]",
+  "dragon-kingdom-vr": {
+    frame: "aspect-[248/300] w-[74%] min-[1024px]:aspect-auto min-[1024px]:h-[300px] min-[1024px]:w-[248px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "crossbow-fishing": {
-    frame: "aspect-[279/315] w-full min-[1024px]:aspect-auto min-[1024px]:h-[315px] min-[1024px]:w-[287.477px]",
-    crop: "top-0 left-[-3.09%] h-[96.27%] w-[105.48%]",
+  "medal-master": {
+    frame: "aspect-[298/266] w-[90%] min-[1024px]:aspect-auto min-[1024px]:h-[266px] min-[1024px]:w-[298px]",
+    crop: "inset-0 size-full object-contain",
   },
-  "jet-ski-racer": {
-    frame: "aspect-[279/315] w-full",
-    crop: "top-[2.59%] left-[-2.6%] h-[90.45%] w-[102.12%]",
+  "hoop-hustle": {
+    frame: "aspect-[235/307] w-[70%] min-[1024px]:aspect-auto min-[1024px]:h-[307px] min-[1024px]:w-[235px]",
+    crop: "inset-0 size-full object-contain",
   },
 };
 
@@ -102,15 +102,13 @@ function CatalogCard({ product }: { product: Product }) {
         ref={face}
         className="group relative flex h-full origin-center flex-col items-start justify-end gap-10 rounded-[16px] bg-white px-2.5 pt-5 pb-2.5 min-[1024px]:px-5 min-[1024px]:pt-10 min-[1024px]:pb-5"
       >
-        <div className="flex w-full flex-1 items-end">
+        <div className="flex w-full flex-1 items-end justify-center">
           <div className={`relative shrink-0 ${cardImage[product.id].frame}`}>
-            <div className="absolute inset-0 overflow-hidden">
-              <LazyImage
-                alt=""
-                src={media(product.image)}
-                className={`absolute max-w-none ${cardImage[product.id].crop}`}
-              />
-            </div>
+            <LazyImage
+              alt=""
+              src={media(product.image)}
+              className={`absolute drop-shadow-[2px_6px_20px_rgba(0,0,0,0.12)] ${cardImage[product.id].crop}`}
+            />
           </div>
         </div>
         <div className="flex w-full items-center justify-between gap-2">
@@ -156,32 +154,35 @@ function FeaturedVisual({ active }: { active: Product }) {
       onPointerLeave={glow.onPointerLeave}
       className="relative aspect-[828/580] w-full overflow-hidden rounded-[16px] min-[1024px]:aspect-auto min-[1024px]:h-[580px]"
     >
+      {active.scene === "combat" ? (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 overflow-hidden opacity-50"
+        >
+          <LazyImage
+            alt=""
+            src={media("/ace/air-combat-bg.webp")}
+            className="absolute inset-0 size-full scale-[1.2] object-cover"
+          />
+        </div>
+      ) : null}
       <div
         ref={glow.gradientRef}
         className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), #7dae95 var(--core), rgba(125, 174, 149, var(--mid)) var(--mid-at), rgba(125, 174, 149, 0) var(--fade)), linear-gradient(to bottom, rgba(45, 45, 45, 0.25) 11.058%, #7dae95 100%)",
+            "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(54, 245, 146, 0.55) var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40.385%, rgba(54, 245, 146, 0.4) 100%)",
           ...gradientFollowVars(featuredGradientFollow),
         }}
       />
-      {active.scene === "combat" ? (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-cover bg-center mix-blend-multiply opacity-70"
-          style={{ backgroundImage: `url(${media("/ace/air-combat-bg.webp?v=2")})` }}
-        />
-      ) : null}
-      <div className="ace-product-in pointer-events-none relative flex h-full items-center justify-center">
+      <div className="ace-product-in pointer-events-none relative flex h-full items-center justify-center px-10 py-[60px] min-[1024px]:px-20 min-[1024px]:py-[100px]">
         {active.scene === "combat" ? (
-          <div className="relative aspect-[556.468/465.523] w-[70%] min-[1024px]:aspect-auto min-[1024px]:h-[465.523px] min-[1024px]:w-[556.468px]">
-            <div className="absolute top-[5.3%] right-[1.46%] left-[3.84%] aspect-[572.365/478.822] overflow-hidden">
-              <LazyImage
-                alt={active.name}
-                src={media(active.image)}
-                className="absolute top-[-13.2%] left-[-2.41%] h-[125.31%] w-[104.83%] max-w-none"
-              />
-            </div>
+          <div className="relative aspect-[511/504] w-[78%] min-[1024px]:aspect-auto min-[1024px]:h-[504px] min-[1024px]:w-[511px]">
+            <LazyImage
+              alt={active.name}
+              src={media(active.image)}
+              className="absolute inset-0 size-full object-contain"
+            />
           </div>
         ) : (
           <LazyImage
@@ -259,7 +260,7 @@ function FeaturedPanel({
 }
 
 export function Products() {
-  const [activeId, setActiveId] = useState<Product["id"]>("air-combat");
+  const [activeId, setActiveId] = useState<Product["id"]>("wild-frontier");
   const active = featuredProducts.find((product) => product.id === activeId) ?? featuredProducts[0];
 
   return (
