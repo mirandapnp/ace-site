@@ -8,6 +8,8 @@ import { media } from "@/lib/media";
 
 const DESKTOP_PAGE_SIZE = 3;
 const MOBILE_PAGE_SIZE = 1;
+/** Gap between mobile news cards while sliding (matches section px-2.5). */
+const MOBILE_SLIDE_GAP = 10;
 
 const sweepStyles = `
 .ace-sweep-out {
@@ -82,6 +84,7 @@ export function News() {
   const [page, setPage] = useState(0);
   const [offset, setOffset] = useState(0);
   const [dragging, setDragging] = useState(false);
+  const [slideWidth, setSlideWidth] = useState(0);
   const pageCount = Math.ceil(newsStories.length / pageSize);
   const atStart = page === 0;
   const atEnd = page >= pageCount - 1;
@@ -98,6 +101,8 @@ export function News() {
     velocity: 0,
     active: false,
   });
+  const slideGap = pageSize === MOBILE_PAGE_SIZE ? MOBILE_SLIDE_GAP : 0;
+  const stride = (slideWidth || 0) + slideGap;
 
   useEffect(() => () => cancelAnimationFrame(settleFrame.current), []);
 
@@ -105,6 +110,16 @@ export function News() {
     setPage(0);
     setOffset(0);
     setDragging(false);
+  }, [pageSize]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const sync = () => setSlideWidth(viewport.clientWidth);
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(viewport);
+    return () => observer.disconnect();
   }, [pageSize]);
 
   function showPage(next: number) {
@@ -233,15 +248,17 @@ export function News() {
         <div
           className={`ace-news-track${dragging ? " is-dragging" : ""}`}
           style={{
-            width: `${pageCount * 100}%`,
-            transform: `translateX(calc(-${(page * 100) / pageCount}% + ${offset}px))`,
+            gap: slideGap || undefined,
+            transform: `translateX(${-(page * (stride || 0)) + offset}px)`,
           }}
         >
           {Array.from({ length: pageCount }, (_, index) => (
             <div
               key={`${pageSize}-${index}`}
               className="flex min-w-0 shrink-0 flex-col self-stretch"
-              style={{ width: `${100 / pageCount}%` }}
+              style={{
+                width: slideWidth > 0 ? slideWidth : `${100 / pageCount}%`,
+              }}
               inert={index === page ? undefined : true}
             >
               <StoryRow
