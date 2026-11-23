@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LazyImage } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
 import { SecondaryButton } from "@/components/secondary-button";
@@ -12,41 +12,30 @@ import {
   useGradientFollow,
 } from "@/lib/use-gradient-follow";
 
-const cardImage: Record<string, { frame: string; crop: string }> = {
-  "pop-shot-circus": {
-    frame: "aspect-[261/307] w-[78%] min-[1024px]:aspect-auto min-[1024px]:h-[307px] min-[1024px]:w-[261px]",
-    crop: "inset-0 size-full object-contain",
-  },
-  "cold-trigger": {
-    frame:
-      "aspect-[246/310] w-[84%] overflow-hidden min-[1024px]:aspect-auto min-[1024px]:h-[310px] min-[1024px]:w-[280px]",
-    crop: "top-[-2.42%] left-[-16.19%] h-[105.55%] w-[132.85%] max-w-none",
-  },
-  "racing-xtreme": {
-    frame: "aspect-[251/295] w-[75%] min-[1024px]:aspect-auto min-[1024px]:h-[295px] min-[1024px]:w-[251px]",
-    crop: "inset-0 size-full object-contain",
-  },
-  "bikers-madness": {
-    frame: "aspect-[279/311] w-[84%] min-[1024px]:aspect-auto min-[1024px]:h-[311px] min-[1024px]:w-[279px]",
-    crop: "inset-0 size-full object-contain",
-  },
-  "thunder-jets": {
-    frame: "aspect-[292/277] w-[88%] min-[1024px]:aspect-auto min-[1024px]:h-[277px] min-[1024px]:w-[292px]",
-    crop: "inset-0 size-full object-contain",
-  },
-  "dragon-kingdom-vr": {
-    frame: "aspect-[248/300] w-[74%] min-[1024px]:aspect-auto min-[1024px]:h-[300px] min-[1024px]:w-[248px]",
-    crop: "inset-0 size-full object-contain",
-  },
-  "medal-master": {
-    frame: "aspect-[298/266] w-[90%] min-[1024px]:aspect-auto min-[1024px]:h-[266px] min-[1024px]:w-[298px]",
-    crop: "inset-0 size-full object-contain",
-  },
-  "hoop-hustle": {
-    frame: "aspect-[235/307] w-[70%] min-[1024px]:aspect-auto min-[1024px]:h-[307px] min-[1024px]:w-[235px]",
-    crop: "inset-0 size-full object-contain",
-  },
+/**
+ * Per-machine display height (css px), sized from the opaque subject bounds
+ * so transparent padding doesn’t shrink some cabinets. Target: max subject
+ * side ≈ 224 / 280 so tall/slim and short/wide keep their proportions but
+ * share one visual scale.
+ */
+const cardMachineHeight: Record<
+  string,
+  { mobile: number; desktop: number }
+> = {
+  "pop-shot-circus": { mobile: 240, desktop: 301 },
+  "cold-trigger": { mobile: 240, desktop: 299 },
+  "racing-xtreme": { mobile: 232, desktop: 290 },
+  "bikers-madness": { mobile: 234, desktop: 292 },
+  "thunder-jets": { mobile: 220, desktop: 275 },
+  "dragon-kingdom-vr": { mobile: 234, desktop: 292 },
+  "medal-master": { mobile: 207, desktop: 259 },
+  "hoop-hustle": { mobile: 231, desktop: 289 },
 };
+
+const cardMachineStage =
+  "relative flex h-[242px] w-full items-end justify-center min-[1024px]:h-[302px]";
+const cardMachineImage =
+  "w-auto max-w-full object-contain object-bottom drop-shadow-[2px_6px_20px_rgba(0,0,0,0.12)]";
 
 function CatalogCard({ product }: { product: Product }) {
   const face = useRef<HTMLDivElement>(null);
@@ -104,11 +93,19 @@ function CatalogCard({ product }: { product: Product }) {
         className="group relative flex h-full origin-center flex-col items-start justify-end gap-10 rounded-[16px] bg-white px-2.5 pt-5 pb-2.5 min-[1024px]:px-5 min-[1024px]:pt-10 min-[1024px]:pb-5"
       >
         <div className="flex w-full flex-1 items-end justify-center">
-          <div className={`relative shrink-0 ${cardImage[product.id].frame}`}>
+          <div
+            className={cardMachineStage}
+            style={
+              {
+                ["--machine-h-mobile" as string]: `${cardMachineHeight[product.id].mobile}px`,
+                ["--machine-h-desktop" as string]: `${cardMachineHeight[product.id].desktop}px`,
+              } as CSSProperties
+            }
+          >
             <LazyImage
               alt=""
               src={media(product.image)}
-              className={`absolute drop-shadow-[2px_6px_20px_rgba(0,0,0,0.12)] ${cardImage[product.id].crop}`}
+              className={`${cardMachineImage} h-[var(--machine-h-mobile)] min-[1024px]:h-[var(--machine-h-desktop)]`}
             />
           </div>
         </div>
