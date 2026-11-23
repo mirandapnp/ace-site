@@ -1,13 +1,21 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { LazyImage } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
-import { useCtaGradientRise } from "@/lib/use-gradient-follow";
+import {
+  gradientFollowVars,
+  partnerCtaGradientFollow,
+  partnerCtaGradientFollowMobile,
+  useGradientFollow,
+} from "@/lib/use-gradient-follow";
 
 const metaType =
-  "font-mono text-[12px] leading-[1.25] font-[475] tracking-[0.07px] uppercase min-[1024px]:text-[14px]";
+  "font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] uppercase min-[1024px]:text-[14px] min-[1024px]:font-[475] min-[1024px]:tracking-[0.07px]";
+
+const green = "54, 245, 146";
 
 export function PartnerCta({
   eyebrow = "Ready to level up?",
@@ -35,7 +43,21 @@ export function PartnerCta({
   href?: string;
   image?: string;
 }) {
-  const glow = useCtaGradientRise({ rest: 35, hover: 45 });
+  const [mobile, setMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setMobile(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  const follow = mobile ? partnerCtaGradientFollowMobile : partnerCtaGradientFollow;
+  const glow = useGradientFollow(follow, {
+    followEase: 0.12,
+    leaveEase: 0.045,
+  });
 
   return (
     <section
@@ -46,28 +68,29 @@ export function PartnerCta({
         ref={glow.cardRef}
         onPointerMove={glow.onPointerMove}
         onPointerLeave={glow.onPointerLeave}
-        className="relative flex h-[640px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-2.5 pt-5 pb-2.5 min-[1024px]:px-5 min-[1024px]:py-7"
+        className="relative flex h-[600px] w-full flex-col justify-between overflow-hidden rounded-[16px] px-2.5 pt-5 pb-2.5 min-[1024px]:h-[700px] min-[1024px]:px-5 min-[1024px]:py-7"
       >
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden rounded-[16px]">
             <LazyImage
               alt=""
               src={media(image)}
-              className="absolute inset-0 size-full max-w-none object-cover"
+              className="absolute top-[-17.24%] left-0 h-[117.24%] w-[269.15%] max-w-none min-[1024px]:top-[-31.19%] min-[1024px]:h-[143.49%] min-[1024px]:w-[107.6%]"
             />
           </div>
-          <div className="absolute inset-0 bg-[rgba(20,20,20,0.5)]" />
-          <LazyImage
-            alt=""
-            src={media("/ace/partner-cta-overlay.webp")}
-            className="absolute inset-0 size-full object-cover"
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 100%)",
+            }}
           />
           <div
             ref={glow.gradientRef}
             className="absolute inset-0"
             style={{
-              backgroundImage:
-                "radial-gradient(ellipse 110% var(--peak, 41%) at var(--px, 50%) 100%, rgba(54, 245, 146, var(--peak-a, 0)) 0%, rgba(54, 245, 146, calc(var(--peak-a, 0) * 0.45)) 50%, rgba(54, 245, 146, 0) 85%)",
+              backgroundImage: `radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(${green}, 0.6) var(--core), rgba(${green}, 0) var(--fade))`,
+              ...gradientFollowVars(follow),
             }}
           />
         </div>
@@ -80,15 +103,12 @@ export function PartnerCta({
           </p>
         </div>
 
-        <div className="relative flex flex-col items-center gap-10 text-center min-[1024px]:items-start min-[1024px]:text-left">
-          <div className="flex flex-col gap-4 text-white">
-            <h2
-              id="partner-cta-heading"
-              className="type-h2"
-            >
+        <div className="relative flex min-h-0 flex-1 flex-col justify-between min-[1024px]:flex-none min-[1024px]:gap-10">
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center text-white min-[1024px]:flex-none min-[1024px]:items-start min-[1024px]:justify-start min-[1024px]:text-left">
+            <h2 id="partner-cta-heading" className="type-h2 capitalize min-[1024px]:normal-case">
               {title}
             </h2>
-            <p className="font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] text-pretty min-[1024px]:whitespace-nowrap">
+            <p className="font-sans text-[12px] leading-[1.5] font-medium tracking-[0.15px] text-pretty min-[1024px]:text-[14px] min-[1024px]:font-[475] min-[1024px]:tracking-[0.175px] min-[1024px]:whitespace-nowrap">
               {body}
             </p>
           </div>

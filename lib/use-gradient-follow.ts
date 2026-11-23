@@ -46,6 +46,32 @@ export const featuredGradientFollow: GradientFollowConfig = {
   rangeY: 22,
 };
 
+/** Partner CTA / closing footer — green wash matches Figma radial size & opacity. */
+export const partnerCtaGradientFollow: GradientFollowConfig = {
+  gx: 18,
+  gy: 100,
+  grx: 100,
+  gry: 85,
+  core: 5.3,
+  mid: 0.3,
+  midAt: 28,
+  fade: 57.4,
+  rangeX: 42,
+  rangeY: 38,
+  scaleBoost: 0.04,
+};
+
+/** Mobile rest sits slightly further right, matching Figma’s mobile radial. */
+export const partnerCtaGradientFollowMobile: GradientFollowConfig = {
+  ...partnerCtaGradientFollow,
+  gx: 22,
+  gy: 100,
+  grx: 110,
+  gry: 90,
+  rangeX: 48,
+  rangeY: 40,
+};
+
 export function gradientFollowVars(config: GradientFollowConfig) {
   return {
     ["--gx" as string]: `${config.gx}%`,
