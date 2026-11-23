@@ -14,19 +14,28 @@
 }
 
 /*
-  Display type scale — GT Flexa Extended Medium
+  Type scale (Figma · full layout r2)
+
+  Display — GT Flexa Extended Medium (--font-gt-flexa)
   Mobile (<1024) / Desktop (≥1024)
 
-  h1  Hero                         40 / 72
-  h2  Banner sections              40 / 54
-  h3  Page sections                32 / 54
-  h4  Compact sections             32 / 40
-  h5  Card titles                  18 / 24
-  h6  Compact card titles          12 / 18
+  h1   Hero                         40/1/-2.5%  →  72/0.9/-3%
+  h2   Banner sections              40/1/-2.5%  →  54/1.1/-3.25%
+  h3   Page sections                32/1.25/-3% →  54/1.1/-3.25%
+  h4   Compact sections             32/1.25/-3% →  40/1/-2.5%
+  h4-panel  In-panel titles         32/1.25/-3% (flat)
+  h5   Card titles                  18/1.25/-2.5% → 24/1.25/-2.5%
+  h6   Compact card titles          12/1.25/-2.5% → 18/1.25/-2.5%
 
-  Pair with color, shadow, and casing at the call site.
-  Use .type-h4-panel for in-panel titles that stay 32 at all sizes.
+  Body — Geist Medium (--font-geist-sans)
+
+  p1              Body              14/1.5/1.25%
+  p2              Small / stats     12/1.5/1.25%
+  p1-responsive   Body 12 → 14
+
+  Labels / UI chrome stay on font-mono at the call site.
 */
+
 @layer components {
   .type-h1,
   .type-h2,
@@ -35,7 +44,9 @@
   .type-h4-panel,
   .type-h5,
   .type-h6 {
-    font-family: var(--font-display), Arial, Helvetica, sans-serif;
+    /* Use the next/font variable directly — @theme inline does not
+       expose --font-display as a runtime custom property. */
+    font-family: var(--font-gt-flexa), Arial, Helvetica, sans-serif;
     font-weight: 500;
   }
 
@@ -71,6 +82,32 @@
     letter-spacing: -0.3px; /* -2.5% */
   }
 
+  .type-p1,
+  .type-p2 {
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .type-p1 {
+    font-size: 14px;
+    letter-spacing: 0.175px; /* 1.25% */
+  }
+
+  .type-p2 {
+    font-size: 12px;
+    letter-spacing: 0.15px; /* 1.25% */
+  }
+
+  /* 12 → 14 — news cards, partner CTA body */
+  .type-p1-responsive {
+    font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    line-height: 1.5;
+    font-size: 12px;
+    letter-spacing: 0.15px;
+  }
+
   @media (min-width: 1024px) {
     .type-h1 {
       font-size: 72px;
@@ -104,6 +141,11 @@
     .type-h6 {
       font-size: 18px;
       letter-spacing: -0.45px; /* -2.5% */
+    }
+
+    .type-p1-responsive {
+      font-size: 14px;
+      letter-spacing: 0.175px;
     }
   }
 }

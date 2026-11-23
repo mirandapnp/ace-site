@@ -308,7 +308,7 @@ function StoryRow({
                 <span aria-hidden className="h-2 w-px bg-[#EC268E]" />
                 <span>{story.date}</span>
               </p>
-              <p className="line-clamp-2 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-pretty text-white min-[1024px]:text-[14px] min-[1024px]:font-[485] min-[1024px]:tracking-[0.175px]">
+              <p className="type-p1-responsive line-clamp-2 text-pretty text-white">
                 {story.body}
               </p>
             </div>

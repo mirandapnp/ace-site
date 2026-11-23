@@ -69,7 +69,7 @@ function HeroCopy({
         </h1>
       </div>
       <p
-        className={`font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-white ${bodyClassName ?? ""}`}
+        className={`type-p1 text-pretty text-white ${bodyClassName ?? ""}`}
       >
         Lock in for explosive 4-player co-op action in this tactical arcade
         shooter featuring swivel-mounted weapons and dual-screen combat.

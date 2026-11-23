@@ -108,7 +108,7 @@ export function PartnerCta({
             <h2 id="partner-cta-heading" className="type-h2 capitalize min-[1024px]:normal-case">
               {title}
             </h2>
-            <p className="font-sans text-[12px] leading-[1.5] font-medium tracking-[0.15px] text-pretty min-[1024px]:text-[14px] min-[1024px]:font-[475] min-[1024px]:tracking-[0.175px] min-[1024px]:whitespace-nowrap">
+            <p className="type-p1-responsive text-pretty min-[1024px]:whitespace-nowrap">
               {body}
             </p>
           </div>

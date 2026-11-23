@@ -39,7 +39,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {product.name}
       </h1>
       {product.body ? (
-        <p className="mt-6 max-w-[560px] font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-white">
+        <p className="type-p1 mt-6 max-w-[560px] text-pretty text-white">
           {product.body}
         </p>
       ) : null}

@@ -21,7 +21,10 @@ export function Header() {
               className="absolute top-0 left-0 h-full w-[294.09%] max-w-none"
             />
           </span>
-          <span className="font-display text-[16px] leading-[0.9] font-medium tracking-[-0.48px] text-white uppercase">
+          <span
+            className="text-[16px] leading-[0.9] font-medium tracking-[-0.48px] text-white uppercase"
+            style={{ fontFamily: "var(--font-gt-flexa), Arial, Helvetica, sans-serif" }}
+          >
             Ace Amusement
           </span>
         </a>

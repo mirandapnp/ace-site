@@ -45,10 +45,9 @@ const sweepStyles = `
 }
 `;
 
-const fieldType = "font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px]";
+const fieldType = "type-p2";
 
-const messageType =
-  "pointer-events-none absolute top-full left-0 mt-1 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] whitespace-nowrap";
+const messageType = "type-p2 pointer-events-none absolute top-full left-0 mt-1 whitespace-nowrap";
 
 export function SubscribeForm({ className }: { className?: string }) {
   const [state, formAction, pending] = useActionState(subscribe, initialState);

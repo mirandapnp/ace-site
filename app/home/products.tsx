@@ -223,7 +223,7 @@ function FeaturedPanel({
               {product.stats.map((stat) => (
                 <li
                   key={stat}
-                  className="flex h-[17px] items-center gap-3 font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-black"
+                  className="type-p2 flex h-[17px] items-center gap-3 text-black"
                 >
                   <span aria-hidden className="size-1.5 shrink-0 bg-black" />
                   {stat}
@@ -241,7 +241,7 @@ function FeaturedPanel({
         }
       >
         {product.body ? (
-          <p className="flex-1 font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
+          <p className="type-p1 flex-1 text-pretty text-black">
             {product.body}
           </p>
         ) : mobile ? null : (

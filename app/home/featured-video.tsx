@@ -36,7 +36,7 @@ export function FeaturedVideo() {
                   <br />
                   {titleRest}
                 </h2>
-                <p className="font-sans text-[14px] leading-[1.5] font-[485] tracking-[0.175px] text-pretty text-black">
+                <p className="type-p1 text-pretty text-black">
                   {featuredVideo.body}
                 </p>
               </div>
@@ -75,7 +75,7 @@ export function FeaturedVideo() {
                 <br />
                 {titleRest}
               </h2>
-              <p className="font-sans text-[12px] leading-[1.5] font-[442] tracking-[0.15px] text-pretty text-black">
+              <p className="type-p2 text-pretty text-black">
                 {featuredVideo.body}
               </p>
             </div>

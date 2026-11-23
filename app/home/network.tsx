@@ -35,7 +35,7 @@ export function Network() {
             >
               A Global Network of Fun.
             </h2>
-            <p className="w-full font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] text-pretty min-[1024px]:w-[879.314px]">
+            <p className="type-p1 w-full text-pretty min-[1024px]:w-[879.314px]">
               Our commitment to excellence has earned ACE Amusement a loyal global
               following.
               <br className="hidden min-[1024px]:inline" />{" "}

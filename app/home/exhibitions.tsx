@@ -33,11 +33,11 @@ export function Exhibitions() {
           >
             Meet Us at Exhibitions!
           </h2>
-          <p className="w-full font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] text-pretty min-[1024px]:hidden">
+          <p className="type-p1 w-full text-pretty min-[1024px]:hidden">
             Keep up with Ace news and meet us at our exhibitions. Subscribe and
             stay posted.
           </p>
-          <p className="hidden font-sans text-[14px] leading-[1.5] font-[475] tracking-[0.175px] whitespace-nowrap min-[1024px]:block">
+          <p className="type-p1 hidden whitespace-nowrap min-[1024px]:block">
             Try our latest machines live, in person at the next exhibition. We
             look forward to meeting you!
           </p>
