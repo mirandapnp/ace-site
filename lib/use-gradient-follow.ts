@@ -36,12 +36,12 @@ export const heroGradientFollow: GradientFollowConfig = {
 export const featuredGradientFollow: GradientFollowConfig = {
   gx: 50,
   gy: 78,
-  grx: 90,
-  gry: 70,
-  core: 8,
-  mid: 0.45,
-  midAt: 40,
-  fade: 72,
+  grx: 60.75,
+  gry: 47.25,
+  core: 5.4,
+  mid: 0.36,
+  midAt: 48,
+  fade: 86.4,
   rangeX: 28,
   rangeY: 22,
 };
@@ -59,7 +59,17 @@ export function gradientFollowVars(config: GradientFollowConfig) {
   };
 }
 
-export function useGradientFollow(config: GradientFollowConfig) {
+export type GradientFollowMotion = {
+  /** Lerp while the pointer is over the card. Default 0.16. */
+  followEase?: number;
+  /** Lerp while resetting after leave. Default matches followEase. */
+  leaveEase?: number;
+};
+
+export function useGradientFollow(
+  config: GradientFollowConfig,
+  motion: GradientFollowMotion = {},
+) {
   const cardRef = useRef<HTMLDivElement>(null);
   const gradientRef = useRef<HTMLDivElement>(null);
   const target = useRef({ x: 0, y: 0 });
@@ -67,7 +77,9 @@ export function useGradientFollow(config: GradientFollowConfig) {
   const hoverTarget = useRef(0);
   const hover = useRef(0);
   const configRef = useRef(config);
+  const motionRef = useRef(motion);
   configRef.current = config;
+  motionRef.current = motion;
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -75,9 +87,12 @@ export function useGradientFollow(config: GradientFollowConfig) {
     let frame = 0;
     const tick = () => {
       const cfg = configRef.current;
-      current.current.x += (target.current.x - current.current.x) * 0.16;
-      current.current.y += (target.current.y - current.current.y) * 0.16;
-      hover.current += (hoverTarget.current - hover.current) * 0.16;
+      const follow = motionRef.current.followEase ?? 0.16;
+      const leave = motionRef.current.leaveEase ?? follow;
+      const ease = hoverTarget.current > 0 ? follow : leave;
+      current.current.x += (target.current.x - current.current.x) * ease;
+      current.current.y += (target.current.y - current.current.y) * ease;
+      hover.current += (hoverTarget.current - hover.current) * ease;
       const node = gradientRef.current;
       if (node) {
         const h = hover.current;

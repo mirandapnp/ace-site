@@ -145,7 +145,10 @@ const mobileKickerClass =
   "font-mono text-[12px] leading-[1.25] font-[475] tracking-[0.07px] text-black uppercase";
 
 function FeaturedVisual({ active }: { active: Product }) {
-  const glow = useGradientFollow(featuredGradientFollow);
+  const glow = useGradientFollow(featuredGradientFollow, {
+    followEase: 0.12,
+    leaveEase: 0.045,
+  });
 
   return (
     <div
