@@ -6,7 +6,6 @@ import { LazyImage } from "@/components/lazy-visual";
 import { PlayButtonFace } from "@/components/play-button";
 import { SecondaryButton } from "@/components/secondary-button";
 import { featuredVideo } from "@/content/featured-video";
-import { media } from "@/lib/media";
 
 export function FeaturedVideo() {
   const [open, setOpen] = useState(false);
@@ -127,9 +126,11 @@ function VideoTrigger({
       aria-label="Play featured video"
     >
       <LazyImage
+        fill
         alt=""
-        src={media(featuredVideo.thumbnail)}
-        className="absolute inset-0 size-full object-cover"
+        src={featuredVideo.thumbnail}
+        className="object-cover"
+        sizes="(max-width: 1023px) 100vw, 1120px"
       />
       <span
         aria-hidden

@@ -42,4 +42,5 @@ yarn-error.log*
 next-env.d.ts
 
 public/ace/*.webp
+!public/ace/footer-logo.webp
 public/ace/*.mp4

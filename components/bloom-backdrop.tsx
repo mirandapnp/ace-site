@@ -1,6 +1,7 @@
 "use client";
 
 import { useWebGPUDevice } from "@figma/expressive-components";
+import Image from "next/image";
 import {
   useEffect,
   useRef,
@@ -12,6 +13,7 @@ import {
   setup as bloomSetup,
   render as bloomRender,
 } from "@/lib/custom-effects/bloom";
+import { photoPath, resolvePhoto } from "@/lib/photos";
 
 export type BloomParams = {
   /** Hover intensity. Rest is always 0. */
@@ -213,7 +215,7 @@ function BloomImageLayer({
           GPUTextureUsage.RENDER_ATTACHMENT,
       });
       device!.queue.copyExternalImageToTexture(
-        { source: scratch as CanvasImageSource },
+        { source: scratch as GPUCopyExternalImageSource },
         { texture: inputTexture },
         [pixelW, pixelH],
       );
@@ -241,7 +243,8 @@ function BloomImageLayer({
 
     void (async () => {
       try {
-        const response = await fetch(src);
+        // Prefer the local public path so GPU bloom does not depend on the image optimizer.
+        const response = await fetch(photoPath(src) ?? src);
         const blob = await response.blob();
         sourceBitmap = await createImageBitmap(blob);
         if (cancelled || !sourceBitmap) return;
@@ -297,20 +300,37 @@ function BloomImageLayer({
 
   const layerStyle: CSSProperties = { opacity };
   const showCanvas = Boolean(device) && !deviceError && !useFallback;
+  const photo = resolvePhoto(src);
 
   return (
     <>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        alt=""
-        src={src}
-        className={className}
-        style={{
-          ...layerStyle,
-          opacity: showCanvas ? 0 : opacity,
-        }}
-        decoding="async"
-      />
+      {photo ? (
+        <Image
+          alt=""
+          src={photo}
+          fill
+          placeholder="blur"
+          sizes="100vw"
+          className={className}
+          style={{
+            ...layerStyle,
+            objectPosition,
+            opacity: showCanvas ? 0 : opacity,
+          }}
+        />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          alt=""
+          src={src}
+          className={className}
+          style={{
+            ...layerStyle,
+            opacity: showCanvas ? 0 : opacity,
+          }}
+          decoding="async"
+        />
+      )}
       <canvas
         ref={canvasRef}
         className={className}
@@ -450,13 +470,15 @@ export function BloomCard({
       onPointerLeave={onPointerLeave}
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        <BloomImageLayer
-          src={src}
-          className={imageClassName}
-          objectPosition={objectPosition}
-          opacity={imageOpacity}
-          params={params}
-        />
+        <div className="absolute inset-0">
+          <BloomImageLayer
+            src={src}
+            className={imageClassName}
+            objectPosition={objectPosition}
+            opacity={imageOpacity}
+            params={params}
+          />
+        </div>
         {overlay}
       </div>
       {children}

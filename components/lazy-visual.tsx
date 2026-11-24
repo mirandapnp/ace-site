@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import Image from "next/image";
+import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import { resolvePhoto } from "@/lib/photos";
 
 const lead = "400% 0px";
 
@@ -48,11 +50,6 @@ function revealStyle(ready: boolean, opacity: number, still: boolean) {
   };
 }
 
-function imageFilter(ready: boolean, loadedFilter?: string) {
-  if (!ready) return "none";
-  return loadedFilter && loadedFilter.length > 0 ? loadedFilter : "none";
-}
-
 export function LazyImage({
   src,
   alt = "",
@@ -60,45 +57,104 @@ export function LazyImage({
   priority = false,
   restOpacity = 1,
   loadedFilter,
+  fill = false,
+  sizes,
+  width,
+  height,
+  style,
 }: {
   src: string;
   alt?: string;
   className?: string;
+  /** Maps to next/image `preload` (Next 16). */
   priority?: boolean;
   restOpacity?: number;
   loadedFilter?: string;
+  fill?: boolean;
+  sizes?: string;
+  width?: number;
+  height?: number;
+  style?: CSSProperties;
 }) {
-  const ref = useRef<HTMLImageElement>(null);
+  const photo = resolvePhoto(src);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    const wanted = src.split("?")[0];
-    const loaded = node.currentSrc.split("?")[0];
-    const done = node.complete && node.naturalWidth > 0 && loaded.endsWith(wanted);
-    setReady(done);
+    setReady(false);
   }, [src]);
 
+  const filter =
+    ready && loadedFilter && loadedFilter.length > 0 ? loadedFilter : undefined;
+
+  const shared = {
+    alt,
+    className,
+    sizes: sizes ?? (fill ? "100vw" : undefined),
+    preload: priority || undefined,
+    loading: (priority ? "eager" : "lazy") as "eager" | "lazy",
+    decoding: "async" as const,
+    fetchPriority: (priority ? "high" : "low") as "high" | "low",
+    onLoad: () => setReady(true),
+    style: {
+      ...style,
+      opacity: restOpacity,
+      ...(filter ? { filter } : {}),
+    } satisfies CSSProperties,
+  };
+
+  if (photo) {
+    if (fill) {
+      return (
+        <Image
+          {...shared}
+          src={photo}
+          fill
+          placeholder="blur"
+        />
+      );
+    }
+    return (
+      <Image
+        {...shared}
+        src={photo}
+        width={width ?? photo.width}
+        height={height ?? photo.height}
+        placeholder="blur"
+      />
+    );
+  }
+
+  // Non-registry assets (logo, etc.) — optimize without blur-up.
+  if (fill) {
+    return (
+      <Image
+        {...shared}
+        src={src}
+        fill
+      />
+    );
+  }
+  if (width != null && height != null) {
+    return (
+      <Image
+        {...shared}
+        src={src}
+        width={width}
+        height={height}
+      />
+    );
+  }
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
-      ref={ref}
       alt={alt}
       src={src}
+      className={className}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       fetchPriority={priority ? "high" : "low"}
-      onLoad={(event) => {
-        const finish = () => setReady(true);
-        const image = event.currentTarget;
-        if (image.decode) image.decode().then(finish).catch(finish);
-        else finish();
-      }}
-      className={className}
-      style={{
-        opacity: restOpacity,
-        filter: imageFilter(ready, loadedFilter),
-      }}
+      onLoad={() => setReady(true)}
+      style={shared.style}
     />
   );
 }

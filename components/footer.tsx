@@ -112,7 +112,7 @@ export function Footer() {
           <a href="/" aria-label="Ace Amusement home" className="block h-[100px] w-[106px] shrink-0">
             <img
               alt=""
-              src={media("/ace/footer-logo.png")}
+              src={media("/ace/footer-logo.webp")}
               width={106}
               height={100}
               className="size-full object-contain"

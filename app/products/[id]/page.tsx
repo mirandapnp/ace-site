@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { LazyImage } from "@/components/lazy-visual";
 import { getProduct, products } from "@/content/products";
 import { site } from "@/content/site";
-import { media } from "@/lib/media";
 
 type ProductPageProps = {
   params: Promise<{ id: string }>;
@@ -43,10 +43,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
           {product.body}
         </p>
       ) : null}
-      <img
+      <LazyImage
         alt={product.name}
-        src={media(product.image)}
+        src={product.image}
         className="mt-10 max-h-[640px] w-auto max-w-full"
+        sizes="(max-width: 1023px) 100vw, 640px"
       />
     </main>
   );

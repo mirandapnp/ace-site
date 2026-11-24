@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { LazyImage } from "@/components/lazy-visual";
 import { SecondaryButton } from "@/components/secondary-button";
 import { newsStories, type NewsStory } from "@/content/news";
-import { media } from "@/lib/media";
 
 const DESKTOP_PAGE_SIZE = 3;
 const MOBILE_PAGE_SIZE = 1;
@@ -310,9 +309,11 @@ function StoryRow({
         >
           <div className="relative aspect-[3/2] w-full min-[1024px]:aspect-[4/3]">
             <LazyImage
+              fill
               alt=""
-              src={media(story.image)}
-              className="absolute inset-0 size-full object-cover"
+              src={story.image}
+              className="object-cover"
+              sizes="(max-width: 1023px) 100vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col px-2.5 pt-5 pb-2.5 min-[1024px]:p-5">

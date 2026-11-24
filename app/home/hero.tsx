@@ -49,11 +49,11 @@ const mobileHeroGradientFollow: GradientFollowConfig = {
 };
 
 function HeroCopy({
-  titleClassName,
+  titleClassName = "",
   bodyClassName,
   align = "left",
 }: {
-  titleClassName: string;
+  titleClassName?: string;
   bodyClassName?: string;
   align?: "left" | "center";
 }) {
@@ -228,8 +228,9 @@ function MobileMachineSlot() {
         <LazyImage
           priority
           alt=""
-          src={media("/ace/machine.webp?v=6")}
+          src="/ace/machine.webp"
           className="pointer-events-none block h-auto w-[140%] max-w-none -translate-x-[14.3%]"
+          sizes="(max-width: 1023px) 140vw, 50vw"
           loadedFilter={MACHINE_SHADOW}
         />
       </div>
@@ -325,9 +326,11 @@ export function Hero() {
           >
             <LazyImage
               priority
+              fill
               alt=""
-              src={media("/ace/machine.webp?v=6")}
-              className="size-full max-w-none"
+              src="/ace/machine.webp"
+              className="object-contain"
+              sizes="50vw"
               loadedFilter={MACHINE_SHADOW}
             />
           </div>

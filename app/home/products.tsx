@@ -108,8 +108,9 @@ function CatalogCard({ product }: { product: Product }) {
           >
             <LazyImage
               alt=""
-              src={media(product.image)}
+              src={product.image}
               className={`${cardMachineImage} h-auto w-[var(--machine-w-mobile)] min-[1024px]:h-[var(--machine-h-desktop)] min-[1024px]:w-auto`}
+              sizes="(max-width: 1023px) 45vw, 25vw"
             />
           </div>
         </div>
@@ -166,9 +167,11 @@ function FeaturedVisual({ active }: { active: Product }) {
           className="pointer-events-none absolute inset-0 overflow-hidden opacity-50"
         >
           <LazyImage
+            fill
             alt=""
-            src={media("/ace/air-combat-bg.webp")}
-            className="absolute inset-0 size-full scale-[1.2] object-cover"
+            src="/ace/air-combat-bg.webp"
+            className="scale-[1.2] object-cover"
+            sizes="(max-width: 1023px) 100vw, 60vw"
           />
         </div>
       ) : null}
@@ -187,9 +190,11 @@ function FeaturedVisual({ active }: { active: Product }) {
         {active.scene === "combat" ? (
           <div className="relative aspect-[511/504] w-[78%] min-[1024px]:aspect-auto min-[1024px]:h-[504px] min-[1024px]:w-[511px]">
             <LazyImage
+              fill
               alt={active.name}
-              src={media(active.image)}
-              className="absolute inset-0 size-full object-contain"
+              src={active.image}
+              className="object-contain"
+              sizes="(max-width: 1023px) 70vw, 511px"
               loadedFilter={MACHINE_SHADOW}
             />
           </div>
@@ -197,8 +202,9 @@ function FeaturedVisual({ active }: { active: Product }) {
           <LazyImage
             key={active.id}
             alt={active.name}
-            src={media(active.image)}
+            src={active.image}
             className="h-auto w-[70%] min-[1024px]:max-h-[460px] min-[1024px]:w-auto min-[1024px]:max-w-[680px]"
+            sizes="(max-width: 1023px) 70vw, 680px"
             loadedFilter={MACHINE_SHADOW}
           />
         )}

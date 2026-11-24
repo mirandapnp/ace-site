@@ -1,4 +1,3 @@
-import { LazyImage } from "@/components/lazy-visual";
 import { SecondaryButton } from "@/components/secondary-button";
 import { media } from "@/lib/media";
 
@@ -14,11 +13,14 @@ export function Header() {
       <header className="absolute top-0 left-0 z-20 hidden w-[1440px] items-center justify-between p-5 min-[1024px]:flex">
         <a href="/" className="flex items-center gap-3">
           <span className="relative h-9 w-[50.594px] shrink-0 overflow-hidden">
-            <LazyImage
-              priority
+            <img
               alt=""
               src={media("/ace/logo.webp")}
+              width={640}
+              height={155}
               className="absolute top-0 left-0 h-full w-[294.09%] max-w-none"
+              decoding="async"
+              fetchPriority="high"
             />
           </span>
           <span
@@ -62,11 +64,14 @@ export function Header() {
         </button>
 
         <a href="/" aria-label="Ace Amusement home" className="relative h-[34px] w-[47.783px] shrink-0 overflow-hidden">
-          <LazyImage
-            priority
+          <img
             alt=""
             src={media("/ace/logo.webp")}
+            width={640}
+            height={155}
             className="absolute top-0 left-0 h-full w-[294.09%] max-w-none"
+            decoding="async"
+            fetchPriority="high"
           />
         </a>
 

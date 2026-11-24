@@ -5,7 +5,6 @@ import { GradientNoise } from "@/components/gradient-noise";
 import { LazyImage } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
-import { media } from "@/lib/media";
 import {
   gradientFollowVars,
   partnerCtaGradientFollow,
@@ -76,11 +75,15 @@ export function PartnerCta({
       >
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 overflow-hidden rounded-[16px]">
-            <LazyImage
-              alt=""
-              src={media(image)}
-              className="absolute top-[-17.24%] left-0 h-[117.24%] w-[269.15%] max-w-none min-[1024px]:top-[-31.19%] min-[1024px]:h-[143.49%] min-[1024px]:w-[107.6%]"
-            />
+            <div className="absolute top-[-17.24%] left-0 h-[117.24%] w-[269.15%] min-[1024px]:top-[-31.19%] min-[1024px]:h-[143.49%] min-[1024px]:w-[107.6%]">
+              <LazyImage
+                fill
+                alt=""
+                src={image}
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
           </div>
           <div
             className="absolute inset-0"
