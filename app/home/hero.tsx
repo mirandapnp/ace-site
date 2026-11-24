@@ -205,20 +205,18 @@ function HeroBackdrop({
       ref={cardRef}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      // Outward black ring masks the light fringe from ScaleFrame’s
-      // transform:scale antialiasing on the rounded clip edge.
-      className={`bg-black shadow-[0_0_0_4px_#000] ${className}`}
+      className={className}
     >
       {/* Machine art is LCP; video waits for idle so it doesn’t contend on first paint. */}
       <LazyVideo
         key={video}
         defer
         src={video}
-        className="absolute -inset-10 h-[calc(100%+80px)] w-[calc(100%+80px)] max-w-none object-cover"
+        className="absolute -inset-10 h-[calc(100%+80px)] w-[calc(100%+80px)] max-w-none object-cover blur-[13px]"
       />
       <div
         ref={gradientRef}
-        className="pointer-events-none absolute -inset-4 isolate backdrop-blur-[8px]"
+        className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage: bloomGradient(bloom),
           ...gradientFollowVars(gradientConfig),
