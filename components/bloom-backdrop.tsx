@@ -15,21 +15,11 @@ import {
 } from "@/lib/custom-effects/bloom";
 import { photoPath, resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
 
-const DISSOLVE_MS = 350;
-const UNBLUR_MS = 350;
-const MATCHED_BLUR = "16px";
-const SOFT_SCALE = 1.05;
-const DISSOLVE = `opacity ${DISSOLVE_MS}ms linear`;
-const UNBLUR = `filter ${UNBLUR_MS}ms linear, transform ${UNBLUR_MS}ms linear`;
-
-/** Start the crossfade only after pixels are decoded, not just downloaded. */
-function afterDecoded(image: HTMLImageElement, done: () => void) {
-  if (image.decode) {
-    image.decode().then(done).catch(done);
-    return;
-  }
-  done();
-}
+/** Soft LQIP ↔ full-image crossfade (mirrors LazyImage). */
+const BLUR_UP_MS = 400;
+const BLUR_UP_RADIUS = "36px";
+const BLUR_UP_TRANSITION = `opacity ${BLUR_UP_MS}ms linear, filter ${BLUR_UP_MS}ms linear`;
+const CANVAS_DISSOLVE = `opacity ${BLUR_UP_MS}ms linear`;
 
 export type BloomParams = {
   /** Hover intensity. Rest is always 0. */
@@ -164,7 +154,7 @@ function BloomImageLayer({
   const { device, error: deviceError } = useWebGPUDevice();
   const [useFallback, setUseFallback] = useState(false);
   const [imageReady, setImageReady] = useState(false);
-  const [sharp, setSharp] = useState(false);
+  const [bloomReady, setBloomReady] = useState(false);
   const [still, setStill] = useState(false);
 
   useEffect(() => {
@@ -173,21 +163,8 @@ function BloomImageLayer({
 
   useEffect(() => {
     setImageReady(false);
-    setSharp(false);
+    setBloomReady(false);
   }, [src]);
-
-  useEffect(() => {
-    if (!imageReady) {
-      setSharp(false);
-      return;
-    }
-    if (still) {
-      setSharp(true);
-      return;
-    }
-    const timer = window.setTimeout(() => setSharp(true), DISSOLVE_MS);
-    return () => window.clearTimeout(timer);
-  }, [imageReady, still]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -196,6 +173,7 @@ function BloomImageLayer({
       return;
     }
 
+    setBloomReady(false);
     let cancelled = false;
     let raf = 0;
     let inputTexture: GPUTexture | null = null;
@@ -205,6 +183,7 @@ function BloomImageLayer({
     let lastDpr = 0;
     let frame: BloomFrame | null = null;
     let ro: ResizeObserver | null = null;
+    let signaledBloom = false;
 
     const context = canvas.getContext("webgpu");
     if (!context) {
@@ -322,6 +301,10 @@ function BloomImageLayer({
           frame.params = params;
           frame.output = context.getCurrentTexture();
           bloomRender(device, frame);
+          if (!signaledBloom) {
+            signaledBloom = true;
+            setBloomReady(true);
+          }
         };
         raf = requestAnimationFrame(tick);
       } catch (err) {
@@ -339,11 +322,12 @@ function BloomImageLayer({
     };
   }, [device, deviceError, src, objectPosition, params]);
 
-  const layerStyle: CSSProperties = { opacity };
-  const showCanvas = Boolean(device) && !deviceError && !useFallback;
+  const gpuActive = Boolean(device) && !deviceError && !useFallback;
+  const photoVisible = !bloomReady;
   const photo = resolvePhoto(src);
   const lqip = resolvePhotoLqip(src);
-  const showPhoto = !showCanvas;
+  const flipTransition = still ? "none" : BLUR_UP_TRANSITION;
+  const canvasTransition = still ? "none" : CANVAS_DISSOLVE;
 
   return (
     <>
@@ -355,12 +339,10 @@ function BloomImageLayer({
           src={lqip}
           className={className}
           style={{
-            ...layerStyle,
             objectPosition,
-            filter: `blur(${MATCHED_BLUR})`,
-            transform: `scale(${SOFT_SCALE})`,
-            opacity: showPhoto && !imageReady ? opacity : 0,
-            transition: still ? "none" : DISSOLVE,
+            filter: `blur(${BLUR_UP_RADIUS})`,
+            opacity: photoVisible && !imageReady ? opacity : 0,
+            transition: flipTransition,
             pointerEvents: "none",
             zIndex: 1,
           }}
@@ -374,26 +356,23 @@ function BloomImageLayer({
           placeholder="empty"
           sizes="100vw"
           className={className}
-          onLoad={(event) => {
-            afterDecoded(event.currentTarget, () => setImageReady(true));
-          }}
+          onLoad={() => setImageReady(true)}
           style={{
-            ...layerStyle,
             objectPosition,
-            // Opaque soft image under the LQIP — only the overlay fades.
-            opacity: showCanvas ? 0 : opacity,
-            visibility: lqip && !imageReady ? "hidden" : undefined,
+            // Mirrored flip with LQIP; stay until first bloom frame, then fade to canvas.
+            opacity: !photoVisible
+              ? 0
+              : lqip
+                ? imageReady
+                  ? opacity
+                  : 0
+                : opacity,
             filter: lqip
-              ? sharp
+              ? imageReady
                 ? "blur(0px)"
-                : `blur(${MATCHED_BLUR})`
+                : `blur(${BLUR_UP_RADIUS})`
               : undefined,
-            transform: lqip
-              ? sharp
-                ? "scale(1)"
-                : `scale(${SOFT_SCALE})`
-              : undefined,
-            transition: still ? "none" : UNBLUR,
+            transition: flipTransition,
           }}
         />
       ) : (
@@ -403,21 +382,20 @@ function BloomImageLayer({
           src={src}
           className={className}
           style={{
-            ...layerStyle,
-            opacity: showCanvas ? 0 : opacity,
+            opacity: photoVisible ? opacity : 0,
+            transition: canvasTransition,
           }}
           decoding="async"
-          onLoad={(event) => {
-            afterDecoded(event.currentTarget, () => setImageReady(true));
-          }}
+          onLoad={() => setImageReady(true)}
         />
       )}
       <canvas
         ref={canvasRef}
         className={className}
         style={{
-          ...layerStyle,
-          display: showCanvas ? "block" : "none",
+          display: gpuActive ? "block" : "none",
+          opacity: bloomReady ? opacity : 0,
+          transition: canvasTransition,
         }}
         aria-hidden
       />

@@ -230,7 +230,7 @@ function MobileMachineSlot() {
           alt=""
           src="/ace/machine.webp"
           className="pointer-events-none block h-auto w-[140%] max-w-none -translate-x-[14.3%]"
-          sizes="(max-width: 1023px) 140vw, 50vw"
+          sizes="(max-width: 1023px) 92vw, 50vw"
           loadedFilter={MACHINE_SHADOW}
         />
       </div>
@@ -330,7 +330,7 @@ export function Hero() {
               alt=""
               src="/ace/machine.webp"
               className="object-contain"
-              sizes="50vw"
+              sizes="(max-width: 1439px) 55vw, 720px"
               loadedFilter={MACHINE_SHADOW}
             />
           </div>

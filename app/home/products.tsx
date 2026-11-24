@@ -190,6 +190,7 @@ function FeaturedVisual({ active }: { active: Product }) {
         {active.scene === "combat" ? (
           <div className="relative aspect-[511/504] w-[78%] min-[1024px]:aspect-auto min-[1024px]:h-[504px] min-[1024px]:w-[511px]">
             <LazyImage
+              priority
               fill
               alt={active.name}
               src={active.image}
@@ -201,6 +202,7 @@ function FeaturedVisual({ active }: { active: Product }) {
         ) : (
           <LazyImage
             key={active.id}
+            priority
             alt={active.name}
             src={active.image}
             className="h-auto w-[70%] min-[1024px]:max-h-[460px] min-[1024px]:w-auto min-[1024px]:max-w-[680px]"

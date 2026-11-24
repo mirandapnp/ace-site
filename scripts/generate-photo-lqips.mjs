@@ -56,14 +56,26 @@ for (const name of keys) {
     console.warn("missing", file);
     continue;
   }
-  const buf = await sharp(file)
-    .resize({ width: 64, withoutEnlargement: true })
-    .blur(1.2)
-    .webp({ quality: 45, alphaQuality: 70 })
+  const meta = await sharp(file).metadata();
+  // Cutouts (machines): keep alpha edges clean — CSS blur softens both layers together.
+  // Full-bleed photos: slightly softer source so mid-dissolve stays gentle.
+  const cutout = Boolean(meta.hasAlpha);
+  // Softness lives in the LQIP pixels only — runtime CSS blur expands cutout
+  // silhouettes and reads as shrink/grow when it animates away.
+  let pipeline = sharp(file).resize({
+    width: cutout ? 160 : 112,
+    withoutEnlargement: true,
+  });
+  pipeline = pipeline.blur(cutout ? 0.45 : 0.6);
+  const buf = await pipeline
+    .webp({
+      quality: cutout ? 70 : 55,
+      alphaQuality: cutout ? 100 : 80,
+    })
     .toBuffer();
   const data = `data:image/webp;base64,${buf.toString("base64")}`;
   lines.push(`  "/ace/${name}.webp": ${JSON.stringify(data)},`);
-  console.log(`${name}: ${buf.length}B`);
+  console.log(`${name}${cutout ? " (cutout)" : ""}: ${buf.length}B`);
 }
 
 lines.push(

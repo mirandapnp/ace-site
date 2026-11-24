@@ -44,6 +44,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         </p>
       ) : null}
       <LazyImage
+        priority
         alt={product.name}
         src={product.image}
         className="mt-10 max-h-[640px] w-auto max-w-full"
