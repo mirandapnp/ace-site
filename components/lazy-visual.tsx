@@ -12,12 +12,18 @@ import {
 import { resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
 
 const lead = "400% 0px";
-/** Matched blur crossfade — both layers share one clock. */
-const BLUR_UP_MS = 400;
-/** Same radius on LQIP (fixed) and full image (animates → 0). */
+/** Phase 1: LQIP fades out over a solid soft full image (no opacity hole). */
+const DISSOLVE_MS = 350;
+/** Phase 2: unblur full image only after the LQIP is gone. */
+const UNBLUR_MS = 350;
 const MATCHED_BLUR = "16px";
-const CROSSFADE = `opacity ${BLUR_UP_MS}ms linear, filter ${BLUR_UP_MS}ms linear`;
-const LQIP_FADE = `opacity ${BLUR_UP_MS}ms linear`;
+/**
+ * Blur expands painted edges / crop; a slight scale while soft keeps the
+ * framed subject from looking like it shrinks as blur clears.
+ */
+const SOFT_SCALE = 1.05;
+const DISSOLVE = `opacity ${DISSOLVE_MS}ms linear`;
+const UNBLUR = `filter ${UNBLUR_MS}ms linear, transform ${UNBLUR_MS}ms linear`;
 
 function useNear<T extends HTMLElement>(priority: boolean) {
   const ref = useRef<T>(null);
@@ -76,8 +82,8 @@ function revealStyle(ready: boolean, opacity: number, still: boolean) {
 }
 
 /**
- * Soft LQIP above the full image. Blur stays fixed at MATCHED_BLUR; opacity
- * crossfades in sync with the full image unblur underneath.
+ * Soft LQIP above the full image. Stays at MATCHED_BLUR; only this layer’s
+ * opacity dissolves — the full image underneath is already opaque and soft.
  */
 function SoftBlurUp({
   blurDataURL,
@@ -102,13 +108,34 @@ function SoftBlurUp({
       style={{
         ...style,
         filter: `blur(${MATCHED_BLUR})`,
+        transform: `scale(${SOFT_SCALE})`,
         opacity: ready ? 0 : 1,
-        transition: still ? "none" : LQIP_FADE,
+        transition: still ? "none" : DISSOLVE,
         pointerEvents: "none",
         zIndex: 1,
       }}
     />
   );
+}
+
+/** After dissolve finishes, allow the full image to unblur. */
+function useBlurUpPhases(ready: boolean, still: boolean) {
+  const [sharp, setSharp] = useState(false);
+
+  useEffect(() => {
+    if (!ready) {
+      setSharp(false);
+      return;
+    }
+    if (still) {
+      setSharp(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setSharp(true), DISSOLVE_MS);
+    return () => window.clearTimeout(timer);
+  }, [ready, still]);
+
+  return sharp;
 }
 
 export function LazyImage({
@@ -145,6 +172,7 @@ export function LazyImage({
     setReady(false);
   }, [src]);
 
+  const sharp = useBlurUpPhases(ready, still);
   const lqip = resolvePhotoLqip(src);
   const hasBlurUp = Boolean(lqip);
   const restFilter =
@@ -163,14 +191,21 @@ export function LazyImage({
     },
     style: {
       ...style,
-      // Matched blur: start as soft as the LQIP, unblur while both opacities crossfade.
-      opacity: hasBlurUp ? (ready ? restOpacity : 0) : restOpacity,
+      // Stay opaque once painted: LQIP fades on top, then this layer unblurs.
+      opacity: restOpacity,
       filter: hasBlurUp
-        ? ready
+        ? sharp
           ? `blur(0px)${restFilter ? ` ${restFilter}` : ""}`
           : `blur(${MATCHED_BLUR})`
         : restFilter,
-      transition: hasBlurUp && !still ? CROSSFADE : undefined,
+      transform: hasBlurUp
+        ? sharp
+          ? "scale(1)"
+          : `scale(${SOFT_SCALE})`
+        : undefined,
+      // Hide until decode so the sharp decode flash never shows under the LQIP.
+      visibility: hasBlurUp && !ready ? "hidden" : undefined,
+      transition: hasBlurUp && !still ? UNBLUR : undefined,
     } satisfies CSSProperties,
   };
 

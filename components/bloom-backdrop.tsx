@@ -15,10 +15,12 @@ import {
 } from "@/lib/custom-effects/bloom";
 import { photoPath, resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
 
-const BLUR_UP_MS = 400;
+const DISSOLVE_MS = 350;
+const UNBLUR_MS = 350;
 const MATCHED_BLUR = "16px";
-const CROSSFADE = `opacity ${BLUR_UP_MS}ms linear, filter ${BLUR_UP_MS}ms linear`;
-const LQIP_FADE = `opacity ${BLUR_UP_MS}ms linear`;
+const SOFT_SCALE = 1.05;
+const DISSOLVE = `opacity ${DISSOLVE_MS}ms linear`;
+const UNBLUR = `filter ${UNBLUR_MS}ms linear, transform ${UNBLUR_MS}ms linear`;
 
 /** Start the crossfade only after pixels are decoded, not just downloaded. */
 function afterDecoded(image: HTMLImageElement, done: () => void) {
@@ -162,6 +164,7 @@ function BloomImageLayer({
   const { device, error: deviceError } = useWebGPUDevice();
   const [useFallback, setUseFallback] = useState(false);
   const [imageReady, setImageReady] = useState(false);
+  const [sharp, setSharp] = useState(false);
   const [still, setStill] = useState(false);
 
   useEffect(() => {
@@ -170,7 +173,21 @@ function BloomImageLayer({
 
   useEffect(() => {
     setImageReady(false);
+    setSharp(false);
   }, [src]);
+
+  useEffect(() => {
+    if (!imageReady) {
+      setSharp(false);
+      return;
+    }
+    if (still) {
+      setSharp(true);
+      return;
+    }
+    const timer = window.setTimeout(() => setSharp(true), DISSOLVE_MS);
+    return () => window.clearTimeout(timer);
+  }, [imageReady, still]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -341,8 +358,9 @@ function BloomImageLayer({
             ...layerStyle,
             objectPosition,
             filter: `blur(${MATCHED_BLUR})`,
+            transform: `scale(${SOFT_SCALE})`,
             opacity: showPhoto && !imageReady ? opacity : 0,
-            transition: still ? "none" : LQIP_FADE,
+            transition: still ? "none" : DISSOLVE,
             pointerEvents: "none",
             zIndex: 1,
           }}
@@ -362,19 +380,20 @@ function BloomImageLayer({
           style={{
             ...layerStyle,
             objectPosition,
-            opacity: showCanvas
-              ? 0
-              : lqip
-                ? imageReady
-                  ? opacity
-                  : 0
-                : opacity,
+            // Opaque soft image under the LQIP — only the overlay fades.
+            opacity: showCanvas ? 0 : opacity,
+            visibility: lqip && !imageReady ? "hidden" : undefined,
             filter: lqip
-              ? imageReady
+              ? sharp
                 ? "blur(0px)"
                 : `blur(${MATCHED_BLUR})`
               : undefined,
-            transition: still ? "none" : CROSSFADE,
+            transform: lqip
+              ? sharp
+                ? "scale(1)"
+                : `scale(${SOFT_SCALE})`
+              : undefined,
+            transition: still ? "none" : UNBLUR,
           }}
         />
       ) : (
