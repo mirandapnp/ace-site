@@ -27,6 +27,11 @@ const DESKTOP_MACHINE = {
   sizePct: (1014.01 / DESKTOP_CARD_H) * 100,
 } as const;
 
+/** text shadow — h1 */
+const TEXT_SHADOW = "0px 3px 20px rgba(0, 0, 0, 0.4)";
+/** machine shadow — follows machine alpha, not the square frame */
+const MACHINE_SHADOW = "drop-shadow(5px 10px 32px rgba(0, 0, 0, 0.25))";
+
 /** Wider, softer bloom tuned for the tall mobile hero card. */
 const mobileHeroGradientFollow: GradientFollowConfig = {
   gx: 50,
@@ -66,7 +71,8 @@ function HeroCopy({
           className={`font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-[#fff645] uppercase [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] ${centered ? "text-center" : ""}`}
         />
         <h1
-          className={`type-h1 capitalize text-white [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] ${titleClassName}`}
+          className={`type-h1 capitalize text-white ${titleClassName}`}
+          style={{ textShadow: TEXT_SHADOW }}
         >
           Cold Trigger
         </h1>
@@ -224,6 +230,7 @@ function MobileMachineSlot() {
           alt=""
           src={media("/ace/machine.webp?v=6")}
           className="pointer-events-none block h-auto w-[140%] max-w-none -translate-x-[14.3%]"
+          loadedFilter={MACHINE_SHADOW}
         />
       </div>
     </div>
@@ -321,6 +328,7 @@ export function Hero() {
               alt=""
               src={media("/ace/machine.webp?v=6")}
               className="size-full max-w-none"
+              loadedFilter={MACHINE_SHADOW}
             />
           </div>
 
