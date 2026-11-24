@@ -75,11 +75,12 @@ export const partnerCtaGradientFollow: GradientFollowConfig = {
   mid: 0.3,
   midAt: 28,
   fade: 57.4,
-  rangeX: 42,
-  rangeY: 38,
-  // Grow ~25% on hover so the wash reads more diffused while following.
-  scaleBoost: 0.25,
-  fadeBoost: 14,
+  // Follow travel stays 40% closer to rest than the prior 42 / 38.
+  rangeX: 25.2,
+  rangeY: 22.8,
+  // Hover expansion is 25% smaller than the prior 25% scale and +14 fade.
+  scaleBoost: 0.1875,
+  fadeBoost: 10.5,
   // Tighten the bright core on hover (5.3 → ~2.12: −20% then another −50%).
   coreBoost: -3.18,
 };
@@ -91,8 +92,8 @@ export const partnerCtaGradientFollowMobile: GradientFollowConfig = {
   gy: 100,
   grx: 110,
   gry: 90,
-  rangeX: 48,
-  rangeY: 40,
+  rangeX: 28.8,
+  rangeY: 24,
 };
 
 export function gradientFollowVars(config: GradientFollowConfig) {
