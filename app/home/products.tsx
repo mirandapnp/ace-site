@@ -38,6 +38,9 @@ const cardMachineStage =
 const cardMachineImage =
   "object-contain object-bottom drop-shadow-[2px_6px_20px_rgba(0,0,0,0.12)]";
 
+/** machine shadow — follows machine alpha, not the square frame */
+const MACHINE_SHADOW = "drop-shadow(5px 10px 32px rgba(0, 0, 0, 0.25))";
+
 function CatalogCard({ product }: { product: Product }) {
   const face = useRef<HTMLDivElement>(null);
   const motion = useRef({ x: 0, y: 0, tx: 0, ty: 0, frame: 0 });
@@ -187,6 +190,7 @@ function FeaturedVisual({ active }: { active: Product }) {
               alt={active.name}
               src={media(active.image)}
               className="absolute inset-0 size-full object-contain"
+              loadedFilter={MACHINE_SHADOW}
             />
           </div>
         ) : (
@@ -195,6 +199,7 @@ function FeaturedVisual({ active }: { active: Product }) {
             alt={active.name}
             src={media(active.image)}
             className="h-auto w-[70%] min-[1024px]:max-h-[460px] min-[1024px]:w-auto min-[1024px]:max-w-[680px]"
+            loadedFilter={MACHINE_SHADOW}
           />
         )}
       </div>
