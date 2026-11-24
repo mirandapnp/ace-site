@@ -37,8 +37,13 @@ const sweepStyles = `
 }
 `;
 
+/** Integer 15px line box — Safari floors fractional leading under zoom. */
 const labelClass =
-  "p-2 font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] uppercase whitespace-nowrap";
+  "px-2 font-mono text-[12px] leading-[15px] font-[525] tracking-[0.78px] uppercase whitespace-nowrap";
+
+/** p-2 + size-9 → 52px; fixed height so Safari zoom can’t shrink vertical padding. */
+const shellClass =
+  "group relative box-border flex h-[52px] items-center overflow-hidden rounded-[12px]";
 
 export function PrimaryButton({
   href,
@@ -54,8 +59,8 @@ export function PrimaryButton({
   const yellow = color === "yellow";
   const wide = /\bw-full\b/.test(className);
   const rowClass = wide
-    ? "relative flex w-full items-center justify-between p-2"
-    : "relative flex items-center gap-3 p-2";
+    ? "relative flex h-full w-full items-center justify-between px-2"
+    : "relative flex h-full w-full items-center gap-3 px-2";
 
   return (
     <>
@@ -64,8 +69,8 @@ export function PrimaryButton({
         href={href}
         className={
           yellow
-            ? `group relative flex items-center overflow-hidden rounded-[12px] border border-[#fff645] bg-[rgba(255,246,69,0.75)] backdrop-blur-[50px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
-            : `group relative flex items-center overflow-hidden rounded-[12px] bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
+            ? `${shellClass} border border-[#fff645] bg-[rgba(255,246,69,0.75)] backdrop-blur-[50px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
+            : `${shellClass} bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
         }
       >
         <span className={rowClass}>
@@ -90,7 +95,7 @@ export function PrimaryButton({
         {yellow ? (
           <span
             aria-hidden
-            className={`ace-sweep-out absolute inset-0 flex items-center bg-[#fff645] p-2 backdrop-blur-[20px] ${wide ? "justify-between" : "gap-3"}`}
+            className={`ace-sweep-out absolute inset-0 flex items-center bg-[#fff645] px-2 backdrop-blur-[20px] ${wide ? "justify-between" : "gap-3"}`}
           >
             <span className={`${labelClass} text-black`}>{children}</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(78,78,78,0.75)]">
@@ -100,7 +105,7 @@ export function PrimaryButton({
         ) : (
           <span
             aria-hidden
-            className={`ace-sweep-in absolute inset-0 flex items-center bg-[#fff645] p-2 ${wide ? "justify-between" : "gap-3"}`}
+            className={`ace-sweep-in absolute inset-0 flex items-center bg-[#fff645] px-2 ${wide ? "justify-between" : "gap-3"}`}
           >
             <span className={`${labelClass} text-black`}>{children}</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#4e4e4e]">

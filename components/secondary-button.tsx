@@ -37,8 +37,16 @@ const sweepStyles = `
 }
 `;
 
+/** Integer 15px line box — Safari floors fractional leading under zoom. */
 const labelClass =
-  "font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] uppercase";
+  "font-mono text-[12px] leading-[15px] font-[525] tracking-[0.78px] uppercase";
+
+/**
+ * py-3 (12) + 15px type + 1px border ×2 → 41px border-box.
+ * Fixed height keeps vertical padding stable under Safari zoom.
+ */
+const faceClass =
+  "relative box-border flex h-[41px] items-center gap-[10px] px-5";
 
 const blackArrow = media("/ace/enquire-arrow.svg");
 const whiteArrow = media("/ace/white-arrow.svg");
@@ -99,7 +107,7 @@ export function SecondaryButton({
             aria-hidden
             className="ace-sweep-in pointer-events-none absolute inset-0 bg-[rgba(78,78,78,0.1)]"
           />
-          <span className="relative flex items-center gap-[10px] px-5 py-3">
+          <span className={faceClass}>
             <Label
               textClass={onLight ? "text-black" : "text-white"}
               arrowSrc={onLight ? blackArrow : whiteArrow}
@@ -122,7 +130,7 @@ export function SecondaryButton({
           className={`group relative inline-flex overflow-hidden rounded-[8px] border border-[#fff645] bg-[rgba(255,246,69,0.75)] ${layout}`}
         >
           <span aria-hidden className="ace-sweep-out pointer-events-none absolute inset-0 bg-[#fff645]" />
-          <span className="relative flex items-center gap-[10px] px-5 py-3">
+          <span className={faceClass}>
             <Label textClass="text-black" arrowSrc={blackArrow} arrow={arrow}>
               {children}
             </Label>
@@ -133,7 +141,8 @@ export function SecondaryButton({
   }
 
   if (color === "black") {
-    const face = "flex items-center gap-[10px] rounded-[8px] px-5 py-3";
+    const face =
+      "box-border flex h-[41px] items-center gap-[10px] rounded-[8px] px-5";
 
     return (
       <>

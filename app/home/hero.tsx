@@ -232,7 +232,7 @@ function MobileMachineSlot() {
           alt=""
           src="/ace/machine.webp"
           className="pointer-events-none block h-auto w-[140%] max-w-none -translate-x-[14.3%]"
-          // 140% of the 412 design frame → scales with ScaleFrame zoom.
+          // 140% of the 412 design frame → scales with ScaleFrame.
           sizes="(max-width: 1023px) 140vw, 71vw"
           quality={90}
           loadedFilter={MACHINE_SHADOW}
@@ -314,7 +314,7 @@ export function Hero() {
         edge = Math.max(edge, range.getBoundingClientRect().right);
       });
       const cardBox = card.getBoundingClientRect();
-      // The page is CSS-zoomed to the viewport, so rects and layout px differ.
+      // ScaleFrame uses transform: scale, so rects and layout px differ.
       const scale = cardBox.width / card.clientWidth || 1;
       const copyRight = (edge - cardBox.left) / scale;
       const machineW = card.clientHeight * (1014.01 / DESKTOP_CARD_H);
@@ -389,7 +389,7 @@ export function Hero() {
                 alt=""
                 src="/ace/machine.webp"
                 className="object-contain"
-                // ~1014/1440 of the design frame; vw tracks ScaleFrame zoom on large screens.
+                // ~1014/1440 of the design frame; vw tracks ScaleFrame on large screens.
                 sizes="(max-width: 1023px) 140vw, 71vw"
                 quality={90}
                 loadedFilter={MACHINE_SHADOW}
