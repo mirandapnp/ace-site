@@ -1,10 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
-import { resolvePhoto } from "@/lib/photos";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+  type SyntheticEvent,
+} from "react";
+import { resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
 
 const lead = "400% 0px";
+/** Matched blur crossfade — both layers share one clock. */
+const BLUR_UP_MS = 400;
+/** Same radius on LQIP (fixed) and full image (animates → 0). */
+const MATCHED_BLUR = "16px";
+const CROSSFADE = `opacity ${BLUR_UP_MS}ms linear, filter ${BLUR_UP_MS}ms linear`;
+const LQIP_FADE = `opacity ${BLUR_UP_MS}ms linear`;
 
 function useNear<T extends HTMLElement>(priority: boolean) {
   const ref = useRef<T>(null);
@@ -43,11 +56,59 @@ function useStill() {
   return still;
 }
 
+/** Start the crossfade only after pixels are decoded, not just downloaded. */
+function afterDecoded(
+  image: HTMLImageElement,
+  done: () => void,
+) {
+  if (image.decode) {
+    image.decode().then(done).catch(done);
+    return;
+  }
+  done();
+}
+
 function revealStyle(ready: boolean, opacity: number, still: boolean) {
   return {
     opacity: ready ? opacity : 0,
     transition: still ? "none" : "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1)",
   };
+}
+
+/**
+ * Soft LQIP above the full image. Blur stays fixed at MATCHED_BLUR; opacity
+ * crossfades in sync with the full image unblur underneath.
+ */
+function SoftBlurUp({
+  blurDataURL,
+  ready,
+  still,
+  className,
+  style,
+}: {
+  blurDataURL: string;
+  ready: boolean;
+  still: boolean;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      aria-hidden
+      alt=""
+      src={blurDataURL}
+      className={className}
+      style={{
+        ...style,
+        filter: `blur(${MATCHED_BLUR})`,
+        opacity: ready ? 0 : 1,
+        transition: still ? "none" : LQIP_FADE,
+        pointerEvents: "none",
+        zIndex: 1,
+      }}
+    />
+  );
 }
 
 export function LazyImage({
@@ -77,14 +138,17 @@ export function LazyImage({
   style?: CSSProperties;
 }) {
   const photo = resolvePhoto(src);
+  const still = useStill();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setReady(false);
   }, [src]);
 
-  const filter =
-    ready && loadedFilter && loadedFilter.length > 0 ? loadedFilter : undefined;
+  const lqip = resolvePhotoLqip(src);
+  const hasBlurUp = Boolean(lqip);
+  const restFilter =
+    loadedFilter && loadedFilter.length > 0 ? loadedFilter : undefined;
 
   const shared = {
     alt,
@@ -94,55 +158,68 @@ export function LazyImage({
     loading: (priority ? "eager" : "lazy") as "eager" | "lazy",
     decoding: "async" as const,
     fetchPriority: (priority ? "high" : "low") as "high" | "low",
-    onLoad: () => setReady(true),
+    onLoad: (event: SyntheticEvent<HTMLImageElement>) => {
+      afterDecoded(event.currentTarget, () => setReady(true));
+    },
     style: {
       ...style,
-      opacity: restOpacity,
-      ...(filter ? { filter } : {}),
+      // Matched blur: start as soft as the LQIP, unblur while both opacities crossfade.
+      opacity: hasBlurUp ? (ready ? restOpacity : 0) : restOpacity,
+      filter: hasBlurUp
+        ? ready
+          ? `blur(0px)${restFilter ? ` ${restFilter}` : ""}`
+          : `blur(${MATCHED_BLUR})`
+        : restFilter,
+      transition: hasBlurUp && !still ? CROSSFADE : undefined,
     } satisfies CSSProperties,
   };
 
   if (photo) {
+    const objectFit = className?.includes("object-contain")
+      ? "object-contain"
+      : "object-cover";
+    const blur = lqip ? (
+      <SoftBlurUp
+        blurDataURL={lqip}
+        ready={ready}
+        still={still}
+        className={
+          fill
+            ? `absolute inset-0 size-full max-w-none ${objectFit}`
+            : "absolute inset-0 size-full max-w-none object-contain"
+        }
+      />
+    ) : null;
+
     if (fill) {
       return (
+        <>
+          {blur}
+          <Image {...shared} src={photo} fill placeholder="empty" />
+        </>
+      );
+    }
+
+    return (
+      <span className="relative inline-block max-w-full leading-[0]">
+        {blur}
         <Image
           {...shared}
           src={photo}
-          fill
-          placeholder="blur"
+          width={width ?? photo.width}
+          height={height ?? photo.height}
+          placeholder="empty"
         />
-      );
-    }
-    return (
-      <Image
-        {...shared}
-        src={photo}
-        width={width ?? photo.width}
-        height={height ?? photo.height}
-        placeholder="blur"
-      />
+      </span>
     );
   }
 
   // Non-registry assets (logo, etc.) — optimize without blur-up.
   if (fill) {
-    return (
-      <Image
-        {...shared}
-        src={src}
-        fill
-      />
-    );
+    return <Image {...shared} src={src} fill />;
   }
   if (width != null && height != null) {
-    return (
-      <Image
-        {...shared}
-        src={src}
-        width={width}
-        height={height}
-      />
-    );
+    return <Image {...shared} src={src} width={width} height={height} />;
   }
   return (
     // eslint-disable-next-line @next/next/no-img-element
@@ -153,7 +230,9 @@ export function LazyImage({
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       fetchPriority={priority ? "high" : "low"}
-      onLoad={() => setReady(true)}
+      onLoad={(event) => {
+        afterDecoded(event.currentTarget, () => setReady(true));
+      }}
       style={shared.style}
     />
   );

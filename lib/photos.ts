@@ -1,4 +1,5 @@
 import type { StaticImageData } from "next/image";
+import { resolveLqip } from "@/lib/photo-lqips";
 
 import aceShooterPromax from "../public/ace/ace-shooter-promax.webp";
 import airCombatBg from "../public/ace/air-combat-bg.webp";
@@ -83,4 +84,9 @@ export function resolvePhoto(src: string): StaticImageData | null {
   const key = photoPath(src);
   if (!key) return null;
   return (photos as Record<string, StaticImageData>)[key] ?? null;
+}
+
+/** Soft placeholder for blur-up — prefer generated LQIP over tiny blurDataURL. */
+export function resolvePhotoLqip(src: string): string | null {
+  return resolveLqip(src) ?? resolvePhoto(src)?.blurDataURL ?? null;
 }

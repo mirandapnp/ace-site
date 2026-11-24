@@ -13,7 +13,21 @@ import {
   setup as bloomSetup,
   render as bloomRender,
 } from "@/lib/custom-effects/bloom";
-import { photoPath, resolvePhoto } from "@/lib/photos";
+import { photoPath, resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
+
+const BLUR_UP_MS = 400;
+const MATCHED_BLUR = "16px";
+const CROSSFADE = `opacity ${BLUR_UP_MS}ms linear, filter ${BLUR_UP_MS}ms linear`;
+const LQIP_FADE = `opacity ${BLUR_UP_MS}ms linear`;
+
+/** Start the crossfade only after pixels are decoded, not just downloaded. */
+function afterDecoded(image: HTMLImageElement, done: () => void) {
+  if (image.decode) {
+    image.decode().then(done).catch(done);
+    return;
+  }
+  done();
+}
 
 export type BloomParams = {
   /** Hover intensity. Rest is always 0. */
@@ -147,6 +161,16 @@ function BloomImageLayer({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { device, error: deviceError } = useWebGPUDevice();
   const [useFallback, setUseFallback] = useState(false);
+  const [imageReady, setImageReady] = useState(false);
+  const [still, setStill] = useState(false);
+
+  useEffect(() => {
+    setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  useEffect(() => {
+    setImageReady(false);
+  }, [src]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -301,21 +325,56 @@ function BloomImageLayer({
   const layerStyle: CSSProperties = { opacity };
   const showCanvas = Boolean(device) && !deviceError && !useFallback;
   const photo = resolvePhoto(src);
+  const lqip = resolvePhotoLqip(src);
+  const showPhoto = !showCanvas;
 
   return (
     <>
+      {lqip ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          aria-hidden
+          alt=""
+          src={lqip}
+          className={className}
+          style={{
+            ...layerStyle,
+            objectPosition,
+            filter: `blur(${MATCHED_BLUR})`,
+            opacity: showPhoto && !imageReady ? opacity : 0,
+            transition: still ? "none" : LQIP_FADE,
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+      ) : null}
       {photo ? (
         <Image
           alt=""
           src={photo}
           fill
-          placeholder="blur"
+          placeholder="empty"
           sizes="100vw"
           className={className}
+          onLoad={(event) => {
+            afterDecoded(event.currentTarget, () => setImageReady(true));
+          }}
           style={{
             ...layerStyle,
             objectPosition,
-            opacity: showCanvas ? 0 : opacity,
+            opacity: showCanvas
+              ? 0
+              : lqip
+                ? imageReady
+                  ? opacity
+                  : 0
+                : opacity,
+            filter: lqip
+              ? imageReady
+                ? "blur(0px)"
+                : `blur(${MATCHED_BLUR})`
+              : undefined,
+            transition: still ? "none" : CROSSFADE,
           }}
         />
       ) : (
@@ -329,6 +388,9 @@ function BloomImageLayer({
             opacity: showCanvas ? 0 : opacity,
           }}
           decoding="async"
+          onLoad={(event) => {
+            afterDecoded(event.currentTarget, () => setImageReady(true));
+          }}
         />
       )}
       <canvas
