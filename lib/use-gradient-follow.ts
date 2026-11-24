@@ -129,6 +129,16 @@ export type GradientFollowMotion = {
   enterEase?: number;
 };
 
+const SETTLE = 0.001;
+
+function nearZero(value: number) {
+  return Math.abs(value) < SETTLE;
+}
+
+/**
+ * Pointer-driven CSS variable animation. Runs requestAnimationFrame only while
+ * values are in motion and the card is on-screen / the tab is visible.
+ */
 export function useGradientFollow(
   config: GradientFollowConfig,
   motion: GradientFollowMotion = {},
@@ -141,6 +151,7 @@ export function useGradientFollow(
   const hover = useRef(0);
   const configRef = useRef(config);
   const motionRef = useRef(motion);
+  const startRef = useRef<() => void>(() => {});
   configRef.current = config;
   motionRef.current = motion;
 
@@ -148,7 +159,49 @@ export function useGradientFollow(
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame = 0;
+    let running = false;
+    let onScreen = true;
+    let pageVisible = document.visibilityState !== "hidden";
+    let io: IntersectionObserver | null = null;
+
+    const settled = () =>
+      hoverTarget.current === 0 &&
+      nearZero(hover.current) &&
+      nearZero(current.current.x) &&
+      nearZero(current.current.y) &&
+      nearZero(target.current.x) &&
+      nearZero(target.current.y);
+
+    const snapRest = () => {
+      hover.current = 0;
+      current.current.x = 0;
+      current.current.y = 0;
+      const cfg = configRef.current;
+      const node = gradientRef.current;
+      if (!node) return;
+      node.style.setProperty("--gx", `${cfg.gx}%`);
+      node.style.setProperty("--gy", `${cfg.gy}%`);
+      node.style.setProperty("--grx", `${cfg.grx}%`);
+      node.style.setProperty("--gry", `${cfg.gry}%`);
+      node.style.setProperty("--core", `${cfg.core}%`);
+      node.style.setProperty("--mid", `${cfg.mid}`);
+      if (cfg.coreAlpha != null) {
+        node.style.setProperty("--core-a", `${cfg.coreAlpha}`);
+      }
+      if (cfg.washAlpha != null) {
+        node.style.setProperty("--wash-a", `${cfg.washAlpha}`);
+      }
+      node.style.setProperty("--mid-at", `${cfg.midAt}%`);
+      node.style.setProperty("--fade", `${cfg.fade}%`);
+    };
+
     const tick = () => {
+      frame = 0;
+      if (!onScreen || !pageVisible) {
+        running = false;
+        return;
+      }
+
       const cfg = configRef.current;
       const follow = motionRef.current.followEase ?? 0.16;
       const leave = motionRef.current.leaveEase ?? follow;
@@ -206,11 +259,62 @@ export function useGradientFollow(
           `${cfg.fade + h * (cfg.fadeBoost ?? 11)}%`,
         );
       }
+
+      if (settled()) {
+        snapRest();
+        running = false;
+        return;
+      }
+
       frame = requestAnimationFrame(tick);
     };
 
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    const start = () => {
+      if (running || !onScreen || !pageVisible) return;
+      if (settled()) return;
+      running = true;
+      frame = requestAnimationFrame(tick);
+    };
+    startRef.current = start;
+
+    const bindIo = () => {
+      const card = cardRef.current;
+      if (!card || io) return;
+      io = new IntersectionObserver(
+        ([entry]) => {
+          onScreen = entry?.isIntersecting ?? false;
+          if (onScreen) start();
+          else if (frame) {
+            cancelAnimationFrame(frame);
+            frame = 0;
+            running = false;
+          }
+        },
+        { rootMargin: "25% 0px" },
+      );
+      io.observe(card);
+    };
+    bindIo();
+    const bindFrame = requestAnimationFrame(bindIo);
+
+    const onVisibility = () => {
+      pageVisible = document.visibilityState !== "hidden";
+      if (pageVisible) start();
+      else if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        running = false;
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      startRef.current = () => {};
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(bindFrame);
+      io?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -220,12 +324,14 @@ export function useGradientFollow(
     const rect = card.getBoundingClientRect();
     target.current.x = (event.clientX - rect.left) / rect.width - 0.5;
     target.current.y = (event.clientY - rect.top) / rect.height - 0.5;
+    startRef.current();
   }
 
   function onPointerLeave() {
     hoverTarget.current = 0;
     target.current.x = 0;
     target.current.y = 0;
+    startRef.current();
   }
 
   return { cardRef, gradientRef, onPointerMove, onPointerLeave };
@@ -250,6 +356,7 @@ export function useCtaGradientRise({
   const currentX = useRef(0.5);
   const restRef = useRef(rest);
   const hoverHeightRef = useRef(hover);
+  const startRef = useRef<() => void>(() => {});
   restRef.current = rest;
   hoverHeightRef.current = hover;
 
@@ -261,7 +368,33 @@ export function useCtaGradientRise({
     const leave = 0.06;
 
     let frame = 0;
+    let running = false;
+    let onScreen = true;
+    let pageVisible = document.visibilityState !== "hidden";
+    let io: IntersectionObserver | null = null;
+
+    const settled = () =>
+      hoverTarget.current === 0 &&
+      nearZero(hoverAmount.current) &&
+      Math.abs(currentX.current - 0.5) < SETTLE;
+
+    const snapRest = () => {
+      hoverAmount.current = 0;
+      currentX.current = 0.5;
+      const node = gradientRef.current;
+      if (!node) return;
+      node.style.setProperty("--px", "50%");
+      node.style.setProperty("--peak", `${restRef.current / 0.85}%`);
+      node.style.setProperty("--peak-a", "0");
+    };
+
     const tick = () => {
+      frame = 0;
+      if (!onScreen || !pageVisible) {
+        running = false;
+        return;
+      }
+
       // Slow ease — keeps the peak from popping in.
       const engaged = hoverAmount.current;
       const intensityEase = hoverTarget.current > 0 ? enter : leave;
@@ -286,11 +419,62 @@ export function useCtaGradientRise({
         node.style.setProperty("--peak", `${peakRadius}%`);
         node.style.setProperty("--peak-a", `${0.12 * h}`);
       }
+
+      if (settled()) {
+        snapRest();
+        running = false;
+        return;
+      }
+
       frame = requestAnimationFrame(tick);
     };
 
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    const start = () => {
+      if (running || !onScreen || !pageVisible) return;
+      if (settled()) return;
+      running = true;
+      frame = requestAnimationFrame(tick);
+    };
+    startRef.current = start;
+
+    const bindIo = () => {
+      const card = cardRef.current;
+      if (!card || io) return;
+      io = new IntersectionObserver(
+        ([entry]) => {
+          onScreen = entry?.isIntersecting ?? false;
+          if (onScreen) start();
+          else if (frame) {
+            cancelAnimationFrame(frame);
+            frame = 0;
+            running = false;
+          }
+        },
+        { rootMargin: "25% 0px" },
+      );
+      io.observe(card);
+    };
+    bindIo();
+    const bindFrame = requestAnimationFrame(bindIo);
+
+    const onVisibility = () => {
+      pageVisible = document.visibilityState !== "hidden";
+      if (pageVisible) start();
+      else if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        running = false;
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      startRef.current = () => {};
+      cancelAnimationFrame(frame);
+      cancelAnimationFrame(bindFrame);
+      io?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, []);
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -299,10 +483,12 @@ export function useCtaGradientRise({
     hoverTarget.current = 1;
     const rect = card.getBoundingClientRect();
     targetX.current = (event.clientX - rect.left) / rect.width;
+    startRef.current();
   }
 
   function onPointerLeave() {
     hoverTarget.current = 0;
+    startRef.current();
   }
 
   return {

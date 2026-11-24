@@ -228,18 +228,88 @@ export function LazyVideo({
   src,
   className,
   priority = false,
+  /**
+   * Wait until the browser is idle (or window load) before attaching `src`,
+   * so LCP images are not competing with video bytes on first paint.
+   */
+  defer = false,
 }: {
   src: string;
   className?: string;
   priority?: boolean;
+  defer?: boolean;
 }) {
   const { ref, near } = useNear<HTMLVideoElement>(priority);
   const still = useStill();
   const [ready, setReady] = useState(false);
+  const [allowed, setAllowed] = useState(!defer && priority);
+
+  useEffect(() => {
+    if (still) {
+      setAllowed(false);
+      return;
+    }
+    if (!near) {
+      setAllowed(false);
+      return;
+    }
+    if (!defer) {
+      setAllowed(true);
+      return;
+    }
+
+    let cancelled = false;
+    let idleId = 0;
+    let deferTimeout = 0;
+    let loadFallback = 0;
+    let scheduled = false;
+
+    const enable = () => {
+      if (!cancelled) setAllowed(true);
+    };
+
+    const schedule = () => {
+      if (cancelled || scheduled) return;
+      scheduled = true;
+      window.clearTimeout(loadFallback);
+      const ric = (
+        window as Window & {
+          requestIdleCallback?: (
+            cb: () => void,
+            opts?: { timeout: number },
+          ) => number;
+        }
+      ).requestIdleCallback;
+      if (ric) {
+        idleId = ric(enable, { timeout: 2000 });
+      } else {
+        deferTimeout = window.setTimeout(enable, 200);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      schedule();
+    } else {
+      window.addEventListener("load", schedule, { once: true });
+      // Fallback if load already raced or never fires in some embeds.
+      loadFallback = window.setTimeout(schedule, 1500);
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", schedule);
+      const cic = (
+        window as Window & { cancelIdleCallback?: (id: number) => void }
+      ).cancelIdleCallback;
+      if (idleId && cic) cic(idleId);
+      if (deferTimeout) window.clearTimeout(deferTimeout);
+      if (loadFallback) window.clearTimeout(loadFallback);
+    };
+  }, [near, defer, still]);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node || !near) {
+    if (!node || !allowed) {
       setReady(false);
       return;
     }
@@ -249,7 +319,7 @@ export function LazyVideo({
     showIfLoaded();
     const frame = requestAnimationFrame(showIfLoaded);
     return () => cancelAnimationFrame(frame);
-  }, [near, src]);
+  }, [allowed, src, ref]);
 
   return (
     <video
@@ -259,8 +329,8 @@ export function LazyVideo({
       muted
       loop
       playsInline
-      preload={near ? "auto" : "none"}
-      src={near ? src : undefined}
+      preload={allowed ? "auto" : "none"}
+      src={allowed ? src : undefined}
       onLoadedData={() => setReady(true)}
       className={className}
       style={revealStyle(ready, 1, still)}

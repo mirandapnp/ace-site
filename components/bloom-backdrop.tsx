@@ -135,6 +135,8 @@ function BloomImageLayer({
   objectPosition = "center",
   opacity = 1,
   params,
+  animateRef,
+  resumeRef,
 }: {
   src: string;
   className?: string;
@@ -149,6 +151,9 @@ function BloomImageLayer({
     threshold: number;
     origin: { x: number; y: number; radius: number };
   };
+  /** When false after the first frame, the GPU loop sleeps until resumed. */
+  animateRef: React.MutableRefObject<boolean>;
+  resumeRef: React.MutableRefObject<(() => void) | null>;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { device, error: deviceError } = useWebGPUDevice();
@@ -158,7 +163,9 @@ function BloomImageLayer({
   const [still, setStill] = useState(false);
 
   useEffect(() => {
-    setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setStill(reduced);
+    if (reduced) setUseFallback(true);
   }, []);
 
   useEffect(() => {
@@ -168,7 +175,7 @@ function BloomImageLayer({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !device || deviceError) {
+    if (!canvas || !device || deviceError || still) {
       if (deviceError) setUseFallback(true);
       return;
     }
@@ -176,6 +183,9 @@ function BloomImageLayer({
     setBloomReady(false);
     let cancelled = false;
     let raf = 0;
+    let running = false;
+    let onScreen = true;
+    let pageVisible = document.visibilityState !== "hidden";
     let inputTexture: GPUTexture | null = null;
     let sourceBitmap: ImageBitmap | null = null;
     let lastCssW = 0;
@@ -183,7 +193,9 @@ function BloomImageLayer({
     let lastDpr = 0;
     let frame: BloomFrame | null = null;
     let ro: ResizeObserver | null = null;
+    let io: IntersectionObserver | null = null;
     let signaledBloom = false;
+    let lastTs = 0;
 
     const context = canvas.getContext("webgpu");
     if (!context) {
@@ -261,6 +273,52 @@ function BloomImageLayer({
       lastDpr = dpr;
     }
 
+    const shouldAnimate = () =>
+      Boolean(animateRef?.current) || !signaledBloom;
+
+    const tick = (ts: number) => {
+      if (cancelled) return;
+      raf = 0;
+      if (!onScreen || !pageVisible) {
+        running = false;
+        return;
+      }
+      if (!frame?.input) {
+        if (shouldAnimate()) raf = requestAnimationFrame(tick);
+        else running = false;
+        return;
+      }
+
+      frame.deltaTime = lastTs ? ts - lastTs : 0;
+      lastTs = ts;
+      frame.time += frame.deltaTime;
+      frame.frame += 1;
+      frame.params = params;
+      frame.output = context.getCurrentTexture();
+      bloomRender(device, frame);
+      if (!signaledBloom) {
+        signaledBloom = true;
+        setBloomReady(true);
+      }
+
+      // Keep rendering while the hover spotlight is live; stop at rest.
+      if (shouldAnimate()) {
+        raf = requestAnimationFrame(tick);
+      } else {
+        running = false;
+      }
+    };
+
+    const start = () => {
+      if (cancelled || running || !onScreen || !pageVisible) return;
+      // Allow a single rest frame after hover settles (!shouldAnimate but input ready).
+      if (!shouldAnimate() && !frame?.input) return;
+      running = true;
+      lastTs = 0;
+      raf = requestAnimationFrame(tick);
+    };
+    resumeRef.current = start;
+
     void (async () => {
       try {
         // Prefer the local public path so GPU bloom does not depend on the image optimizer.
@@ -281,6 +339,7 @@ function BloomImageLayer({
             dpr !== lastDpr
           ) {
             rebuildInput(sourceBitmap, cssW, cssH, dpr);
+            start();
           }
         };
 
@@ -288,39 +347,49 @@ function BloomImageLayer({
         ro = new ResizeObserver(syncSize);
         ro.observe(canvas);
 
-        let lastTs = 0;
-        const tick = (ts: number) => {
-          if (cancelled) return;
-          raf = requestAnimationFrame(tick);
-          if (!frame?.input) return;
+        io = new IntersectionObserver(
+          ([entry]) => {
+            onScreen = entry?.isIntersecting ?? false;
+            if (onScreen) start();
+            else if (raf) {
+              cancelAnimationFrame(raf);
+              raf = 0;
+              running = false;
+            }
+          },
+          { rootMargin: "25% 0px" },
+        );
+        io.observe(canvas);
 
-          frame.deltaTime = lastTs ? ts - lastTs : 0;
-          lastTs = ts;
-          frame.time += frame.deltaTime;
-          frame.frame += 1;
-          frame.params = params;
-          frame.output = context.getCurrentTexture();
-          bloomRender(device, frame);
-          if (!signaledBloom) {
-            signaledBloom = true;
-            setBloomReady(true);
-          }
-        };
-        raf = requestAnimationFrame(tick);
+        start();
       } catch (err) {
         console.warn("Bloom image effect failed", err);
         if (!cancelled) setUseFallback(true);
       }
     })();
 
+    const onVisibility = () => {
+      pageVisible = document.visibilityState !== "hidden";
+      if (pageVisible) start();
+      else if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        running = false;
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       cancelled = true;
+      resumeRef.current = null;
       cancelAnimationFrame(raf);
       ro?.disconnect();
+      io?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       inputTexture?.destroy();
       sourceBitmap?.close();
     };
-  }, [device, deviceError, src, objectPosition, params]);
+  }, [device, deviceError, src, objectPosition, params, still, animateRef, resumeRef]);
 
   const gpuActive = Boolean(device) && !deviceError && !useFallback;
   const photoVisible = !bloomReady;
@@ -423,6 +492,9 @@ export function BloomCard({
   const hover = useRef(0);
   const target = useRef({ x: 50, y: 50 });
   const current = useRef({ x: 50, y: 50 });
+  const animateRef = useRef(false);
+  const resumeBloomRef = useRef<(() => void) | null>(null);
+  const startHoverRef = useRef<() => void>(() => {});
 
   const look = { ...aceBloom, ...bloom };
   const hoverIntensity = look.intensity;
@@ -472,15 +544,26 @@ export function BloomCard({
       params.vignetteStrength = 0;
       params.origin.x = 50;
       params.origin.y = 50;
+      animateRef.current = false;
       return;
     }
 
     const enter = 0.045;
     const follow = 0.1;
     const leave = 0.045;
+    const settle = 0.001;
 
     let frame = 0;
+    let running = false;
+
+    const settled = () =>
+      hoverTarget.current === 0 &&
+      hover.current < settle &&
+      Math.abs(current.current.x - 50) < settle &&
+      Math.abs(current.current.y - 50) < settle;
+
     const tick = () => {
+      frame = 0;
       const engaged = hover.current;
       const intensityEase = hoverTarget.current > 0 ? enter : leave;
       hover.current += (hoverTarget.current - hover.current) * intensityEase;
@@ -498,11 +581,39 @@ export function BloomCard({
       params.origin.x = current.current.x;
       params.origin.y = current.current.y;
 
+      if (settled()) {
+        hover.current = 0;
+        current.current.x = 50;
+        current.current.y = 50;
+        params.intensity = 0;
+        params.vignetteStrength = 0;
+        params.origin.x = 50;
+        params.origin.y = 50;
+        animateRef.current = false;
+        running = false;
+        // One more GPU frame so the canvas lands on intensity 0.
+        resumeBloomRef.current?.();
+        return;
+      }
+
+      animateRef.current = true;
       frame = requestAnimationFrame(tick);
     };
 
-    frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    const start = () => {
+      if (running) return;
+      running = true;
+      animateRef.current = true;
+      resumeBloomRef.current?.();
+      frame = requestAnimationFrame(tick);
+    };
+    startHoverRef.current = start;
+
+    return () => {
+      startHoverRef.current = () => {};
+      cancelAnimationFrame(frame);
+      animateRef.current = false;
+    };
   }, [params, hoverIntensity, vignetteStrength]);
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
@@ -513,12 +624,14 @@ export function BloomCard({
     if (rect.width <= 0 || rect.height <= 0) return;
     target.current.x = ((event.clientX - rect.left) / rect.width) * 100;
     target.current.y = ((event.clientY - rect.top) / rect.height) * 100;
+    startHoverRef.current();
   }
 
   function onPointerLeave() {
     hoverTarget.current = 0;
     target.current.x = 50;
     target.current.y = 50;
+    startHoverRef.current();
   }
 
   return (
@@ -536,6 +649,8 @@ export function BloomCard({
             objectPosition={objectPosition}
             opacity={imageOpacity}
             params={params}
+            animateRef={animateRef}
+            resumeRef={resumeBloomRef}
           />
         </div>
         {overlay}

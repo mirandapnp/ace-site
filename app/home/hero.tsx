@@ -17,6 +17,7 @@ import {
 
 const slides = ["01", "02", "03"] as const;
 const MACHINE_WIDTH = 1.4;
+const DESKTOP_MQ = "(min-width: 1024px)";
 
 /** Desktop hero card design height — below this, copy centers vertically. */
 const DESKTOP_CARD_H = 860;
@@ -111,8 +112,9 @@ function HeroBackdrop({
       onPointerLeave={onPointerLeave}
       className={className}
     >
+      {/* Machine art is LCP; video waits for idle so it doesn’t contend on first paint. */}
       <LazyVideo
-        priority
+        defer
         src={media("/ace/hero.mp4?v=3")}
         className="absolute -inset-10 h-[calc(100%+80px)] w-[calc(100%+80px)] max-w-none object-cover"
       />
@@ -240,16 +242,60 @@ function MobileMachineSlot() {
   );
 }
 
+function HeroShell({
+  desktop,
+  children,
+}: {
+  desktop: boolean;
+  children: React.ReactNode;
+}) {
+  if (desktop) {
+    return (
+      <div
+        className="relative w-[1440px]"
+        style={{ height: "min(900px, calc(100dvh * 1440px / 100cqw))" }}
+      >
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex flex-col items-center gap-5 px-2.5 pt-2.5"
+      style={{ height: "calc(100dvh * 412px / 100cqw)" }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function Hero() {
   const [active, setActive] = useState(0);
+  const [desktop, setDesktop] = useState<boolean | null>(null);
   const [desktopCompact, setDesktopCompact] = useState(false);
   const [compactMachineLeft, setCompactMachineLeft] = useState<number | null>(null);
   const copyRef = useRef<HTMLDivElement>(null);
-  const desktopGlow = useGradientFollow(heroGradientFollow);
-  const mobileGlow = useGradientFollow(mobileHeroGradientFollow);
+  const glow = useGradientFollow(
+    desktop === false ? mobileHeroGradientFollow : heroGradientFollow,
+  );
 
   useEffect(() => {
-    const card = desktopGlow.cardRef.current;
+    const media = window.matchMedia(DESKTOP_MQ);
+    const sync = () => setDesktop(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (!desktop) {
+      setDesktopCompact(false);
+      setCompactMachineLeft(null);
+      return;
+    }
+
+    const card = glow.cardRef.current;
     if (!card) return;
 
     const sync = () => {
@@ -291,102 +337,110 @@ export function Hero() {
       cancelled = true;
       observer.disconnect();
     };
-  }, [desktopGlow.cardRef]);
+  }, [desktop, glow.cardRef]);
 
   return (
     <section className="w-[412px] bg-black min-[1024px]:w-[1440px]">
-      {/* Desktop — 900 design-px tall, or 100dvh when a flat viewport would clip the card */}
-      <div
-        className="relative hidden w-[1440px] min-[1024px]:block"
-        style={{ height: "min(900px, calc(100dvh * 1440px / 100cqw))" }}
-      >
-        <HeroBackdrop
-          cardRef={desktopGlow.cardRef}
-          gradientRef={desktopGlow.gradientRef}
-          onPointerMove={desktopGlow.onPointerMove}
-          onPointerLeave={desktopGlow.onPointerLeave}
-          className="absolute inset-5 overflow-hidden rounded-[16px]"
-        >
+      {desktop === null ? (
+        <>
+          {/* Reserve layout before matchMedia so only one hero tree mounts. */}
           <div
+            className="hidden w-[1440px] min-[1024px]:block"
+            style={{ height: "min(900px, calc(100dvh * 1440px / 100cqw))" }}
             aria-hidden
-            className="pointer-events-none absolute"
-            style={
-              desktopCompact && compactMachineLeft != null
-                ? {
-                    left: compactMachineLeft,
-                    top: `${DESKTOP_MACHINE.topPct}%`,
-                    height: `${DESKTOP_MACHINE.sizePct}%`,
-                    aspectRatio: "1 / 1",
-                  }
-                : {
-                    right: DESKTOP_MACHINE.right,
-                    top: `${DESKTOP_MACHINE.topPct}%`,
-                    height: `${DESKTOP_MACHINE.sizePct}%`,
-                    aspectRatio: "1 / 1",
-                  }
-            }
-          >
-            <LazyImage
-              priority
-              fill
-              alt=""
-              src="/ace/machine.webp"
-              className="object-contain"
-              // ~1014/1440 of the design frame; vw tracks ScaleFrame zoom on large screens.
-              sizes="(max-width: 1023px) 140vw, 71vw"
-              quality={90}
-              loadedFilter={MACHINE_SHADOW}
-            />
-          </div>
-
+          />
           <div
-            ref={copyRef}
-            className={
-              desktopCompact
-                ? "absolute top-1/2 left-0 z-10 flex w-[664.711px] -translate-y-1/2 flex-col gap-10 px-5"
-                : "absolute top-[271.5px] left-0 z-10 flex w-[664.711px] flex-col gap-10 px-5"
-            }
+            className="min-[1024px]:hidden"
+            style={{ height: "calc(100dvh * 412px / 100cqw)" }}
+            aria-hidden
+          />
+        </>
+      ) : desktop ? (
+        <HeroShell desktop>
+          <HeroBackdrop
+            cardRef={glow.cardRef}
+            gradientRef={glow.gradientRef}
+            onPointerMove={glow.onPointerMove}
+            onPointerLeave={glow.onPointerLeave}
+            className="absolute inset-5 overflow-hidden rounded-[16px]"
           >
-            <HeroCopy
-              titleClassName="w-[624.711px]"
-              bodyClassName="w-[495.54px]"
-            />
-            <PrimaryButton href="#products" color="gray">
-              View Machine
-            </PrimaryButton>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute"
+              style={
+                desktopCompact && compactMachineLeft != null
+                  ? {
+                      left: compactMachineLeft,
+                      top: `${DESKTOP_MACHINE.topPct}%`,
+                      height: `${DESKTOP_MACHINE.sizePct}%`,
+                      aspectRatio: "1 / 1",
+                    }
+                  : {
+                      right: DESKTOP_MACHINE.right,
+                      top: `${DESKTOP_MACHINE.topPct}%`,
+                      height: `${DESKTOP_MACHINE.sizePct}%`,
+                      aspectRatio: "1 / 1",
+                    }
+              }
+            >
+              <LazyImage
+                priority
+                fill
+                alt=""
+                src="/ace/machine.webp"
+                className="object-contain"
+                // ~1014/1440 of the design frame; vw tracks ScaleFrame zoom on large screens.
+                sizes="(max-width: 1023px) 140vw, 71vw"
+                quality={90}
+                loadedFilter={MACHINE_SHADOW}
+              />
+            </div>
+
+            <div
+              ref={copyRef}
+              className={
+                desktopCompact
+                  ? "absolute top-1/2 left-0 z-10 flex w-[664.711px] -translate-y-1/2 flex-col gap-10 px-5"
+                  : "absolute top-[271.5px] left-0 z-10 flex w-[664.711px] flex-col gap-10 px-5"
+              }
+            >
+              <HeroCopy
+                titleClassName="w-[624.711px]"
+                bodyClassName="w-[495.54px]"
+              />
+              <PrimaryButton href="#products" color="gray">
+                View Machine
+              </PrimaryButton>
+            </div>
+          </HeroBackdrop>
+
+          <div className="absolute top-1/2 left-[1328px] flex w-[112px] -translate-y-1/2 justify-center">
+            <HeroPager active={active} onSelect={setActive} orientation="vertical" />
           </div>
-        </HeroBackdrop>
+        </HeroShell>
+      ) : (
+        <HeroShell desktop={false}>
+          <HeroBackdrop
+            cardRef={glow.cardRef}
+            gradientRef={glow.gradientRef}
+            onPointerMove={glow.onPointerMove}
+            onPointerLeave={glow.onPointerLeave}
+            gradientConfig={mobileHeroGradientFollow}
+            className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[16px] pt-2.5"
+          >
+            <div className="relative z-10 flex w-full shrink-0 flex-col gap-5 px-2.5 pt-10">
+              <HeroCopy align="center" />
+              <PrimaryButton href="#products" color="gray" className="w-full">
+                View Machine
+              </PrimaryButton>
+            </div>
 
-        <div className="absolute top-1/2 left-[1328px] flex w-[112px] -translate-y-1/2 justify-center">
-          <HeroPager active={active} onSelect={setActive} orientation="vertical" />
-        </div>
-      </div>
+            <MobileMachineSlot />
+          </HeroBackdrop>
 
-      {/* Mobile — slider + numbers fill 100vh in design space */}
-      <div
-        className="flex flex-col items-center gap-5 px-2.5 pt-2.5 min-[1024px]:hidden"
-        style={{ height: "calc(100dvh * 412px / 100cqw)" }}
-      >
-        <HeroBackdrop
-          cardRef={mobileGlow.cardRef}
-          gradientRef={mobileGlow.gradientRef}
-          onPointerMove={mobileGlow.onPointerMove}
-          onPointerLeave={mobileGlow.onPointerLeave}
-          gradientConfig={mobileHeroGradientFollow}
-          className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[16px] pt-2.5"
-        >
-          <div className="relative z-10 flex w-full shrink-0 flex-col gap-5 px-2.5 pt-10">
-            <HeroCopy align="center" />
-            <PrimaryButton href="#products" color="gray" className="w-full">
-              View Machine
-            </PrimaryButton>
-          </div>
-
-          <MobileMachineSlot />
-        </HeroBackdrop>
-
-        <HeroPager active={active} onSelect={setActive} orientation="horizontal" />
-      </div>
+          <HeroPager active={active} onSelect={setActive} orientation="horizontal" />
+        </HeroShell>
+      )}
 
       <Marquee />
     </section>
