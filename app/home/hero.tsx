@@ -78,15 +78,15 @@ const slides: readonly HeroSlide[] = [
     title: "Thunder Jets",
     body: "Feel every roll and dive in a full-motion, 360° combat cockpit. Choose your jet, conquer six intense battlegrounds, and rule the skies in Thunder Jets.",
     machine: "/ace/machine-thunder-jets.webp",
-    video: media("/ace/hero-2.mp4"),
+    video: media("/ace/hero-2.mp4?v=2"),
     bloom: "#04C8CF",
-    // Figma 905:8034 — image 10 inside Frame 2147238782.
+    // Figma 1051:8776 inside Frame 2147238782 (905:8033).
     art: {
-      left: -174.43701171875,
-      top: 40.920570373535156,
-      width: 840.3685913085938,
-      height: 845.8428344726562,
-      visualCenter: 0.52,
+      left: -108.523681640625,
+      top: 35.53114700317383,
+      width: 779.4738159179688,
+      height: 877.4951171875,
+      visualCenter: 0.5,
     },
   },
   {
