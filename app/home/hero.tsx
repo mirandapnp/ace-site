@@ -205,15 +205,19 @@ function HeroBackdrop({
       ref={cardRef}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
-      className={className}
+      // Black fill owns the rounded clip edge. Video is inset so its blur layer
+      // never AA-fringes at the mask (ScaleFrame scale makes that a bright hairline).
+      className={`bg-black ${className}`}
     >
       {/* Machine art is LCP; video waits for idle so it doesn’t contend on first paint. */}
-      <LazyVideo
-        key={video}
-        defer
-        src={video}
-        className="absolute -inset-10 h-[calc(100%+80px)] w-[calc(100%+80px)] max-w-none object-cover blur-[13px]"
-      />
+      <div className="absolute inset-[2px] overflow-hidden rounded-[14px]">
+        <LazyVideo
+          key={video}
+          defer
+          src={video}
+          className="absolute -inset-10 h-[calc(100%+80px)] w-[calc(100%+80px)] max-w-none object-cover blur-[13px]"
+        />
+      </div>
       <div
         ref={gradientRef}
         className="pointer-events-none absolute inset-0"
