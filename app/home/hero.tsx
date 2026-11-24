@@ -230,7 +230,9 @@ function MobileMachineSlot() {
           alt=""
           src="/ace/machine.webp"
           className="pointer-events-none block h-auto w-[140%] max-w-none -translate-x-[14.3%]"
-          sizes="(max-width: 1023px) 92vw, 50vw"
+          // 140% of the 412 design frame → scales with ScaleFrame zoom.
+          sizes="(max-width: 1023px) 140vw, 71vw"
+          quality={90}
           loadedFilter={MACHINE_SHADOW}
         />
       </div>
@@ -330,7 +332,9 @@ export function Hero() {
               alt=""
               src="/ace/machine.webp"
               className="object-contain"
-              sizes="(max-width: 1439px) 55vw, 720px"
+              // ~1014/1440 of the design frame; vw tracks ScaleFrame zoom on large screens.
+              sizes="(max-width: 1023px) 140vw, 71vw"
+              quality={90}
               loadedFilter={MACHINE_SHADOW}
             />
           </div>

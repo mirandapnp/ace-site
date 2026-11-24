@@ -107,6 +107,7 @@ export function LazyImage({
   sizes,
   width,
   height,
+  quality,
   style,
 }: {
   src: string;
@@ -120,6 +121,8 @@ export function LazyImage({
   sizes?: string;
   width?: number;
   height?: number;
+  /** next/image encode quality (1–100). Default 75. */
+  quality?: number;
   style?: CSSProperties;
 }) {
   const photo = resolvePhoto(src);
@@ -145,6 +148,7 @@ export function LazyImage({
     alt,
     className,
     sizes: sizes ?? (fill ? "100vw" : undefined),
+    quality,
     preload: priority || undefined,
     loading: (priority ? "eager" : "lazy") as "eager" | "lazy",
     decoding: "async" as const,
