@@ -49,8 +49,6 @@ type HeroSlide = {
   label: string;
   title: string;
   body: string;
-  /** Desktop body measure — Figma copy column width. */
-  bodyWidth: string;
   machine: string;
   video: string;
   /** Radial bloom tint over the backdrop video. */
@@ -63,7 +61,6 @@ const slides: readonly HeroSlide[] = [
     label: "01",
     title: "Cold Trigger",
     body: "Lock in for explosive 4-player co-op action in this tactical arcade shooter featuring swivel-mounted weapons and dual-screen combat.",
-    bodyWidth: "w-[495.54px]",
     machine: "/ace/machine.webp",
     video: media("/ace/hero.mp4?v=3"),
     bloom: "#36F592",
@@ -80,16 +77,15 @@ const slides: readonly HeroSlide[] = [
     label: "02",
     title: "Thunder Jets",
     body: "Feel every roll and dive in a full-motion, 360° combat cockpit. Choose your jet, conquer six intense battlegrounds, and rule the skies in Thunder Jets.",
-    bodyWidth: "w-[419.26px]",
     machine: "/ace/machine-thunder-jets.webp",
     video: media("/ace/hero-2.mp4"),
     bloom: "#04C8CF",
     // Figma 905:8034 — image 10 inside Frame 2147238782.
     art: {
-      left: -190.40127563476562,
-      top: 13.5474214553833,
-      width: 867.5648803710938,
-      height: 873.21630859375,
+      left: -174.43701171875,
+      top: 40.920570373535156,
+      width: 840.3685913085938,
+      height: 845.8428344726562,
       visualCenter: 0.52,
     },
   },
@@ -98,7 +94,6 @@ const slides: readonly HeroSlide[] = [
     label: "03",
     title: "Cold Trigger",
     body: "Lock in for explosive 4-player co-op action in this tactical arcade shooter featuring swivel-mounted weapons and dual-screen combat.",
-    bodyWidth: "w-[495.54px]",
     machine: "/ace/machine.webp",
     video: media("/ace/hero.mp4?v=3"),
     bloom: "#36F592",
@@ -532,7 +527,7 @@ export function Hero() {
                 title={slide.title}
                 body={slide.body}
                 titleClassName="w-[624.711px]"
-                bodyClassName={slide.bodyWidth}
+                bodyClassName="max-w-[420px]"
               />
               <PrimaryButton href="#products" color="gray">
                 View Machine
