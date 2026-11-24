@@ -16,6 +16,9 @@ import {
 const metaType =
   "font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] uppercase min-[1024px]:text-[14px] min-[1024px]:font-[475] min-[1024px]:tracking-[0.07px]";
 
+/** text shadow — footer heading */
+const TEXT_SHADOW = "0px 3px 20px rgba(0, 0, 0, 0.4)";
+
 const green = "54, 245, 146";
 
 export function PartnerCta({
@@ -108,7 +111,11 @@ export function PartnerCta({
 
         <div className="relative flex min-h-0 flex-1 flex-col justify-between min-[1024px]:flex-none min-[1024px]:gap-10">
           <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center text-white min-[1024px]:flex-none min-[1024px]:items-start min-[1024px]:justify-start min-[1024px]:text-left">
-            <h2 id="partner-cta-heading" className="type-h2 capitalize min-[1024px]:normal-case">
+            <h2
+              id="partner-cta-heading"
+              className="type-h2 capitalize min-[1024px]:normal-case"
+              style={{ textShadow: TEXT_SHADOW }}
+            >
               {title}
             </h2>
             <p className="type-p1-responsive text-pretty min-[1024px]:whitespace-nowrap">
