@@ -39,6 +39,8 @@ export const heroGradientFollow: GradientFollowConfig = {
   fade: 69.11,
   rangeX: 26,
   rangeY: 18,
+  // Core stop grows 40% less than the shared 0.5 hover boost.
+  coreBoost: 0.3,
 };
 
 export const featuredGradientFollow: GradientFollowConfig = {

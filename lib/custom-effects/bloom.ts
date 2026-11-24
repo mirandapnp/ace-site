@@ -55,9 +55,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4f {
   let dx = (in.uv.x - u.originX) * u.aspectRatio;
   let dy = in.uv.y - u.originY;
   let dist = sqrt(dx * dx + dy * dy);
-  // Soft gaussian falloff (was a hard 0.9→1.0 ring that read as a spotlight).
+  // Edge band is another 50% wider than the prior 0.625→1.0 fade
+  // (0.4375→1.0). The circle radius itself is set by originRadius.
   let t = clamp(dist / max(u.originRadius, 0.001), 0.0, 1.0);
-  let mask = exp(-t * t * 3.0) * (1.0 - smoothstep(0.75, 1.0, t));
+  let mask = exp(-t * t * 3.0) * (1.0 - smoothstep(0.4375, 1.0, t));
   return vec4f(color.rgb * bright * mask, color.a);
 }
 `;

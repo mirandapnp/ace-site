@@ -33,7 +33,7 @@ export const aceBloom: Required<BloomParams> = {
   vignetteSoftness: 100,
   softness: 60,
   threshold: 80,
-  radius: 100,
+  radius: 80,
 };
 
 type BloomCardProps = {
@@ -397,7 +397,7 @@ export function BloomCard({
     }
 
     const enter = 0.045;
-    const follow = 0.12;
+    const follow = 0.1;
     const leave = 0.045;
 
     let frame = 0;

@@ -39,6 +39,8 @@ const mobileHeroGradientFollow: GradientFollowConfig = {
   fade: 78,
   rangeX: 22,
   rangeY: 14,
+  // Core stop grows 40% less than the shared 0.5 hover boost.
+  coreBoost: 0.3,
 };
 
 function HeroCopy({
