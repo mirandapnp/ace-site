@@ -41,10 +41,10 @@ const MOBILE_MACHINE_FRAME = {
   height: 408.8399963378906,
 } as const;
 
-/** Cold Trigger mobile: 140% wide, centered in Frame 13. */
+/** Cold Trigger mobile — Figma 1058:8903 inside Frame 13 (1058:8886). */
 const MOBILE_ART_COLD_TRIGGER = {
-  center: MOBILE_MACHINE_FRAME.width / 2,
-  width: MOBILE_MACHINE_FRAME.width * 1.4,
+  center: -21.5 + 415 / 2,
+  width: 415,
 } as const;
 
 type MachineArt = {
@@ -72,6 +72,8 @@ type HeroSlide = {
   title: string;
   body: string;
   machine: string;
+  /** Mobile Frame 13 art when cropped differently from desktop. */
+  mobileMachine?: string;
   video: string;
   /** Radial bloom tint over the backdrop video. */
   bloom: string;
@@ -86,6 +88,7 @@ const slides: readonly HeroSlide[] = [
     title: "Cold Trigger",
     body: "Lock in for explosive 4-player co-op action in this tactical arcade shooter featuring swivel-mounted weapons and dual-screen combat.",
     machine: "/ace/machine.webp",
+    mobileMachine: "/ace/machine-mobile.webp",
     video: media("/ace/hero.mp4?v=3"),
     bloom: "#36F592",
     // Prior 1014² placement expressed as an inset in MACHINE_FRAME.
@@ -103,6 +106,7 @@ const slides: readonly HeroSlide[] = [
     title: "Thunder Jets",
     body: "Feel every roll and dive in a full-motion, 360° combat cockpit. Choose your jet, conquer six intense battlegrounds, and rule the skies in Thunder Jets.",
     machine: "/ace/machine-thunder-jets.webp",
+    mobileMachine: "/ace/machine-thunder-jets-mobile.webp",
     video: media("/ace/hero-2.mp4?v=3"),
     bloom: "#04C8CF",
     // Figma 1051:8776 inside Frame 2147238782 (905:8033).
@@ -115,8 +119,8 @@ const slides: readonly HeroSlide[] = [
     },
     // Figma 1058:8845 inside mobile Frame 13 (1058:8825).
     mobileArt: {
-      center: -13.981531143188477 + 399.9631652832031 / 2,
-      width: 399.9631652832031,
+      center: -35.06592559814453 + 442.13201904296875 / 2,
+      width: 442.13201904296875,
     },
   },
   {
@@ -125,6 +129,7 @@ const slides: readonly HeroSlide[] = [
     title: "Cold Trigger",
     body: "Lock in for explosive 4-player co-op action in this tactical arcade shooter featuring swivel-mounted weapons and dual-screen combat.",
     machine: "/ace/machine.webp",
+    mobileMachine: "/ace/machine-mobile.webp",
     video: media("/ace/hero.mp4?v=3"),
     bloom: "#36F592",
     art: {
@@ -611,7 +616,10 @@ export function Hero() {
               </PrimaryButton>
             </div>
 
-            <MobileMachineSlot src={slide.machine} art={slide.mobileArt} />
+            <MobileMachineSlot
+              src={slide.mobileMachine ?? slide.machine}
+              art={slide.mobileArt}
+            />
           </HeroBackdrop>
 
           <HeroPager active={active} onSelect={setActive} orientation="horizontal" />
