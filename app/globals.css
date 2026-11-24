@@ -195,9 +195,54 @@ body {
   animation: ace-blink 1.2s step-end infinite;
 }
 
+/*
+ * Film grain over pointer-follow gradients (full-bleed SVG).
+ * Masked with the same ellipse vars as the wash so noise reads strongest
+ * where the color is most opaque, and fades out with it.
+ */
+.ace-gradient-noise {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.65;
+  -webkit-mask-image: radial-gradient(
+    ellipse var(--grx) var(--gry) at var(--gx) var(--gy),
+    #000 0%,
+    #000 var(--core),
+    rgba(0, 0, 0, 0.65) var(--mid-at),
+    transparent var(--fade)
+  );
+  mask-image: radial-gradient(
+    ellipse var(--grx) var(--gry) at var(--gx) var(--gy),
+    #000 0%,
+    #000 var(--core),
+    rgba(0, 0, 0, 0.65) var(--mid-at),
+    transparent var(--fade)
+  );
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ace-ticker,
   .ace-blink {
     animation: none;
+  }
+
+  .ace-gradient-noise {
+    opacity: 0.35;
+  }
+
+  .ace-gradient-noise animate {
+    display: none;
   }
 }

@@ -5,6 +5,7 @@ import { LazyImage, LazyVideo } from "@/components/lazy-visual";
 import { Marquee } from "@/components/marquee";
 import { PageNumber } from "@/components/page-number";
 import { PrimaryButton } from "@/components/primary-button";
+import { GradientNoise } from "@/components/gradient-noise";
 import { TypeIn } from "@/components/type-in";
 import { media } from "@/lib/media";
 import {
@@ -109,13 +110,15 @@ function HeroBackdrop({
       />
       <div
         ref={gradientRef}
-        className="pointer-events-none absolute inset-0 backdrop-blur-[8px]"
+        className="pointer-events-none absolute inset-0 isolate backdrop-blur-[8px]"
         style={{
           backgroundImage:
             "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), #36F592 var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0.21) 100%)",
           ...gradientFollowVars(gradientConfig),
         }}
-      />
+      >
+        <GradientNoise />
+      </div>
       {children}
     </div>
   );

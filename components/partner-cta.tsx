@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { GradientNoise } from "@/components/gradient-noise";
 import { LazyImage } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
 import { TypeIn } from "@/components/type-in";
@@ -87,12 +88,14 @@ export function PartnerCta({
           />
           <div
             ref={glow.gradientRef}
-            className="absolute inset-0"
+            className="absolute inset-0 isolate"
             style={{
               backgroundImage: `radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(${green}, 0.6) var(--core), rgba(${green}, 0) var(--fade))`,
               ...gradientFollowVars(follow),
             }}
-          />
+          >
+            <GradientNoise />
+          </div>
         </div>
 
         <div className="relative flex items-center justify-between">

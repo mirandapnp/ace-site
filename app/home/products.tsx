@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { GradientNoise } from "@/components/gradient-noise";
 import { LazyImage } from "@/components/lazy-visual";
 import { PrimaryButton } from "@/components/primary-button";
 import { SecondaryButton } from "@/components/secondary-button";
@@ -170,13 +171,15 @@ function FeaturedVisual({ active }: { active: Product }) {
       ) : null}
       <div
         ref={glow.gradientRef}
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 isolate"
         style={{
           backgroundImage:
             "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(54, 245, 146, 0.55) var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40.385%, rgba(54, 245, 146, 0.4) 100%)",
           ...gradientFollowVars(featuredGradientFollow),
         }}
-      />
+      >
+        <GradientNoise />
+      </div>
       <div className="ace-product-in pointer-events-none relative flex h-full items-center justify-center px-10 py-[60px] min-[1024px]:px-20 min-[1024px]:py-[100px]">
         {active.scene === "combat" ? (
           <div className="relative aspect-[511/504] w-[78%] min-[1024px]:aspect-auto min-[1024px]:h-[504px] min-[1024px]:w-[511px]">
