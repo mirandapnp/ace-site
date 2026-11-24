@@ -14,6 +14,7 @@ import {
   render as bloomRender,
 } from "@/lib/custom-effects/bloom";
 import { photoPath, resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
+import { useIsDesktop } from "@/lib/use-is-desktop";
 
 /** Soft LQIP ↔ full-image crossfade (mirrors LazyImage). */
 const BLUR_UP_MS = 400;
@@ -123,6 +124,89 @@ function coverDraw(
   const dy = (height - dh) * yAlign;
   ctx.clearRect(0, 0, width, height);
   ctx.drawImage(image, dx, dy, dw, dh);
+}
+
+/** Static photo layer used on mobile (no WebGPU / hover bloom). */
+function BloomStaticImage({
+  src,
+  className,
+  objectPosition = "center",
+  opacity = 1,
+}: {
+  src: string;
+  className?: string;
+  objectPosition?: string;
+  opacity?: number;
+}) {
+  const [imageReady, setImageReady] = useState(false);
+  const [still, setStill] = useState(false);
+  const photo = resolvePhoto(src);
+  const lqip = resolvePhotoLqip(src);
+  const flipTransition = still ? "none" : BLUR_UP_TRANSITION;
+
+  useEffect(() => {
+    setStill(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  useEffect(() => {
+    setImageReady(false);
+  }, [src]);
+
+  return (
+    <>
+      {lqip ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          aria-hidden
+          alt=""
+          src={lqip}
+          className={className}
+          style={{
+            objectPosition,
+            filter: `blur(${BLUR_UP_RADIUS})`,
+            opacity: !imageReady ? opacity : 0,
+            transition: flipTransition,
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        />
+      ) : null}
+      {photo ? (
+        <Image
+          alt=""
+          src={photo}
+          fill
+          placeholder="empty"
+          sizes="100vw"
+          className={className}
+          onLoad={() => setImageReady(true)}
+          style={{
+            objectPosition,
+            opacity: lqip ? (imageReady ? opacity : 0) : opacity,
+            filter: lqip
+              ? imageReady
+                ? "blur(0px)"
+                : `blur(${BLUR_UP_RADIUS})`
+              : undefined,
+            transition: flipTransition,
+          }}
+        />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          alt=""
+          src={src}
+          className={className}
+          style={{
+            objectPosition,
+            opacity,
+          }}
+          decoding="async"
+          onLoad={() => setImageReady(true)}
+        />
+      )}
+    </>
+  );
 }
 
 /**
@@ -487,6 +571,7 @@ export function BloomCard({
   overlay,
   children,
 }: BloomCardProps) {
+  const desktop = useIsDesktop();
   const rootRef = useRef<HTMLDivElement>(null);
   const hoverTarget = useRef(0);
   const hover = useRef(0);
@@ -539,6 +624,16 @@ export function BloomCard({
   ]);
 
   useEffect(() => {
+    // Mobile: static image only — no WebGPU bloom or hover spotlight.
+    if (!desktop) {
+      params.intensity = 0;
+      params.vignetteStrength = 0;
+      params.origin.x = 50;
+      params.origin.y = 50;
+      animateRef.current = false;
+      return;
+    }
+
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       params.intensity = 0;
       params.vignetteStrength = 0;
@@ -614,9 +709,10 @@ export function BloomCard({
       cancelAnimationFrame(frame);
       animateRef.current = false;
     };
-  }, [params, hoverIntensity, vignetteStrength]);
+  }, [desktop, params, hoverIntensity, vignetteStrength]);
 
   function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (!desktop) return;
     const root = rootRef.current;
     if (!root) return;
     hoverTarget.current = 1;
@@ -628,6 +724,7 @@ export function BloomCard({
   }
 
   function onPointerLeave() {
+    if (!desktop) return;
     hoverTarget.current = 0;
     target.current.x = 50;
     target.current.y = 50;
@@ -643,15 +740,24 @@ export function BloomCard({
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute inset-0">
-          <BloomImageLayer
-            src={src}
-            className={imageClassName}
-            objectPosition={objectPosition}
-            opacity={imageOpacity}
-            params={params}
-            animateRef={animateRef}
-            resumeRef={resumeBloomRef}
-          />
+          {desktop ? (
+            <BloomImageLayer
+              src={src}
+              className={imageClassName}
+              objectPosition={objectPosition}
+              opacity={imageOpacity}
+              params={params}
+              animateRef={animateRef}
+              resumeRef={resumeBloomRef}
+            />
+          ) : (
+            <BloomStaticImage
+              src={src}
+              className={imageClassName}
+              objectPosition={objectPosition}
+              opacity={imageOpacity}
+            />
+          )}
         </div>
         {overlay}
       </div>

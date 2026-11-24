@@ -1,17 +1,23 @@
 "use client";
 
 import { useId } from "react";
+import { useIsDesktop } from "@/lib/use-is-desktop";
 
 /**
  * Animated film grain masked by the parent gradient’s ellipse vars
  * (--gx/--gy/--grx/--gry/--core/--mid-at/--fade) so it reads where
  * the wash is most opaque. Seed jumps like TV static. Same green tone as
  * the wash, with crushed luminance so speckles stay visible under color-burn.
+ *
+ * Desktop only — skipped on mobile to save paint/CPU.
  */
 export function GradientNoise({ className = "" }: { className?: string }) {
+  const desktop = useIsDesktop();
   const filterId = `ace-noise-${useId().replace(/:/g, "")}`;
   // Discrete seed cycle — each step is a fresh noise field (TV static).
   const seeds = Array.from({ length: 24 }, (_, i) => i + 1).join(";");
+
+  if (!desktop) return null;
 
   return (
     <svg
