@@ -174,7 +174,7 @@ function FeaturedVisual({ active }: { active: Product }) {
         className="pointer-events-none absolute inset-0 isolate"
         style={{
           backgroundImage:
-            "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(54, 245, 146, 0.55) var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40.385%, rgba(54, 245, 146, 0.4) 100%)",
+            "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(54, 245, 146, var(--core-a)) var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40.385%, rgba(54, 245, 146, var(--wash-a)) 100%)",
           ...gradientFollowVars(featuredGradientFollow),
         }}
       >

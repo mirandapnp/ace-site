@@ -18,6 +18,14 @@ export type GradientFollowConfig = {
   midDrop?: number;
   midAtBoost?: number;
   fadeBoost?: number;
+  /** Resting alpha of the radial core color stop. */
+  coreAlpha?: number;
+  /** Core color alpha at full hover. */
+  coreAlphaHover?: number;
+  /** Resting alpha of the linear wash color stop. */
+  washAlpha?: number;
+  /** Wash color alpha at full hover. */
+  washAlphaHover?: number;
 };
 
 export const heroGradientFollow: GradientFollowConfig = {
@@ -45,6 +53,16 @@ export const featuredGradientFollow: GradientFollowConfig = {
   fade: 100,
   rangeX: 22,
   rangeY: 17,
+  // Hover growth is 15% smaller than the shared defaults (scale 0.03, fade +11).
+  scaleBoost: 0.0255,
+  coreBoost: 0.425,
+  midDrop: 0.136,
+  midAtBoost: 6.8,
+  fadeBoost: 9.35,
+  coreAlpha: 0.55,
+  coreAlphaHover: 0.7,
+  washAlpha: 0.4,
+  washAlphaHover: 0.5,
 };
 
 /** Partner CTA / closing footer — green wash matches Figma radial size & opacity. */
@@ -87,6 +105,12 @@ export function gradientFollowVars(config: GradientFollowConfig) {
     ["--mid" as string]: `${config.mid}`,
     ["--mid-at" as string]: `${config.midAt}%`,
     ["--fade" as string]: `${config.fade}%`,
+    ...(config.coreAlpha != null
+      ? { ["--core-a" as string]: `${config.coreAlpha}` }
+      : {}),
+    ...(config.washAlpha != null
+      ? { ["--wash-a" as string]: `${config.washAlpha}` }
+      : {}),
   };
 }
 
@@ -156,6 +180,20 @@ export function useGradientFollow(
         node.style.setProperty("--gry", `${cfg.gry * scale}%`);
         node.style.setProperty("--core", `${cfg.core + h * (cfg.coreBoost ?? 0.5)}%`);
         node.style.setProperty("--mid", `${cfg.mid - h * (cfg.midDrop ?? 0.16)}`);
+        if (cfg.coreAlpha != null) {
+          const end = cfg.coreAlphaHover ?? cfg.coreAlpha;
+          node.style.setProperty(
+            "--core-a",
+            `${cfg.coreAlpha + h * (end - cfg.coreAlpha)}`,
+          );
+        }
+        if (cfg.washAlpha != null) {
+          const end = cfg.washAlphaHover ?? cfg.washAlpha;
+          node.style.setProperty(
+            "--wash-a",
+            `${cfg.washAlpha + h * (end - cfg.washAlpha)}`,
+          );
+        }
         node.style.setProperty(
           "--mid-at",
           `${cfg.midAt + h * (cfg.midAtBoost ?? 8)}%`,
