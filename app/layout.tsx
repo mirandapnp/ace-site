@@ -26,9 +26,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${gtFlexa.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${gtFlexa.variable} ${geistSans.variable} ${geistMono.variable} h-full bg-black antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col bg-black text-white">
+        {children}
+      </body>
     </html>
   );
 }

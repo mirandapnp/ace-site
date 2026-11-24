@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Site chrome is always black — avoids transform-scale hairlines flashing white. */
+  --background: #000000;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -147,13 +148,6 @@
       font-size: 14px;
       letter-spacing: 0.175px;
     }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
   }
 }
 

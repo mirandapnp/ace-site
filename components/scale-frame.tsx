@@ -155,7 +155,9 @@ export function ScaleFrame({ children }: { children: React.ReactNode }) {
   }, []);
 
   const { frameWidth, scale, vhDesign } = metrics;
-  const layoutHeight = frameHeight > 0 ? frameHeight * scale : undefined;
+  // Ceil so the spacer never undershoots the painted scaled height (hairlines).
+  const layoutHeight =
+    frameHeight > 0 ? Math.ceil(frameHeight * scale) : undefined;
 
   return (
     <div
@@ -189,6 +191,8 @@ export function ScaleFrame({ children }: { children: React.ReactNode }) {
             width: frameWidth,
             transform: `scale(${scale})`,
             transformOrigin: "top left",
+            // Promote a layer so subpixel edges composite cleanly over black.
+            backfaceVisibility: "hidden",
           }}
         >
           {children}
