@@ -253,7 +253,7 @@ function HeroShell({
     return (
       <div
         className="relative w-[1440px]"
-        style={{ height: "min(900px, calc(100dvh / var(--ace-scale, 1)))" }}
+        style={{ height: "min(900px, calc(var(--ace-vh-design, 900) * 1px))" }}
       >
         {children}
       </div>
@@ -263,7 +263,7 @@ function HeroShell({
   return (
     <div
       className="flex flex-col items-center gap-5 px-2.5 pt-2.5"
-      style={{ height: "calc(100dvh / var(--ace-scale, 1))" }}
+      style={{ height: "calc(var(--ace-vh-design, 800) * 1px)" }}
     >
       {children}
     </div>
@@ -346,12 +346,12 @@ export function Hero() {
           {/* Reserve layout before matchMedia so only one hero tree mounts. */}
           <div
             className="hidden w-[1440px] min-[1024px]:block"
-            style={{ height: "min(900px, calc(100dvh / var(--ace-scale, 1)))" }}
+            style={{ height: "min(900px, calc(var(--ace-vh-design, 900) * 1px))" }}
             aria-hidden
           />
           <div
             className="min-[1024px]:hidden"
-            style={{ height: "calc(100dvh / var(--ace-scale, 1))" }}
+            style={{ height: "calc(var(--ace-vh-design, 800) * 1px)" }}
             aria-hidden
           />
         </>

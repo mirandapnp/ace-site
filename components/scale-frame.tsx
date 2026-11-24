@@ -10,19 +10,27 @@ function frameForViewport() {
   return window.matchMedia(DESKTOP_MQ).matches ? DESKTOP_FRAME : MOBILE_FRAME;
 }
 
+function viewportSize() {
+  const visual = window.visualViewport;
+  return {
+    width: visual?.width ?? window.innerWidth,
+    height: visual?.height ?? window.innerHeight,
+  };
+}
+
 /**
  * Locks the page to a fixed design width (412 / 1440) and scales it to the
  * viewport with CSS `zoom` driven by a plain number from ResizeObserver.
  *
- * Safari is unreliable with `zoom: calc(...cqw...)`, so the scale factor is
- * measured in JS and applied as a unitless number. Custom properties
- * `--ace-scale` and `--ace-frame-width` are published for design-space math
- * (e.g. hero heights that need to fill 100dvh after zoom).
+ * Safari is unreliable with `zoom: calc(...cqw...)` and with `dvh` inside a
+ * zoomed subtree, so scale + design-space viewport height are measured in JS
+ * and published as unitless custom properties for layout math.
  */
 export function ScaleFrame({ children }: { children: React.ReactNode }) {
   const shellRef = useRef<HTMLDivElement>(null);
   const [frameWidth, setFrameWidth] = useState(DESKTOP_FRAME);
   const [scale, setScale] = useState(1);
+  const [vhDesign, setVhDesign] = useState(900);
 
   useLayoutEffect(() => {
     const shell = shellRef.current;
@@ -32,17 +40,29 @@ export function ScaleFrame({ children }: { children: React.ReactNode }) {
 
     const sync = () => {
       const frame = frameForViewport();
-      const width = shell.clientWidth;
+      // Prefer the shell’s content box for width (excludes scrollbars reliably).
+      const width = shell.clientWidth || viewportSize().width;
+      const { height } = viewportSize();
+      const nextScale = width > 0 ? width / frame : 1;
       setFrameWidth(frame);
-      if (width > 0) setScale(width / frame);
+      setScale(nextScale);
+      // Design-space px that map to 100vh after zoom (avoids Safari dvh+zoom bugs).
+      if (nextScale > 0) setVhDesign(height / nextScale);
     };
 
     sync();
     media.addEventListener("change", sync);
+    window.addEventListener("resize", sync);
+    const visual = window.visualViewport;
+    visual?.addEventListener("resize", sync);
+    visual?.addEventListener("scroll", sync);
     const observer = new ResizeObserver(sync);
     observer.observe(shell);
     return () => {
       media.removeEventListener("change", sync);
+      window.removeEventListener("resize", sync);
+      visual?.removeEventListener("resize", sync);
+      visual?.removeEventListener("scroll", sync);
       observer.disconnect();
     };
   }, []);
@@ -55,6 +75,8 @@ export function ScaleFrame({ children }: { children: React.ReactNode }) {
         {
           ["--ace-frame-width" as string]: frameWidth,
           ["--ace-scale" as string]: scale,
+          // Unitless design-space px ≈ 100vh after zoom.
+          ["--ace-vh-design" as string]: vhDesign,
         } as CSSProperties
       }
     >
