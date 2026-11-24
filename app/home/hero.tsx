@@ -16,7 +16,6 @@ import {
 } from "@/lib/use-gradient-follow";
 
 const DESKTOP_MQ = "(min-width: 1024px)";
-const MACHINE_WIDTH = 1.4;
 
 /** Desktop hero card design height — below this, copy centers vertically. */
 const DESKTOP_CARD_H = 860;
@@ -32,6 +31,22 @@ const MACHINE_FRAME = {
   height: 682,
 } as const;
 
+/**
+ * Shared mobile machine slot — Figma "Frame 13" in the 392 card.
+ * Same position across slides; each slide only swaps center/width of the art.
+ * Height is intrinsic (aspect preserved); Frame 13 clips the overflow.
+ */
+const MOBILE_MACHINE_FRAME = {
+  width: 372,
+  height: 408.8399963378906,
+} as const;
+
+/** Cold Trigger mobile: 140% wide, centered in Frame 13. */
+const MOBILE_ART_COLD_TRIGGER = {
+  center: MOBILE_MACHINE_FRAME.width / 2,
+  width: MOBILE_MACHINE_FRAME.width * 1.4,
+} as const;
+
 type MachineArt = {
   /** Offset of the art within MACHINE_FRAME (Figma image layer). */
   left: number;
@@ -45,6 +60,13 @@ type MachineArt = {
   visualCenter: number;
 };
 
+/** Horizontal art placement within MOBILE_MACHINE_FRAME. Height follows image aspect. */
+type MobileMachineArt = {
+  /** X of the art’s horizontal center within Frame 13 (Figma coords). */
+  center: number;
+  width: number;
+};
+
 type HeroSlide = {
   label: string;
   title: string;
@@ -54,6 +76,8 @@ type HeroSlide = {
   /** Radial bloom tint over the backdrop video. */
   bloom: string;
   art: MachineArt;
+  /** Placement within shared mobile Frame 13. */
+  mobileArt: MobileMachineArt;
 };
 
 const slides: readonly HeroSlide[] = [
@@ -72,6 +96,7 @@ const slides: readonly HeroSlide[] = [
       height: 1014.01,
       visualCenter: 0.68,
     },
+    mobileArt: MOBILE_ART_COLD_TRIGGER,
   },
   {
     label: "02",
@@ -87,6 +112,11 @@ const slides: readonly HeroSlide[] = [
       width: 779.4738159179688,
       height: 877.4951171875,
       visualCenter: 0.5,
+    },
+    // Figma 1058:8845 inside mobile Frame 13 (1058:8825).
+    mobileArt: {
+      center: -13.981531143188477 + 399.9631652832031 / 2,
+      width: 399.9631652832031,
     },
   },
   {
@@ -104,6 +134,7 @@ const slides: readonly HeroSlide[] = [
       height: 1014.01,
       visualCenter: 0.68,
     },
+    mobileArt: MOBILE_ART_COLD_TRIGGER,
   },
 ];
 
@@ -286,10 +317,19 @@ function HeroPager({
   );
 }
 
-function MobileMachineSlot({ src }: { src: string }) {
+function MobileMachineSlot({
+  src,
+  art,
+}: {
+  src: string;
+  art: MobileMachineArt;
+}) {
   const slotRef = useRef<HTMLDivElement>(null);
   const imgWrapRef = useRef<HTMLDivElement>(null);
   const [roomy, setRoomy] = useState(false);
+  const widthFrac = art.width / MOBILE_MACHINE_FRAME.width;
+  const leftFrac =
+    (art.center - art.width / 2) / MOBILE_MACHINE_FRAME.width;
 
   useEffect(() => {
     const slot = slotRef.current;
@@ -299,9 +339,10 @@ function MobileMachineSlot({ src }: { src: string }) {
     const sync = () => {
       const img = wrap.querySelector("img");
       if (!img || img.naturalWidth === 0) return;
+      // Width is a fraction of Frame 13; height follows image aspect.
       const displayHeight =
-        (slot.clientWidth * MACHINE_WIDTH * img.naturalHeight) / img.naturalWidth;
-      // Full machine visible → even space above/below; otherwise keep 20px and crop.
+        (slot.clientWidth * widthFrac * img.naturalHeight) / img.naturalWidth;
+      // Full machine visible → center vertically; otherwise pin top and clip base.
       setRoomy(displayHeight <= slot.clientHeight + 0.5);
     };
 
@@ -314,7 +355,7 @@ function MobileMachineSlot({ src }: { src: string }) {
       img?.removeEventListener("load", sync);
       observer.disconnect();
     };
-  }, [src]);
+  }, [src, widthFrac]);
 
   return (
     <div
@@ -322,17 +363,23 @@ function MobileMachineSlot({ src }: { src: string }) {
       className={
         roomy
           ? "relative z-10 flex min-h-0 w-full flex-1 flex-col justify-evenly overflow-hidden"
-          : "relative z-10 flex min-h-0 w-full flex-1 flex-col justify-start overflow-hidden pt-5"
+          : "relative z-10 flex min-h-0 w-full flex-1 flex-col justify-start overflow-hidden"
       }
     >
-      <div ref={imgWrapRef} className="w-full shrink-0">
+      <div
+        ref={imgWrapRef}
+        className="shrink-0 [&_span]:block [&_span]:w-full [&_span]:max-w-none"
+        style={{
+          width: `${widthFrac * 100}%`,
+          marginLeft: `${leftFrac * 100}%`,
+        }}
+      >
         <LazyImage
           key={src}
           priority
           alt=""
           src={src}
-          className="pointer-events-none block h-auto w-[140%] max-w-none -translate-x-[14.3%]"
-          // 140% of the 412 design frame → scales with ScaleFrame.
+          className="pointer-events-none block h-auto w-full max-w-none"
           sizes="(max-width: 1023px) 140vw, 71vw"
           quality={90}
           loadedFilter={MACHINE_SHADOW}
@@ -565,7 +612,7 @@ export function Hero() {
               </PrimaryButton>
             </div>
 
-            <MobileMachineSlot src={slide.machine} />
+            <MobileMachineSlot src={slide.machine} art={slide.mobileArt} />
           </HeroBackdrop>
 
           <HeroPager active={active} onSelect={setActive} orientation="horizontal" />
