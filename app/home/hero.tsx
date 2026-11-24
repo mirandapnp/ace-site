@@ -598,7 +598,7 @@ export function Hero() {
             bloom={slide.bloom}
             video={slide.video}
             gradientConfig={mobileHeroGradientFollow}
-            className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden rounded-[16px] pt-2.5"
+            className="relative flex min-h-0 w-full flex-1 flex-col gap-10 overflow-hidden rounded-[16px] pt-2.5"
           >
             <div className="relative z-10 flex w-full shrink-0 flex-col gap-5 px-2.5 pt-10">
               <HeroCopy
