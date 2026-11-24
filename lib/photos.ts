@@ -14,6 +14,7 @@ import galaxyRangers from "../public/ace/galaxy-rangers.webp";
 import hoopHustle from "../public/ace/hoop-hustle.webp";
 import jetSkiRacer from "../public/ace/jet-ski-racer.webp";
 import machine from "../public/ace/machine.webp";
+import machineThunderJets from "../public/ace/machine-thunder-jets.webp";
 import medalMaster from "../public/ace/medal-master.webp";
 import network from "../public/ace/network.webp";
 import newsGuangzhouArcade from "../public/ace/news-guangzhou-arcade.webp";
@@ -44,6 +45,7 @@ export const photos = {
   "/ace/hoop-hustle.webp": hoopHustle,
   "/ace/jet-ski-racer.webp": jetSkiRacer,
   "/ace/machine.webp": machine,
+  "/ace/machine-thunder-jets.webp": machineThunderJets,
   "/ace/medal-master.webp": medalMaster,
   "/ace/network.webp": network,
   "/ace/news-guangzhou-arcade.webp": newsGuangzhouArcade,

@@ -27,6 +27,7 @@ const keys = [
   "hoop-hustle",
   "jet-ski-racer",
   "machine",
+  "machine-thunder-jets",
   "medal-master",
   "network",
   "news-guangzhou-arcade",
