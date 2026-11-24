@@ -382,7 +382,6 @@ function MobileMachineSlot({
           className="pointer-events-none block h-auto w-full max-w-none"
           sizes="(max-width: 1023px) 140vw, 71vw"
           quality={90}
-          loadedFilter={MACHINE_SHADOW}
         />
       </div>
     </div>
