@@ -233,6 +233,8 @@ function MobileMachineSlot() {
 export function Hero() {
   const [active, setActive] = useState(0);
   const [desktopCompact, setDesktopCompact] = useState(false);
+  const [compactMachineLeft, setCompactMachineLeft] = useState<number | null>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
   const desktopGlow = useGradientFollow(heroGradientFollow);
   const mobileGlow = useGradientFollow(mobileHeroGradientFollow);
 
@@ -241,13 +243,44 @@ export function Hero() {
     if (!card) return;
 
     const sync = () => {
-      setDesktopCompact(card.clientHeight < DESKTOP_CARD_H - 0.5);
+      const compact = card.clientHeight < DESKTOP_CARD_H - 0.5;
+      setDesktopCompact(compact);
+      const copy = copyRef.current;
+      if (!compact || !copy) {
+        setCompactMachineLeft(null);
+        return;
+      }
+      // Center on the rendered words, not the wider copy box.
+      const range = document.createRange();
+      let edge = 0;
+      copy.querySelectorAll("h1, p").forEach((node) => {
+        range.selectNodeContents(node);
+        edge = Math.max(edge, range.getBoundingClientRect().right);
+      });
+      const cardBox = card.getBoundingClientRect();
+      // The page is CSS-zoomed to the viewport, so rects and layout px differ.
+      const scale = cardBox.width / card.clientWidth || 1;
+      const copyRight = (edge - cardBox.left) / scale;
+      const machineW = card.clientHeight * (1014.01 / DESKTOP_CARD_H);
+      // Cabinet art (marquee/screen) sits right of the square, so center that mass.
+      const visualCenter = 0.68;
+      const boxLeft = copyRight + (card.clientWidth - copyRight - machineW) / 2;
+      setCompactMachineLeft(boxLeft + (0.5 - visualCenter) * machineW);
     };
 
     sync();
     const observer = new ResizeObserver(sync);
     observer.observe(card);
-    return () => observer.disconnect();
+    const copy = copyRef.current;
+    if (copy) observer.observe(copy);
+    let cancelled = false;
+    document.fonts?.ready.then(() => {
+      if (!cancelled) sync();
+    });
+    return () => {
+      cancelled = true;
+      observer.disconnect();
+    };
   }, [desktopGlow.cardRef]);
 
   return (
@@ -267,12 +300,21 @@ export function Hero() {
           <div
             aria-hidden
             className="pointer-events-none absolute"
-            style={{
-              right: DESKTOP_MACHINE.right,
-              top: `${DESKTOP_MACHINE.topPct}%`,
-              height: `${DESKTOP_MACHINE.sizePct}%`,
-              aspectRatio: "1 / 1",
-            }}
+            style={
+              desktopCompact && compactMachineLeft != null
+                ? {
+                    left: compactMachineLeft,
+                    top: `${DESKTOP_MACHINE.topPct}%`,
+                    height: `${DESKTOP_MACHINE.sizePct}%`,
+                    aspectRatio: "1 / 1",
+                  }
+                : {
+                    right: DESKTOP_MACHINE.right,
+                    top: `${DESKTOP_MACHINE.topPct}%`,
+                    height: `${DESKTOP_MACHINE.sizePct}%`,
+                    aspectRatio: "1 / 1",
+                  }
+            }
           >
             <LazyImage
               priority
@@ -283,6 +325,7 @@ export function Hero() {
           </div>
 
           <div
+            ref={copyRef}
             className={
               desktopCompact
                 ? "absolute top-1/2 left-0 z-10 flex w-[664.711px] -translate-y-1/2 flex-col gap-10 px-5"
