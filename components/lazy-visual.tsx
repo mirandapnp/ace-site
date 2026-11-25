@@ -82,12 +82,14 @@ function SoftBlurUp({
   blurDataURL,
   ready,
   snap,
+  radius,
   className,
   style,
 }: {
   blurDataURL: string;
   ready: boolean;
   snap: boolean;
+  radius: string;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -100,7 +102,7 @@ function SoftBlurUp({
       className={className}
       style={{
         ...style,
-        filter: `blur(${BLUR_UP_RADIUS})`,
+        filter: `blur(${radius})`,
         opacity: ready ? 0 : 1,
         transition: snap ? "none" : BLUR_UP_TRANSITION,
         pointerEvents: "none",
@@ -122,6 +124,7 @@ export function LazyImage({
   width,
   height,
   quality,
+  blurUpRadius = BLUR_UP_RADIUS,
   style,
 }: {
   src: string;
@@ -137,6 +140,8 @@ export function LazyImage({
   height?: number;
   /** next/image encode quality (1–100). Default 75. */
   quality?: number;
+  /** Chrome LQIP blur radius (Safari snaps). Default 36px. */
+  blurUpRadius?: string;
   style?: CSSProperties;
 }) {
   const photo = resolvePhoto(src);
@@ -155,7 +160,7 @@ export function LazyImage({
   const imageFilter = hasBlurUp
     ? ready
       ? `blur(0px)${restFilter ? ` ${restFilter}` : ""}`
-      : `blur(${BLUR_UP_RADIUS})`
+      : `blur(${blurUpRadius})`
     : restFilter;
 
   const shared = {
@@ -185,6 +190,7 @@ export function LazyImage({
         blurDataURL={lqip}
         ready={ready}
         snap={snapBlur}
+        radius={blurUpRadius}
         className={
           fill
             ? `absolute inset-0 size-full max-w-none ${objectFit}`

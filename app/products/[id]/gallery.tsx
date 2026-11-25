@@ -10,6 +10,8 @@ const controlClass =
 /** Approximate BeUI SPRING_LAYOUT (stiffness 360 / damping 32). */
 const zoomTransition =
   "transform 420ms cubic-bezier(0.22, 1, 0.36, 1)";
+/** Softer Chrome LQIP blur-up than the default 36px (Safari snaps). */
+const galleryBlurUp = "14px";
 
 export function ProductGallery({
   name,
@@ -39,6 +41,7 @@ export function ProductGallery({
           className="object-contain"
           sizes="(max-width: 1023px) 90vw, 746px"
           quality={90}
+          blurUpRadius={galleryBlurUp}
         />
       </button>
 
@@ -70,6 +73,7 @@ export function ProductGallery({
                   src={src}
                   className="object-cover"
                   sizes="60px"
+                  blurUpRadius={galleryBlurUp}
                 />
               </button>
             );
@@ -554,6 +558,7 @@ function LightboxFrame({
                 className="pointer-events-none object-contain select-none"
                 sizes="(max-width: 1023px) 100vw, 1120px"
                 quality={90}
+                blurUpRadius={galleryBlurUp}
               />
             </div>
           </div>
