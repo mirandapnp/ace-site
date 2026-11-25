@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { LazyImage, LazyVideo } from "@/components/lazy-visual";
 import { Marquee } from "@/components/marquee";
 import { PageNumber } from "@/components/page-number";
@@ -18,6 +18,53 @@ import {
 const DESKTOP_MQ = "(min-width: 1024px)";
 /** Auto-advance hero slides. */
 const HERO_AUTO_MS = 10_000;
+const HERO_MACHINE_ENTER_MS = 650;
+const HERO_ENTER_EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+/**
+ * Slide-enter: machine fade-up. Resets on each slide key.
+ * `ready` waits until desktop/mobile layout has mounted (after matchMedia).
+ */
+function useHeroSlideEnter(slideKey: string, ready: boolean) {
+  const [machineIn, setMachineIn] = useState(false);
+
+  useEffect(() => {
+    if (!ready) {
+      setMachineIn(false);
+      return;
+    }
+
+    setMachineIn(false);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMachineIn(true);
+      return;
+    }
+
+    // Double rAF so the hidden frame paints before we transition in.
+    let raf2 = 0;
+    const raf1 = window.requestAnimationFrame(() => {
+      raf2 = window.requestAnimationFrame(() => {
+        setMachineIn(true);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(raf1);
+      window.cancelAnimationFrame(raf2);
+    };
+  }, [slideKey, ready]);
+
+  const machineStyle = {
+    opacity: machineIn ? 1 : 0,
+    transform: machineIn ? "translateY(0)" : "translateY(100px)",
+    transition: machineIn
+      ? `opacity ${HERO_MACHINE_ENTER_MS}ms ${HERO_ENTER_EASE}, transform ${HERO_MACHINE_ENTER_MS}ms ${HERO_ENTER_EASE}`
+      : "none",
+  } satisfies CSSProperties;
+
+  return { machineStyle };
+}
 
 /** Desktop hero card design height — below this, copy centers vertically. */
 const DESKTOP_CARD_H = 860;
@@ -162,14 +209,12 @@ function HeroCopy({
   titleClassName = "",
   bodyClassName,
   align = "left",
-  typeKey,
 }: {
   title: string;
   body: string;
   titleClassName?: string;
   bodyClassName?: string;
   align?: "left" | "center";
-  typeKey: string;
 }) {
   const centered = align === "center";
 
@@ -181,7 +226,6 @@ function HeroCopy({
         className={`flex flex-col gap-2 min-[1024px]:gap-4 ${centered ? "items-center" : ""}`}
       >
         <TypeIn
-          key={typeKey}
           text="The Latest Games"
           className={`font-mono text-[14px] leading-[1.25] font-[475] tracking-[0.07px] text-[#fff645] uppercase [text-shadow:0px_3px_14px_rgba(0,0,0,0.5)] ${centered ? "text-center" : ""}`}
         />
@@ -309,9 +353,11 @@ function HeroPager({
 function MobileMachineSlot({
   src,
   art,
+  enterStyle,
 }: {
   src: string;
   art: MobileMachineArt;
+  enterStyle: CSSProperties;
 }) {
   const slotRef = useRef<HTMLDivElement>(null);
   const imgWrapRef = useRef<HTMLDivElement>(null);
@@ -361,6 +407,7 @@ function MobileMachineSlot({
         style={{
           width: `${widthFrac * 100}%`,
           marginLeft: `${leftFrac * 100}%`,
+          ...enterStyle,
         }}
       >
         <LazyImage
@@ -416,6 +463,7 @@ export function Hero() {
   );
   const slide = slides[active] ?? slides[0];
   const art = slide.art;
+  const enter = useHeroSlideEnter(slide.label, desktop !== null);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(DESKTOP_MQ);
@@ -544,6 +592,7 @@ export function Hero() {
                   top: `${(art.top / MACHINE_FRAME.height) * 100}%`,
                   width: `${(art.width / MACHINE_FRAME.width) * 100}%`,
                   height: `${(art.height / MACHINE_FRAME.height) * 100}%`,
+                  ...enter.machineStyle,
                 }}
               >
                 <LazyImage
@@ -569,7 +618,6 @@ export function Hero() {
               }
             >
               <HeroCopy
-                typeKey={slide.label}
                 title={slide.title}
                 body={slide.body}
                 titleClassName="w-[624.711px]"
@@ -599,7 +647,6 @@ export function Hero() {
           >
             <div className="relative z-10 flex w-full shrink-0 flex-col gap-5 px-2.5 pt-10">
               <HeroCopy
-                typeKey={slide.label}
                 title={slide.title}
                 body={slide.body}
                 align="center"
@@ -612,6 +659,7 @@ export function Hero() {
             <MobileMachineSlot
               src={slide.mobileMachine ?? slide.machine}
               art={slide.mobileArt}
+              enterStyle={enter.machineStyle}
             />
           </HeroBackdrop>
 
