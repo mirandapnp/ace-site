@@ -3,7 +3,7 @@ import { media } from "@/lib/media";
 
 /** Integer 15px line box — Safari floors fractional leading under zoom. */
 const labelClass =
-  "font-mono text-[12px] leading-[15px] font-[525] tracking-[0.78px] uppercase";
+  "font-mono text-[12px] leading-[15px] font-[525] tracking-[0.78px] uppercase whitespace-nowrap";
 
 /**
  * Figma secondary: py-12 + 15px type → 39px hug. Does not stretch by default —
@@ -113,22 +113,18 @@ export function SecondaryButton({
         <a
           href={href}
           {...linkProps}
-          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border border-[#fff645] bg-[#fff645] ${layout}`}
+          className={`group relative box-border inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border border-[#fff645] bg-[#fff645] ${layout}`}
         >
-          <span className={face}>
+          {/* Label stays put — hover only sweeps the muted fill (same type/arrow). */}
+          <span className={`relative z-10 ${face}`}>
             <Label textClass="text-black" arrowSrc={blackArrow} arrow={arrow}>
               {children}
             </Label>
           </span>
-          {/* Hover: muted yellow #f0e62d, black type/arrow. */}
           <span
             aria-hidden
-            className={`${hoverFace} -inset-px rounded-[8px] border border-[#f0e62d] bg-[#f0e62d]`}
-          >
-            <Label textClass="text-black" arrowSrc={blackArrow} arrow={arrow}>
-              {children}
-            </Label>
-          </span>
+            className="ace-sweep-in pointer-events-none absolute -inset-px rounded-[8px] border border-[#f0e62d] bg-[#f0e62d]"
+          />
         </a>
       </>
     );
