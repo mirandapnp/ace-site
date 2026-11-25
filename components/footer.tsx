@@ -42,9 +42,9 @@ const socials = [
 export function Footer() {
   return (
     <footer className="w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:py-5">
-      <div className="flex w-full flex-col items-center gap-[60px] rounded-[16px] bg-[rgba(78,78,78,0.5)] px-2.5 pt-10 pb-5 min-[1024px]:gap-[120px] min-[1024px]:px-5 min-[1024px]:pt-[60px]">
-        <div className="flex w-full flex-col gap-5 min-[1024px]:flex-row min-[1024px]:items-start min-[1024px]:justify-between min-[1024px]:gap-0">
-          <div className="flex w-full justify-between gap-5 min-[1024px]:contents">
+      <div className="flex w-full flex-col items-center gap-20 rounded-[16px] bg-[rgba(78,78,78,0.5)] px-2.5 pt-10 pb-5 min-[1024px]:gap-[120px] min-[1024px]:px-5 min-[1024px]:pt-[60px]">
+        <div className="flex w-full flex-col gap-10 min-[1024px]:flex-row min-[1024px]:items-start min-[1024px]:justify-between min-[1024px]:gap-0">
+          <div className="flex w-full gap-20 min-[1024px]:contents">
             <div className="flex flex-col gap-5">
               <p className={headingClass}>Quick Links</p>
               <nav aria-label="Footer" className="flex flex-col gap-2">
@@ -80,17 +80,15 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-5 min-[1024px]:gap-6">
+          <div className="flex flex-col gap-6">
             <p className={headingClass}>Address</p>
             <p className={`${linkClass} text-pretty min-[1024px]:whitespace-pre-line`}>
               {`No. 22, Shagang East Road, Gankou Town,\nZhongshan City, Guangdong Province, China\n528447`}
             </p>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <p className="font-mono text-[12px] leading-[1.25] font-[525] tracking-[0.78px] text-[rgba(215,215,215,0.75)] uppercase">
-              Social
-            </p>
+          <div className="flex flex-col gap-5">
+            <p className={headingClass}>Social</p>
             <div className="flex gap-2.5">
               {socials.map((social) => (
                 <a
@@ -120,9 +118,9 @@ export function Footer() {
           </a>
 
           <div
-            className={`flex w-full flex-col items-center gap-2 text-center min-[1024px]:flex-row min-[1024px]:justify-between min-[1024px]:gap-0 min-[1024px]:text-left ${fineClass}`}
+            className={`flex w-full flex-col items-center gap-5 text-center min-[1024px]:flex-row min-[1024px]:justify-between min-[1024px]:gap-0 min-[1024px]:text-left ${fineClass}`}
           >
-            <div className="flex flex-col items-center gap-2 min-[1024px]:flex-row min-[1024px]:gap-10">
+            <div className="flex items-center gap-5 min-[1024px]:gap-10">
               <a href="#terms">Terms and Conditions</a>
               <a href="#privacy">Privacy Policy</a>
             </div>
