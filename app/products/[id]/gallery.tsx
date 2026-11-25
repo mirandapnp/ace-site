@@ -25,11 +25,11 @@ export function ProductGallery({
   const current = images[active] ?? images[0];
 
   return (
-    <div className="relative flex aspect-square w-full flex-col items-center justify-center overflow-hidden rounded-[16px] bg-white p-2.5 min-[1024px]:p-5">
+    <div className="relative flex w-full flex-col items-center gap-5 overflow-hidden rounded-[16px] bg-white pt-5 pb-2.5 min-[1024px]:aspect-square min-[1024px]:justify-center min-[1024px]:gap-0 min-[1024px]:p-5">
       <button
         type="button"
         onClick={() => setLightbox(true)}
-        className="relative h-[90%] w-[90%] cursor-zoom-in"
+        className="relative aspect-square w-full cursor-zoom-in min-[1024px]:h-[90%] min-[1024px]:w-[90%] min-[1024px]:aspect-auto"
         aria-label={`View larger photo of ${name}`}
       >
         <LazyImage
@@ -39,7 +39,7 @@ export function ProductGallery({
           alt={name}
           src={current}
           className="object-contain"
-          sizes="(max-width: 1023px) 90vw, 746px"
+          sizes="(max-width: 1023px) 100vw, 746px"
           quality={90}
           blurUpRadius={galleryBlurUp}
         />
@@ -47,7 +47,7 @@ export function ProductGallery({
 
       {images.length > 1 ? (
         <div
-          className="absolute bottom-0 left-0 flex flex-col gap-5 p-5"
+          className="flex w-full gap-5 px-2.5 min-[1024px]:absolute min-[1024px]:bottom-0 min-[1024px]:left-0 min-[1024px]:w-auto min-[1024px]:flex-col min-[1024px]:p-5"
           role="tablist"
           aria-label={`${name} photos`}
         >
@@ -61,7 +61,7 @@ export function ProductGallery({
                 aria-selected={selected}
                 aria-label={`Photo ${index + 1}`}
                 onClick={() => setActive(index)}
-                className={`relative size-[60px] overflow-hidden rounded-[8px] bg-white transition-[filter,opacity] duration-300 ease-out motion-reduce:transition-none ${
+                className={`relative size-[60px] shrink-0 overflow-hidden rounded-[8px] bg-white transition-[filter,opacity] duration-300 ease-out motion-reduce:transition-none ${
                   selected
                     ? "opacity-100 grayscale-0"
                     : "opacity-50 grayscale hover:opacity-80"

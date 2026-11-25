@@ -9,9 +9,13 @@ const variant = instance.getEnum("variant", {
   kid: "kid",
   new: "new",
 });
+const size = instance.getEnum("size", {
+  desktop: "desktop",
+  mobile: "mobile",
+});
 
 export default {
-  example: figma.code`<LabelBadge variant="${variant}" />`,
+  example: figma.code`<LabelBadge variant="${variant}" size="${size}" />`,
   imports: ['import { LabelBadge } from "@/components/label-badge"'],
   id: "label-badge",
   metadata: { nestable: true },

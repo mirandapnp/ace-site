@@ -64,7 +64,7 @@ async function ProductListing({
       <Header />
       <ScaleFrame>
         <main className="flex w-[412px] flex-col min-[1024px]:w-[1440px]">
-          <div className="flex flex-col gap-10 px-2.5 pt-20 pb-2.5 min-[1024px]:gap-20 min-[1024px]:px-5 min-[1024px]:pb-5">
+          <div className="flex flex-col gap-5 px-2.5 pt-20 pb-2.5 min-[1024px]:gap-20 min-[1024px]:px-5 min-[1024px]:pb-5">
             <div className="flex flex-col gap-2.5 min-[1024px]:grid min-[1024px]:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] min-[1024px]:gap-5">
               <ProductGallery name={product.name} images={gallery} />
               <ProductSpecs product={product} />

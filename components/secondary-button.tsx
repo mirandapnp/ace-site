@@ -7,9 +7,10 @@ const labelClass =
 
 /**
  * Figma secondary: py-12 + 15px type → 39px hug. Does not stretch by default —
- * parents that pair it with PrimaryButton should set `h-full` on the link
- * (e.g. `[&>a]:h-full`). Wide (`w-full`) uses space-between like the listing
- * Actions instance.
+ * parents that pair it with PrimaryButton should stretch the link (`h-full` /
+ * `[&>a]:h-full` in a shared row). When that pair stacks on mobile, set
+ * `h-[52px]` so it matches PrimaryButton. Wide (`w-full`) uses space-between
+ * like the listing Actions instance.
  */
 function faceClass(wide: boolean) {
   return wide
@@ -76,7 +77,7 @@ export function SecondaryButton({
         <a
           href={href}
           {...linkProps}
-          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border ${onLight ? "border-black" : "border-white hover:border-[#fff645]"} ${layout}`}
+          className={`group relative box-border inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border ${onLight ? "border-black" : "border-white hover:border-[#fff645]"} ${layout}`}
         >
           <span className={face}>
             <Label

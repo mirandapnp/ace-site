@@ -9,7 +9,10 @@ export function RelatedProducts({ product }: { product: Product }) {
   if (related.length === 0) return null;
 
   return (
-    <section className="flex flex-col gap-10" aria-labelledby="related-heading">
+    <section
+      className="flex flex-col gap-5 min-[1024px]:gap-10"
+      aria-labelledby="related-heading"
+    >
       <style>{productCardSweepStyles}</style>
       <h2 id="related-heading" className="type-h4 max-w-[620px] text-white capitalize">
         Related Products
