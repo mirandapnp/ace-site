@@ -198,9 +198,27 @@ export function productSpecRows(product: Product): { label: string; value: strin
   return rows;
 }
 
+function shuffleProducts(items: readonly Product[]): Product[] {
+  const next = [...items];
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const swap = next[i]!;
+    next[i] = next[j]!;
+    next[j] = swap;
+  }
+  return next;
+}
+
+/** Explicit `relatedIds`, or four other products at random when none are set. */
 export function relatedProducts(product: Product): Product[] {
   const ids = product.relatedIds ?? [];
-  return ids
+  const selected = ids
     .map((id) => byId.get(id))
-    .filter((item): item is Product => Boolean(item));
+    .filter((item): item is Product => Boolean(item) && item.id !== product.id);
+  if (selected.length > 0) return selected;
+
+  return shuffleProducts(products.filter((item) => item.id !== product.id)).slice(
+    0,
+    4,
+  );
 }
