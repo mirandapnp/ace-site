@@ -38,9 +38,7 @@ export const aceSafariFadeStyles = `
   mask: none !important;
   /* Keep a hair above 0 — Safari often skips opacity transitions from 0. */
   transition: opacity 200ms ease-out !important;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform: translateZ(0);
+  /* No translateZ — Safari reorders composited layers over label text after scroll. */
 }
 :root[data-safari] .ace-sweep-in,
 :root[data-safari] .ace-card-sweep:not(.ace-card-fade),

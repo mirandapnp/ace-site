@@ -129,8 +129,12 @@ export function SecondaryButton({
           href={href} {...linkProps}
           className={`group relative inline-flex overflow-hidden rounded-[8px] border border-[#fff645] bg-[rgba(255,246,69,0.75)] ${layout}`}
         >
-          <span aria-hidden className="ace-sweep-out pointer-events-none absolute inset-0 bg-[#fff645]" />
-          <span className={faceClass}>
+          {/* z-0 keeps the fill under the label — Safari scroll can otherwise stack it on top. */}
+          <span
+            aria-hidden
+            className="ace-sweep-out pointer-events-none absolute inset-0 z-0 bg-[#fff645]"
+          />
+          <span className={`${faceClass} z-10`}>
             <Label textClass="text-black" arrowSrc={blackArrow} arrow={arrow}>
               {children}
             </Label>
