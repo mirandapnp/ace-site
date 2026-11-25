@@ -76,7 +76,7 @@ export function SecondaryButton({
         <a
           href={href}
           {...linkProps}
-          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border ${onLight ? "border-black" : "border-white"} ${layout}`}
+          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border ${onLight ? "border-black" : "border-white hover:border-[#fff645]"} ${layout}`}
         >
           <span className={face}>
             <Label
@@ -87,14 +87,14 @@ export function SecondaryButton({
               {children}
             </Label>
           </span>
-          {/* Hover: fill opposite of outline — black on light, white on dark. */}
+          {/* Hover: black fill + white type on light outline; yellow type only on white outline. */}
           <span
             aria-hidden
-            className={`${hoverFace} ${onLight ? "bg-black" : "bg-white"}`}
+            className={`${hoverFace}${onLight ? " bg-black" : ""}`}
           >
             <Label
-              textClass={onLight ? "text-white" : "text-black"}
-              arrowSrc={onLight ? whiteArrow : blackArrow}
+              textClass={onLight ? "text-white" : "text-[#fff645]"}
+              arrowSrc={onLight ? whiteArrow : yellowArrow}
               arrow={arrow}
             >
               {children}
