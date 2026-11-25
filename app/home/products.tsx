@@ -9,7 +9,13 @@ import {
   productCardSweepStyles,
 } from "@/components/product-card";
 import { SecondaryButton } from "@/components/secondary-button";
-import { catalogProducts, featuredProducts, productPath, type Product } from "@/content/products";
+import {
+  catalogProducts,
+  featuredProducts,
+  productPath,
+  sortProductsByBadge,
+  type Product,
+} from "@/content/products";
 import {
   featuredGradientFollow,
   gradientFollowVars,
@@ -287,7 +293,7 @@ export function Products() {
       </div>
 
       <ul className="mt-2.5 grid grid-cols-2 gap-1 min-[1024px]:mt-10 min-[1024px]:grid-cols-4 min-[1024px]:gap-5">
-        {catalogProducts.map((product) => (
+        {sortProductsByBadge(catalogProducts).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </ul>

@@ -7,6 +7,7 @@ import { PageNumber } from "@/components/page-number";
 import { PrimaryButton } from "@/components/primary-button";
 import { GradientNoise } from "@/components/gradient-noise";
 import { TypeIn } from "@/components/type-in";
+import { productPathByName } from "@/content/products";
 import { media } from "@/lib/media";
 import {
   gradientFollowVars,
@@ -646,7 +647,10 @@ export function Hero() {
                 titleClassName="w-[624.711px]"
                 bodyClassName="max-w-[420px]"
               />
-              <PrimaryButton href="#products" color="gray">
+              <PrimaryButton
+                href={productPathByName(slide.title) ?? "#products"}
+                color="gray"
+              >
                 View Machine
               </PrimaryButton>
             </div>
@@ -674,7 +678,11 @@ export function Hero() {
                 body={slide.body}
                 align="center"
               />
-              <PrimaryButton href="#products" color="gray" className="w-full">
+              <PrimaryButton
+                href={productPathByName(slide.title) ?? "#products"}
+                color="gray"
+                className="w-full"
+              >
                 View Machine
               </PrimaryButton>
             </div>

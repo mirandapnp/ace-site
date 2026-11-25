@@ -163,8 +163,33 @@ export function getProduct(id: string) {
   return byId.get(id);
 }
 
+/** Match listing product by display name (e.g. hero h1). */
+export function getProductByName(name: string) {
+  const key = name.trim().toLowerCase();
+  return products.find((product) => product.name.trim().toLowerCase() === key);
+}
+
 export function productPath(id: string) {
   return `/products/${id}`;
+}
+
+export function productPathByName(name: string) {
+  const product = getProductByName(name);
+  return product ? productPath(product.id) : undefined;
+}
+
+/** new → top → unlabeled; stable within each tier. */
+export function sortProductsByBadge(items: readonly Product[]): Product[] {
+  const rank = (product: Product) => {
+    const labels = product.labels ?? [];
+    if (labels.includes("new")) return 0;
+    if (labels.includes("top")) return 1;
+    return 2;
+  };
+  return [...items]
+    .map((product, index) => ({ product, index }))
+    .sort((a, b) => rank(a.product) - rank(b.product) || a.index - b.index)
+    .map(({ product }) => product);
 }
 
 /** Listing gallery images — CMS photos, else the card thumbnail. */
