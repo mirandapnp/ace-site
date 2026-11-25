@@ -25,11 +25,11 @@ export function ProductGallery({
   const current = images[active] ?? images[0];
 
   return (
-    <div className="relative flex w-full flex-col items-center gap-5 overflow-hidden rounded-[16px] bg-white pt-5 pb-2.5 min-[1024px]:aspect-square min-[1024px]:justify-center min-[1024px]:gap-0 min-[1024px]:p-5">
+    <div className="relative flex w-full flex-col items-center gap-5 overflow-hidden rounded-[16px] bg-white pt-5 pb-2.5 min-[1024px]:aspect-square min-[1024px]:w-full min-[1024px]:self-start min-[1024px]:justify-center min-[1024px]:gap-0 min-[1024px]:p-5">
       <button
         type="button"
         onClick={() => setLightbox(true)}
-        className="relative aspect-square w-full cursor-zoom-in min-[1024px]:h-[90%] min-[1024px]:w-[90%] min-[1024px]:aspect-auto"
+        className="relative aspect-square w-full cursor-zoom-in overflow-hidden min-[1024px]:w-[90%]"
         aria-label={`View larger photo of ${name}`}
       >
         <LazyImage
