@@ -6,9 +6,10 @@ const labelClass =
   "font-mono text-[12px] leading-[15px] font-[525] tracking-[0.78px] uppercase";
 
 /**
- * Figma secondary: py-12 + 15px type → 39px hug. `h-full` fills a taller
- * sibling row (e.g. beside PrimaryButton). Wide (`w-full`) uses space-between
- * like the listing Actions instance.
+ * Figma secondary: py-12 + 15px type → 39px hug. Does not stretch by default —
+ * parents that pair it with PrimaryButton should set `h-full` on the link
+ * (e.g. `[&>a]:h-full`). Wide (`w-full`) uses space-between like the listing
+ * Actions instance.
  */
 function faceClass(wide: boolean) {
   return wide
@@ -75,7 +76,7 @@ export function SecondaryButton({
         <a
           href={href}
           {...linkProps}
-          className={`group relative inline-flex h-full min-h-[39px] items-center overflow-hidden rounded-[8px] border ${onLight ? "border-black" : "border-white"} ${layout}`}
+          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border ${onLight ? "border-black" : "border-white"} ${layout}`}
         >
           <span className={face}>
             <Label
@@ -111,7 +112,7 @@ export function SecondaryButton({
         <a
           href={href}
           {...linkProps}
-          className={`group relative inline-flex h-full min-h-[39px] items-center overflow-hidden rounded-[8px] border border-[#fff645] bg-[#fff645] ${layout}`}
+          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] border border-[#fff645] bg-[#fff645] ${layout}`}
         >
           <span className={face}>
             <Label textClass="text-black" arrowSrc={blackArrow} arrow={arrow}>
@@ -139,7 +140,7 @@ export function SecondaryButton({
         <a
           href={href}
           {...linkProps}
-          className={`group relative inline-flex h-full min-h-[39px] items-center overflow-hidden rounded-[8px] ${layout}`}
+          className={`group relative inline-flex min-h-[39px] items-center overflow-hidden rounded-[8px] ${layout}`}
         >
           <span className={`${face} border border-black bg-black`}>
             <Label textClass="text-white" arrowSrc={whiteArrow} arrow={arrow}>
