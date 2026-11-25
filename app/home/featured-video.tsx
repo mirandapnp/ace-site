@@ -138,7 +138,7 @@ function VideoTrigger({
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-[350ms] ease-out group-hover:opacity-100 motion-reduce:transition-none"
+        className="ace-section-blur pointer-events-none absolute inset-0 opacity-0 backdrop-blur-[4px] transition-opacity duration-[350ms] ease-out group-hover:opacity-100 motion-reduce:transition-none"
       />
       <span className="absolute inset-0 flex items-center justify-center">
         <PlayButtonFace className={playClassName} />

@@ -1,41 +1,5 @@
+import { aceSweepStyles } from "@/components/ace-sweep";
 import { media } from "@/lib/media";
-
-const sweepStyles = `
-.ace-sweep-in,
-.ace-sweep-out {
-  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 33.333%, transparent 66.666%, transparent 100%);
-  mask-image: linear-gradient(90deg, #000 0%, #000 33.333%, transparent 66.666%, transparent 100%);
-  -webkit-mask-size: 300% 100%;
-  mask-size: 300% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  transition: mask-position 700ms cubic-bezier(0.22, 1, 0.36, 1), -webkit-mask-position 700ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.ace-sweep-in {
-  -webkit-mask-position: 100% 0;
-  mask-position: 100% 0;
-}
-.ace-sweep-out {
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 33.333%, #000 66.666%, #000 100%);
-  mask-image: linear-gradient(90deg, transparent 0%, transparent 33.333%, #000 66.666%, #000 100%);
-  -webkit-mask-position: 100% 0;
-  mask-position: 100% 0;
-}
-.group:hover > .ace-sweep-in {
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
-}
-.group:hover > .ace-sweep-out {
-  -webkit-mask-position: 0 0;
-  mask-position: 0 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  .ace-sweep-in,
-  .ace-sweep-out {
-    transition: none;
-  }
-}
-`;
 
 /** Integer 15px line box — Safari floors fractional leading under zoom. */
 const labelClass =
@@ -44,6 +8,9 @@ const labelClass =
 /** p-2 + size-9 → 52px; fixed height so Safari zoom can’t shrink vertical padding. */
 const shellClass =
   "group relative box-border flex h-[52px] items-center overflow-hidden rounded-[12px]";
+
+const blackArrow = media("/ace/enquire-arrow.svg");
+const yellowArrow = media("/ace/view-arrow.svg");
 
 export function PrimaryButton({
   href,
@@ -61,15 +28,22 @@ export function PrimaryButton({
   const rowClass = wide
     ? "relative flex h-full w-full items-center justify-between px-2"
     : "relative flex h-full w-full items-center gap-3 px-2";
+  const hoverRow = wide
+    ? "ace-sweep-in pointer-events-none absolute inset-0 flex items-center justify-between rounded-[12px] px-2"
+    : "ace-sweep-in pointer-events-none absolute inset-0 flex items-center gap-3 rounded-[12px] px-2";
+  /* Cover resting yellow border so the muted hover fill doesn’t leave a ring. */
+  const yellowHoverRow = wide
+    ? "ace-sweep-in pointer-events-none absolute -inset-px flex items-center justify-between rounded-[12px] border border-[#f0e62d] bg-[#f0e62d] px-2"
+    : "ace-sweep-in pointer-events-none absolute -inset-px flex items-center gap-3 rounded-[12px] border border-[#f0e62d] bg-[#f0e62d] px-2";
 
   return (
     <>
-      <style>{sweepStyles}</style>
+      <style>{aceSweepStyles}</style>
       <a
         href={href}
         className={
           yellow
-            ? `${shellClass} border border-[#fff645] bg-[rgba(255,246,69,0.75)] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
+            ? `${shellClass} border border-[#fff645] bg-[#fff645] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
             : `${shellClass} ace-frost bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
         }
       >
@@ -80,36 +54,32 @@ export function PrimaryButton({
           <span
             className={
               yellow
-                ? "flex size-9 shrink-0 items-center justify-center rounded-full bg-black"
+                ? "flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(78,78,78,0.75)]"
                 : "flex size-9 shrink-0 items-center justify-center rounded-full bg-[#fff645]"
             }
           >
             <img
               alt=""
-              src={yellow ? media("/ace/view-arrow.svg") : media("/ace/enquire-arrow.svg")}
+              src={yellow ? yellowArrow : blackArrow}
               width={7.49553}
               height={7.5}
             />
           </span>
         </span>
         {yellow ? (
-          <span
-            aria-hidden
-            className={`ace-sweep-out absolute inset-0 flex items-center bg-[#fff645] px-2 ${wide ? "justify-between" : "gap-3"}`}
-          >
+          /* Hover: muted yellow shell, black label, black disc + yellow arrow */
+          <span aria-hidden className={yellowHoverRow}>
             <span className={`${labelClass} text-black`}>{children}</span>
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(78,78,78,0.75)]">
-              <img alt="" src={media("/ace/view-arrow.svg")} width={7.49553} height={7.5} />
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-black">
+              <img alt="" src={yellowArrow} width={7.49553} height={7.5} />
             </span>
           </span>
         ) : (
-          <span
-            aria-hidden
-            className={`ace-sweep-in absolute inset-0 flex items-center bg-[#fff645] px-2 ${wide ? "justify-between" : "gap-3"}`}
-          >
+          /* Hover: yellow shell, black label, gray disc + yellow arrow */
+          <span aria-hidden className={`${hoverRow} bg-[#fff645]`}>
             <span className={`${labelClass} text-black`}>{children}</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#4e4e4e]">
-              <img alt="" src={media("/ace/view-arrow.svg")} width={7.49553} height={7.5} />
+              <img alt="" src={yellowArrow} width={7.49553} height={7.5} />
             </span>
           </span>
         )}

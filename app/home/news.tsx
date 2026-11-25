@@ -366,14 +366,14 @@ function ArrowButton({
       onClick={() => {
         if (!disabled) onClick();
       }}
-      className={`relative size-10 ${disabled ? "" : "group"}`}
+      className={`relative size-10 overflow-hidden ${disabled ? "" : "group"}`}
     >
-      <ArrowFace direction={direction} tone="hover" />
+      <ArrowFace direction={direction} tone="rest" />
       <span
         aria-hidden
-        className="ace-sweep-out ace-arrow-sweep pointer-events-none absolute top-0 left-0"
+        className="ace-sweep-in ace-arrow-sweep pointer-events-none absolute inset-0"
       >
-        <ArrowFace direction={direction} tone="rest" />
+        <ArrowFace direction={direction} tone="hover" />
       </span>
     </button>
   );
@@ -391,31 +391,18 @@ function ArrowFace({
   return (
     <svg width={40} height={40} viewBox="0 0 40 40" fill="none" aria-hidden>
       {hover ? (
+        <rect width="40" height="40" rx="8" fill="#FFF645" />
+      ) : (
         <rect
           x="0.5"
           y="0.5"
           width="39"
           height="39"
           rx="7.5"
-          fill="#FFF645"
-          fillOpacity="0.75"
-          stroke="#FFF645"
+          stroke="#D7D7D7"
         />
-      ) : (
-        <>
-          <rect width="40" height="40" rx="8" fill="black" />
-          <rect width="40" height="40" rx="8" fill="#4E4E4E" fillOpacity="0.5" />
-          <rect
-            x="0.5"
-            y="0.5"
-            width="39"
-            height="39"
-            rx="7.5"
-            stroke="#D7D7D7"
-            strokeOpacity="0.75"
-          />
-        </>
       )}
+
       <path
         d={chevron}
         fill={hover ? "black" : "white"}

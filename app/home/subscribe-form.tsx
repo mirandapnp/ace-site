@@ -73,7 +73,7 @@ export function SubscribeForm({ className }: { className?: string }) {
       className={`relative z-10 ${className ?? "w-[400px]"}`}
     >      <style>{sweepStyles}</style>
       <div
-        className={`${resting ? "group bg-[rgba(215,215,215,0.75)]" : "bg-[#D7D7D7]"} relative flex items-center justify-between overflow-hidden rounded-full border border-solid p-1 ${border}`}
+        className={`${resting ? "group bg-[#B7B7B7]" : "bg-[#D7D7D7]"} relative flex items-center justify-between overflow-hidden rounded-full border border-solid p-1 ${border}`}
       >
         {resting ? (
           <span aria-hidden className="ace-field-sweep pointer-events-none absolute inset-0 rounded-full bg-[#D7D7D7]" />
