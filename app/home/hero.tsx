@@ -456,7 +456,13 @@ export function Hero() {
   const [active, setActive] = useState(0);
   const [desktop, setDesktop] = useState<boolean | null>(null);
   const [desktopCompact, setDesktopCompact] = useState(false);
-  const [compactMachineLeft, setCompactMachineLeft] = useState<number | null>(null);
+  /** Compact-only: image box centered in the free space (ignores Figma art inset). */
+  const [compactArt, setCompactArt] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  } | null>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const glow = useGradientFollow(
     desktop === false ? mobileHeroGradientFollow : heroGradientFollow,
@@ -485,7 +491,7 @@ export function Hero() {
   useEffect(() => {
     if (!desktop) {
       setDesktopCompact(false);
-      setCompactMachineLeft(null);
+      setCompactArt(null);
       return;
     }
 
@@ -497,10 +503,10 @@ export function Hero() {
       setDesktopCompact(compact);
       const copy = copyRef.current;
       if (!compact || !copy) {
-        setCompactMachineLeft(null);
+        setCompactArt(null);
         return;
       }
-      // Center on the rendered words, not the wider copy box.
+      // Free space starts after the rendered words, not the wider copy box.
       const range = document.createRange();
       let edge = 0;
       copy.querySelectorAll("h1, p").forEach((node) => {
@@ -513,14 +519,14 @@ export function Hero() {
       const copyRight = (edge - cardBox.left) / scale;
       const frameH = card.clientHeight * (MACHINE_FRAME.height / DESKTOP_CARD_H);
       const frameW = frameH * (MACHINE_FRAME.width / MACHINE_FRAME.height);
-      // Art box size in card px (scaled with the frame).
+      const frameTop = card.clientHeight * (MACHINE_FRAME.top / DESKTOP_CARD_H);
+      // Image box from art size; ignore Figma art.left. Center visual mass in free space.
       const artW = frameW * (art.width / MACHINE_FRAME.width);
-      const artLeftInFrame = frameW * (art.left / MACHINE_FRAME.width);
-      const boxLeft = copyRight + (card.clientWidth - copyRight - artW) / 2;
-      // compactMachineLeft is the FRAME left that keeps art visually centered.
-      setCompactMachineLeft(
-        boxLeft - artLeftInFrame + (0.5 - art.visualCenter) * artW,
-      );
+      const artH = frameH * (art.height / MACHINE_FRAME.height);
+      const artTop = frameTop + frameH * (art.top / MACHINE_FRAME.height);
+      const remainMid = copyRight + (card.clientWidth - copyRight) / 2;
+      const artLeft = remainMid - art.visualCenter * artW;
+      setCompactArt({ left: artLeft, top: artTop, width: artW, height: artH });
     };
 
     sync();
@@ -565,33 +571,16 @@ export function Hero() {
             video={slide.video}
             className="absolute inset-5 overflow-hidden rounded-[16px]"
           >
-            {/* Shared Figma slot: Frame 2147238782 */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute"
-              style={
-                desktopCompact && compactMachineLeft != null
-                  ? {
-                      left: compactMachineLeft,
-                      top: `${(MACHINE_FRAME.top / DESKTOP_CARD_H) * 100}%`,
-                      height: `${(MACHINE_FRAME.height / DESKTOP_CARD_H) * 100}%`,
-                      aspectRatio: `${MACHINE_FRAME.width} / ${MACHINE_FRAME.height}`,
-                    }
-                  : {
-                      left: MACHINE_FRAME.left,
-                      top: `${(MACHINE_FRAME.top / DESKTOP_CARD_H) * 100}%`,
-                      height: `${(MACHINE_FRAME.height / DESKTOP_CARD_H) * 100}%`,
-                      aspectRatio: `${MACHINE_FRAME.width} / ${MACHINE_FRAME.height}`,
-                    }
-              }
-            >
+            {/* Compact: center the image box in free space. Wide: Figma frame + art inset. */}
+            {desktopCompact && compactArt != null ? (
               <div
-                className="absolute"
+                aria-hidden
+                className="pointer-events-none absolute"
                 style={{
-                  left: `${(art.left / MACHINE_FRAME.width) * 100}%`,
-                  top: `${(art.top / MACHINE_FRAME.height) * 100}%`,
-                  width: `${(art.width / MACHINE_FRAME.width) * 100}%`,
-                  height: `${(art.height / MACHINE_FRAME.height) * 100}%`,
+                  left: compactArt.left,
+                  top: compactArt.top,
+                  width: compactArt.width,
+                  height: compactArt.height,
                   ...enter.machineStyle,
                 }}
               >
@@ -607,7 +596,41 @@ export function Hero() {
                   loadedFilter={MACHINE_SHADOW}
                 />
               </div>
-            </div>
+            ) : (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute"
+                style={{
+                  left: MACHINE_FRAME.left,
+                  top: `${(MACHINE_FRAME.top / DESKTOP_CARD_H) * 100}%`,
+                  height: `${(MACHINE_FRAME.height / DESKTOP_CARD_H) * 100}%`,
+                  aspectRatio: `${MACHINE_FRAME.width} / ${MACHINE_FRAME.height}`,
+                }}
+              >
+                <div
+                  className="absolute"
+                  style={{
+                    left: `${(art.left / MACHINE_FRAME.width) * 100}%`,
+                    top: `${(art.top / MACHINE_FRAME.height) * 100}%`,
+                    width: `${(art.width / MACHINE_FRAME.width) * 100}%`,
+                    height: `${(art.height / MACHINE_FRAME.height) * 100}%`,
+                    ...enter.machineStyle,
+                  }}
+                >
+                  <LazyImage
+                    key={slide.machine}
+                    priority
+                    fill
+                    alt=""
+                    src={slide.machine}
+                    className="object-contain"
+                    sizes="(max-width: 1023px) 140vw, 71vw"
+                    quality={90}
+                    loadedFilter={MACHINE_SHADOW}
+                  />
+                </div>
+              </div>
+            )}
 
             <div
               ref={copyRef}

@@ -178,6 +178,7 @@ function BloomStaticImage({
           fill
           placeholder="empty"
           sizes="100vw"
+          quality={90}
           className={className}
           onLoad={() => setImageReady(true)}
           style={{
@@ -508,6 +509,7 @@ function BloomImageLayer({
           fill
           placeholder="empty"
           sizes="100vw"
+          quality={90}
           className={className}
           onLoad={() => setImageReady(true)}
           style={{

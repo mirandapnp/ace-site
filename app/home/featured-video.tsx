@@ -131,6 +131,7 @@ function VideoTrigger({
         src={featuredVideo.thumbnail}
         className="object-cover"
         sizes="(max-width: 1023px) 100vw, 1120px"
+        quality={90}
       />
       <span
         aria-hidden
