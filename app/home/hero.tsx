@@ -16,6 +16,8 @@ import {
 } from "@/lib/use-gradient-follow";
 
 const DESKTOP_MQ = "(min-width: 1024px)";
+/** Auto-advance hero slides. */
+const HERO_AUTO_MS = 10_000;
 
 /** Desktop hero card design height — below this, copy centers vertically. */
 const DESKTOP_CARD_H = 860;
@@ -122,24 +124,6 @@ const slides: readonly HeroSlide[] = [
       center: -35.06592559814453 + 442.13201904296875 / 2,
       width: 442.13201904296875,
     },
-  },
-  {
-    // Slide 03 mockup not built yet — keep the pager slot, reuse slide 01 media.
-    label: "03",
-    title: "Cold Trigger",
-    body: "Lock in for explosive 4-player co-op action in this tactical arcade shooter featuring swivel-mounted weapons and dual-screen combat.",
-    machine: "/ace/machine.webp",
-    mobileMachine: "/ace/machine-mobile.webp",
-    video: media("/ace/hero.mp4?v=3"),
-    bloom: "#36F592",
-    art: {
-      left: 338.94 - MACHINE_FRAME.left,
-      top: 58.17 - MACHINE_FRAME.top,
-      width: 1014.01,
-      height: 1014.01,
-      visualCenter: 0.68,
-    },
-    mobileArt: MOBILE_ART_COLD_TRIGGER,
   },
 ];
 
@@ -440,6 +424,15 @@ export function Hero() {
     mediaQuery.addEventListener("change", sync);
     return () => mediaQuery.removeEventListener("change", sync);
   }, []);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => {
+      setActive((index) => (index + 1) % slides.length);
+    }, HERO_AUTO_MS);
+    return () => window.clearInterval(id);
+  }, [active]);
 
   useEffect(() => {
     if (!desktop) {
