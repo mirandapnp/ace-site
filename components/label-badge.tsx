@@ -27,7 +27,7 @@ const styles: Record<
 
 /**
  * Figma `Label Badge` — New / Top / Kid product labels.
- * Mobile is smaller (10px type); desktop matches the 14px control.
+ * Mobile is smaller (10px type); desktop is 5% under wide, 8% less tall.
  */
 export function LabelBadge({
   variant = "kid",
@@ -40,28 +40,34 @@ export function LabelBadge({
   className?: string;
 }) {
   const style = styles[variant];
+  const shellRadius =
+    size === "mobile"
+      ? "rounded-[8px]"
+      : size === "desktop"
+        ? "rounded-[7.6px]"
+        : "rounded-[8px] min-[1024px]:rounded-[7.6px]";
   const pad =
     size === "mobile"
       ? "gap-[4.5px] px-2.5 py-1.5"
       : size === "desktop"
-        ? "gap-2 p-2.5"
-        : "gap-[4.5px] px-2.5 py-1.5 min-[1024px]:gap-2 min-[1024px]:p-2.5";
+        ? "gap-[7.6px] px-[9.5px] py-[9px]"
+        : "gap-[4.5px] px-2.5 py-1.5 min-[1024px]:gap-[7.6px] min-[1024px]:px-[9.5px] min-[1024px]:py-[9px]";
   const dot =
     size === "mobile"
       ? "size-[3.5px]"
       : size === "desktop"
-        ? "size-[4.5px]"
-        : "size-[3.5px] min-[1024px]:size-[4.5px]";
+        ? "size-[4.275px]"
+        : "size-[3.5px] min-[1024px]:size-[4.275px]";
   const type =
     size === "mobile"
       ? "text-[10px] leading-[1.25] tracking-[0.45px]"
       : size === "desktop"
-        ? "text-[14px] leading-none tracking-[0.7px]"
-        : "text-[10px] leading-[1.25] tracking-[0.45px] min-[1024px]:text-[14px] min-[1024px]:leading-none min-[1024px]:tracking-[0.7px]";
+        ? "text-[13.3px] leading-none tracking-[0.665px]"
+        : "text-[10px] leading-[1.25] tracking-[0.45px] min-[1024px]:text-[13.3px] min-[1024px]:leading-none min-[1024px]:tracking-[0.665px]";
 
   return (
     <span
-      className={`inline-flex items-center rounded-[8px] border border-solid ${style.shell}${className ? ` ${className}` : ""}`}
+      className={`inline-flex items-center border border-solid ${shellRadius} ${style.shell}${className ? ` ${className}` : ""}`}
     >
       <span className={`flex items-center justify-center ${pad}`}>
         <span aria-hidden className={`shrink-0 ${dot} ${style.dot}`} />
