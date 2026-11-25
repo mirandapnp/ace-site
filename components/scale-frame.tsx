@@ -94,6 +94,11 @@ function getServerSnapshot() {
   return SERVER_METRICS;
 }
 
+/** Live ScaleFrame metrics (`frameWidth`, `scale`, `vhDesign`). */
+export function useAceMetrics() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
 /**
  * Locks the page to a fixed design width (412 / 1440) and scales it to the
  * viewport with `transform: scale()` plus a layout spacer.

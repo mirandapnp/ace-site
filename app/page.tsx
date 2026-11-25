@@ -13,11 +13,10 @@ import { Products } from "./home/products";
 export default function Home() {
   return (
     <div className="min-h-screen w-full min-w-0 bg-black">
+      {/* Fixed outside ScaleFrame — avoids JS pin lag from the scale transform. */}
+      <Header />
       <ScaleFrame>
-        <div className="relative">
-          <Hero />
-          <Header />
-        </div>
+        <Hero />
         <Network />
         <Products />
         <FeaturedVideo />
