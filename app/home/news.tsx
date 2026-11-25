@@ -208,7 +208,7 @@ export function News() {
 
   return (
     <section
-      className="flex w-[412px] flex-col gap-5 px-2.5 pt-5 pb-2.5 min-[1024px]:w-[1440px] min-[1024px]:gap-10 min-[1024px]:px-5 min-[1024px]:pt-[60px] min-[1024px]:pb-5"
+      className="ace-below-fold flex w-[412px] flex-col gap-5 px-2.5 pt-5 pb-2.5 min-[1024px]:w-[1440px] min-[1024px]:gap-10 min-[1024px]:px-5 min-[1024px]:pt-[60px] min-[1024px]:pb-5"
       aria-labelledby="news-heading"
     >
       <style>{sweepStyles}</style>

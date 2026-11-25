@@ -138,7 +138,7 @@ function VideoTrigger({
       />
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 backdrop-blur-[4px] transition-opacity duration-[350ms] ease-out group-hover:opacity-100 motion-reduce:transition-none"
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-[350ms] ease-out group-hover:opacity-100 motion-reduce:transition-none"
       />
       <span className="absolute inset-0 flex items-center justify-center">
         <PlayButtonFace className={playClassName} />
@@ -209,7 +209,7 @@ function VideoLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-6 backdrop-blur-[8px] transition-opacity duration-300 ease-out ${
+      className={`fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-6 transition-opacity duration-300 ease-out ${
         visible ? "opacity-100" : "opacity-0"
       }`}
       onClick={requestClose}

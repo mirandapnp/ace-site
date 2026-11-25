@@ -1,6 +1,7 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useLayoutEffect, useState } from "react";
+import { isAceSafari } from "@/components/ace-sweep";
 import { useIsDesktop } from "@/lib/use-is-desktop";
 
 /**
@@ -13,11 +14,17 @@ import { useIsDesktop } from "@/lib/use-is-desktop";
  */
 export function GradientNoise({ className = "" }: { className?: string }) {
   const desktop = useIsDesktop();
+  const [safari, setSafari] = useState(false);
   const filterId = `ace-noise-${useId().replace(/:/g, "")}`;
   // Discrete seed cycle — each step is a fresh noise field (TV static).
   const seeds = Array.from({ length: 24 }, (_, i) => i + 1).join(";");
 
-  if (!desktop) return null;
+  useLayoutEffect(() => {
+    setSafari(isAceSafari());
+  }, []);
+
+  // Desktop only — skipped on mobile / Safari to save paint/CPU.
+  if (!desktop || safari) return null;
 
   return (
     <svg

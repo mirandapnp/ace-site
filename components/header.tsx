@@ -24,9 +24,9 @@ const HIDE_MS = 350;
 type NavChrome = "default" | "scrolled";
 
 /**
- * Scrolled nav wash: one backdrop blur + black tint, faded with an eased
- * parent mask. Layer bleeds below the header so the element's hard box edge
- * sits where the mask is already fully transparent (avoids a crisp cutoff).
+ * Scrolled nav wash: black tint, faded with an eased parent mask. Layer bleeds
+ * below the header so the hard box edge sits where the mask is already fully
+ * transparent (avoids a crisp cutoff).
  */
 const progressiveWashStyles = `
 .ace-nav-wash {
@@ -34,7 +34,7 @@ const progressiveWashStyles = `
   top: 0;
   left: 0;
   right: 0;
-  /* Bleed past the header foot — hard backdrop edge lives in the transparent zone */
+  /* Bleed past the header foot — hard edge lives in the transparent zone */
   height: calc(100% + 56px);
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
@@ -64,12 +64,6 @@ const progressiveWashStyles = `
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
-.ace-nav-wash__frost {
-  position: absolute;
-  inset: 0;
-  backdrop-filter: blur(13px);
-  -webkit-backdrop-filter: blur(13px);
-}
 .ace-nav-wash__tint {
   position: absolute;
   inset: 0;
@@ -93,7 +87,6 @@ function ProgressiveWash({ visible }: { visible: boolean }) {
         visible ? "opacity-100" : "opacity-0",
       ].join(" ")}
     >
-      <div className="ace-nav-wash__frost" />
       <div className="ace-nav-wash__tint" />
     </div>
   );
@@ -189,9 +182,7 @@ export function Header() {
     "transition-transform duration-[350ms] ease-[cubic-bezier(0.4,0.15,0.6,0.85)] motion-reduce:transition-none";
 
   const mobileScrolled =
-    chrome === "scrolled"
-      ? "bg-black/60 backdrop-blur-[20px]"
-      : "backdrop-blur-[20px]";
+    chrome === "scrolled" ? "bg-black/60" : "";
 
   return (
     <>

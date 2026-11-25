@@ -59,7 +59,7 @@ export function PageNumber({
           className={
             active
               ? `${faceClass} border-[#FFF645] bg-[rgba(78,78,78,0.75)]`
-              : `${faceClass} border-[rgba(215,215,215,0.75)] bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px]`
+              : `${faceClass} border-[rgba(215,215,215,0.75)] bg-[rgba(78,78,78,0.5)]`
           }
         >
           <span className={`${labelClass} ${active ? "text-[#FFF645]" : "text-white"}`}>
@@ -69,7 +69,7 @@ export function PageNumber({
         {active ? null : (
           <span
             aria-hidden
-            className={`ace-sweep-in ${faceClass} border-[#FFF645] bg-[rgba(255,246,69,0.75)] backdrop-blur-[20px]`}
+            className={`ace-sweep-in ${faceClass} border-[#FFF645] bg-[rgba(255,246,69,0.75)]`}
           >
             <span className={`${labelClass} text-black`}>{children}</span>
           </span>

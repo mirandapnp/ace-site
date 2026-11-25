@@ -64,7 +64,7 @@ export function PartnerCta({
 
   return (
     <section
-      className="w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:py-5"
+      className="ace-below-fold w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:py-5"
       aria-labelledby="partner-cta-heading"
     >
       <div

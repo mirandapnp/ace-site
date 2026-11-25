@@ -29,7 +29,7 @@ export function LanguageSelect({ className }: { className?: string }) {
           .filter(Boolean)
           .join(" ")}
       >
-        <span className="absolute inset-0 rounded-full bg-[rgba(78,78,78,0.5)] backdrop-blur-[10px]">
+        <span className="ace-frost absolute inset-0 rounded-full bg-[rgba(78,78,78,0.5)] backdrop-blur-[10px]">
           <GlobeIcon stroke="white" />
         </span>
         <span

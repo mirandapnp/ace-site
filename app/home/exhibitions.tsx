@@ -5,7 +5,7 @@ import { SubscribeForm } from "./subscribe-form";
 export function Exhibitions() {
   return (
     <section
-      className="w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:pt-5 min-[1024px]:pb-0"
+      className="ace-below-fold w-[412px] px-2.5 py-2.5 min-[1024px]:w-[1440px] min-[1024px]:px-5 min-[1024px]:pt-5 min-[1024px]:pb-0"
       aria-labelledby="exhibitions-heading"
     >
       <BloomCard

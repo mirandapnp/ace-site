@@ -27,7 +27,7 @@ const sweepStyles = `
 `;
 
 const faceClass =
-  "absolute inset-0 flex items-center justify-center rounded-full border border-solid border-[rgba(215,215,215,0.25)] backdrop-blur-[20px]";
+  "absolute inset-0 flex items-center justify-center rounded-full border border-solid border-[rgba(215,215,215,0.25)]";
 
 export function PlayButtonFace({ className = "" }: { className?: string }) {
   return (

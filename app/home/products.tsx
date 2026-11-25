@@ -71,6 +71,7 @@ function CatalogCard({ product }: { product: Product }) {
   }
 
   function tilt(event: React.MouseEvent<HTMLLIElement>) {
+    if (document.documentElement.hasAttribute("data-safari")) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     event.currentTarget.style.perspective = "900px";
     const rect = event.currentTarget.getBoundingClientRect();
@@ -177,7 +178,7 @@ function FeaturedVisual({ active }: { active: Product }) {
       ) : null}
       <div
         ref={glow.gradientRef}
-        className="pointer-events-none absolute inset-0 isolate backdrop-blur-[4px]"
+        className="ace-section-blur pointer-events-none absolute inset-0 isolate backdrop-blur-[4px]"
         style={{
           backgroundImage:
             "radial-gradient(ellipse var(--grx) var(--gry) at var(--gx) var(--gy), rgba(54, 245, 146, var(--core-a)) var(--core), rgba(54, 245, 146, var(--mid)) var(--mid-at), rgba(54, 245, 146, 0) var(--fade)), linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40.385%, rgba(54, 245, 146, var(--wash-a)) 100%)",

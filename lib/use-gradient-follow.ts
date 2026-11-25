@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { isAceSafari } from "@/components/ace-sweep";
 
 export type GradientFollowConfig = {
   gx: number;
@@ -162,6 +163,9 @@ export function useGradientFollow(
     let running = false;
     let onScreen = true;
     let pageVisible = document.visibilityState !== "hidden";
+    let scrolling = false;
+    let scrollTimeout = 0;
+    const safari = isAceSafari();
     let io: IntersectionObserver | null = null;
 
     const settled = () =>
@@ -195,9 +199,17 @@ export function useGradientFollow(
       node.style.setProperty("--fade", `${cfg.fade}%`);
     };
 
+    const stopFrame = () => {
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      running = false;
+    };
+
     const tick = () => {
       frame = 0;
-      if (!onScreen || !pageVisible) {
+      if (!onScreen || !pageVisible || scrolling) {
         running = false;
         return;
       }
@@ -270,7 +282,7 @@ export function useGradientFollow(
     };
 
     const start = () => {
-      if (running || !onScreen || !pageVisible) return;
+      if (running || !onScreen || !pageVisible || scrolling) return;
       if (settled()) return;
       running = true;
       frame = requestAnimationFrame(tick);
@@ -284,11 +296,7 @@ export function useGradientFollow(
         ([entry]) => {
           onScreen = entry?.isIntersecting ?? false;
           if (onScreen) start();
-          else if (frame) {
-            cancelAnimationFrame(frame);
-            frame = 0;
-            running = false;
-          }
+          else stopFrame();
         },
         { rootMargin: "25% 0px" },
       );
@@ -300,20 +308,34 @@ export function useGradientFollow(
     const onVisibility = () => {
       pageVisible = document.visibilityState !== "hidden";
       if (pageVisible) start();
-      else if (frame) {
-        cancelAnimationFrame(frame);
-        frame = 0;
-        running = false;
-      }
+      else stopFrame();
     };
     document.addEventListener("visibilitychange", onVisibility);
 
+    // Safari: freeze the rAF glow while the page is scrolling.
+    const onScroll = () => {
+      scrolling = true;
+      stopFrame();
+      window.clearTimeout(scrollTimeout);
+      scrollTimeout = window.setTimeout(() => {
+        scrolling = false;
+        start();
+      }, 140);
+    };
+    if (safari) {
+      window.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    }
+
     return () => {
       startRef.current = () => {};
-      cancelAnimationFrame(frame);
+      stopFrame();
       cancelAnimationFrame(bindFrame);
+      window.clearTimeout(scrollTimeout);
       io?.disconnect();
       document.removeEventListener("visibilitychange", onVisibility);
+      if (safari) {
+        window.removeEventListener("scroll", onScroll, true);
+      }
     };
   }, []);
 

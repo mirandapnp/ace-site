@@ -41,7 +41,7 @@ export function NavItem({
             // Blur only with the gray pill — blur on a transparent face frosts
             // content behind the nav while it dismisses and reads as a morph.
             scrolled
-              ? "bg-[rgba(78,78,78,0.5)] backdrop-blur-[10px]"
+              ? "ace-frost bg-[rgba(78,78,78,0.5)] backdrop-blur-[10px]"
               : "bg-transparent",
           ].join(" ")}
         >

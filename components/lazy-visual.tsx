@@ -3,11 +3,13 @@
 import Image from "next/image";
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type CSSProperties,
   type RefObject,
 } from "react";
+import { isAceSafari } from "@/components/ace-sweep";
 import { resolvePhoto, resolvePhotoLqip } from "@/lib/photos";
 
 const lead = "400% 0px";
@@ -53,6 +55,18 @@ function useStill() {
   return still;
 }
 
+/** Safari (or reduced motion) — snap LQIP blur-up; no filter transition. */
+function useSnapBlur() {
+  const [snap, setSnap] = useState(false);
+  useLayoutEffect(() => {
+    setSnap(
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        isAceSafari(),
+    );
+  }, []);
+  return snap;
+}
+
 function revealStyle(ready: boolean, opacity: number, still: boolean) {
   return {
     opacity: ready ? opacity : 0,
@@ -67,13 +81,13 @@ function revealStyle(ready: boolean, opacity: number, still: boolean) {
 function SoftBlurUp({
   blurDataURL,
   ready,
-  still,
+  snap,
   className,
   style,
 }: {
   blurDataURL: string;
   ready: boolean;
-  still: boolean;
+  snap: boolean;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -88,7 +102,7 @@ function SoftBlurUp({
         ...style,
         filter: `blur(${BLUR_UP_RADIUS})`,
         opacity: ready ? 0 : 1,
-        transition: still ? "none" : BLUR_UP_TRANSITION,
+        transition: snap ? "none" : BLUR_UP_TRANSITION,
         pointerEvents: "none",
         zIndex: 1,
       }}
@@ -126,7 +140,7 @@ export function LazyImage({
   style?: CSSProperties;
 }) {
   const photo = resolvePhoto(src);
-  const still = useStill();
+  const snapBlur = useSnapBlur();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -158,7 +172,7 @@ export function LazyImage({
       ...style,
       opacity: hasBlurUp ? (ready ? restOpacity : 0) : restOpacity,
       filter: imageFilter,
-      transition: hasBlurUp && !still ? BLUR_UP_TRANSITION : undefined,
+      transition: hasBlurUp && !snapBlur ? BLUR_UP_TRANSITION : undefined,
     } satisfies CSSProperties,
   };
 
@@ -170,7 +184,7 @@ export function LazyImage({
       <SoftBlurUp
         blurDataURL={lqip}
         ready={ready}
-        still={still}
+        snap={snapBlur}
         className={
           fill
             ? `absolute inset-0 size-full max-w-none ${objectFit}`

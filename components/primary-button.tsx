@@ -69,8 +69,8 @@ export function PrimaryButton({
         href={href}
         className={
           yellow
-            ? `${shellClass} border border-[#fff645] bg-[rgba(255,246,69,0.75)] backdrop-blur-[50px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
-            : `${shellClass} bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
+            ? `${shellClass} border border-[#fff645] bg-[rgba(255,246,69,0.75)] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
+            : `${shellClass} ace-frost bg-[rgba(78,78,78,0.5)] backdrop-blur-[20px] ${wide ? "w-full" : "w-fit"}${className ? ` ${className}` : ""}`
         }
       >
         <span className={rowClass}>
@@ -95,7 +95,7 @@ export function PrimaryButton({
         {yellow ? (
           <span
             aria-hidden
-            className={`ace-sweep-out absolute inset-0 flex items-center bg-[#fff645] px-2 backdrop-blur-[20px] ${wide ? "justify-between" : "gap-3"}`}
+            className={`ace-sweep-out absolute inset-0 flex items-center bg-[#fff645] px-2 ${wide ? "justify-between" : "gap-3"}`}
           >
             <span className={`${labelClass} text-black`}>{children}</span>
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(78,78,78,0.75)]">
