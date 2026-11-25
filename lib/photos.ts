@@ -6,6 +6,10 @@ import airCombatBg from "../public/ace/air-combat-bg.webp";
 import airCombat from "../public/ace/air-combat.webp";
 import bikersMadness from "../public/ace/bikers-madness.webp";
 import coldTrigger from "../public/ace/cold-trigger.webp";
+import coldTriggerGallery1 from "../public/ace/products/cold-trigger/gallery-1.webp";
+import coldTriggerGallery2 from "../public/ace/products/cold-trigger/gallery-2.webp";
+import coldTriggerGallery3 from "../public/ace/products/cold-trigger/gallery-3.webp";
+import coldTriggerGallery4 from "../public/ace/products/cold-trigger/gallery-4.webp";
 import crossbowFishing from "../public/ace/crossbow-fishing.webp";
 import dragonKingdomVr from "../public/ace/dragon-kingdom-vr.webp";
 import exhibitions from "../public/ace/exhibitions.webp";
@@ -39,6 +43,10 @@ export const photos = {
   "/ace/air-combat.webp": airCombat,
   "/ace/bikers-madness.webp": bikersMadness,
   "/ace/cold-trigger.webp": coldTrigger,
+  "/ace/products/cold-trigger/gallery-1.webp": coldTriggerGallery1,
+  "/ace/products/cold-trigger/gallery-2.webp": coldTriggerGallery2,
+  "/ace/products/cold-trigger/gallery-3.webp": coldTriggerGallery3,
+  "/ace/products/cold-trigger/gallery-4.webp": coldTriggerGallery4,
   "/ace/crossbow-fishing.webp": crossbowFishing,
   "/ace/dragon-kingdom-vr.webp": dragonKingdomVr,
   "/ace/exhibitions.webp": exhibitions,
