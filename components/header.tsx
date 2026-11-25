@@ -19,7 +19,7 @@ const DIR_EPS = 4;
 /** Treat near-top as the transparent default state. */
 const TOP_EPS = 8;
 /** Match slide duration — block reveal/chrome flip until dismiss finishes. */
-const HIDE_MS = 350;
+const HIDE_MS = 425;
 
 type NavChrome = "default" | "scrolled";
 
@@ -180,8 +180,7 @@ export function Header() {
     ? "-translate-y-[calc(100%+24px)] pointer-events-none"
     : "translate-y-0";
   const slideClass =
-    "transition-transform duration-[350ms] ease-[cubic-bezier(0.4,0.15,0.6,0.85)] motion-reduce:transition-none";
-
+    "transition-transform duration-[425ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
   const mobileScrolled =
     chrome === "scrolled" ? "rounded-b-[16px] bg-black" : "";
 
