@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { LazyImage } from "@/components/lazy-visual";
 
 const controlClass =
-  "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#4E4E4E] text-white transition-colors hover:bg-[#FFF645] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFF645] disabled:opacity-30";
+  "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-[#4E4E4E] text-white transition-colors enabled:hover:bg-[#FFF645] enabled:hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFF645] disabled:opacity-30 disabled:transition-none";
 
 /** Approximate BeUI SPRING_LAYOUT (stiffness 360 / damping 32). */
 const zoomTransition =
@@ -282,76 +282,42 @@ function PhotoLightbox({
               />
             </svg>
           </button>
-          <p className="min-w-0 flex-1 truncate text-center text-sm text-white/80">
-            {name}
-          </p>
-          <div className="flex flex-col items-center gap-2.5">
+          <div
+            className="flex items-center gap-2.5"
+            onKeyDown={(event) => {
+              if (!zoom) return;
+              if (
+                !(event.target instanceof Element) ||
+                !event.target.closest("[data-lightbox-zoom]")
+              ) {
+                return;
+              }
+              const dx =
+                event.key === "ArrowLeft"
+                  ? -40
+                  : event.key === "ArrowRight"
+                    ? 40
+                    : 0;
+              const dy =
+                event.key === "ArrowUp"
+                  ? -40
+                  : event.key === "ArrowDown"
+                    ? 40
+                    : 0;
+              if (!dx && !dy) return;
+              event.preventDefault();
+              event.stopPropagation();
+              panByRef.current(dx, dy);
+            }}
+          >
             <button
               type="button"
               data-lightbox-zoom=""
-              aria-label={zoom ? "Zoom out" : "Zoom in"}
-              aria-pressed={zoom}
+              aria-label="Zoom out"
               aria-describedby={panHelp}
               className={controlClass}
-              onKeyDown={(event) => {
-                if (!zoom) return;
-                const dx =
-                  event.key === "ArrowLeft"
-                    ? -40
-                    : event.key === "ArrowRight"
-                      ? 40
-                      : 0;
-                const dy =
-                  event.key === "ArrowUp"
-                    ? -40
-                    : event.key === "ArrowDown"
-                      ? 40
-                      : 0;
-                if (!dx && !dy) return;
-                event.preventDefault();
-                event.stopPropagation();
-                panByRef.current(dx, dy);
-              }}
-              onClick={() => setZoom((current) => !current)}
-            >
-              {zoom ? (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 18 18"
-                  fill="none"
-                  aria-hidden
-                >
-                  <path
-                    d="M4 9h10"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 18 18"
-                  fill="none"
-                  aria-hidden
-                >
-                  <path
-                    d="M9 4v10M4 9h10"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              )}
-            </button>
-            <button
-              type="button"
-              className={controlClass}
-              aria-label="Next photo"
-              disabled={!multi}
-              onClick={() => move(1)}
+              disabled={!zoom}
+              onClick={() => setZoom(false)}
             >
               <svg
                 width="18"
@@ -361,15 +327,61 @@ function PhotoLightbox({
                 aria-hidden
               >
                 <path
-                  d="M7 4.5L11.5 9 7 13.5"
+                  d="M4 9h10"
                   stroke="currentColor"
                   strokeWidth="1.5"
                   strokeLinecap="round"
-                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              data-lightbox-zoom=""
+              aria-label="Zoom in"
+              aria-describedby={panHelp}
+              className={controlClass}
+              disabled={zoom}
+              onClick={() => setZoom(true)}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+                aria-hidden
+              >
+                <path
+                  d="M9 4v10M4 9h10"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
                 />
               </svg>
             </button>
           </div>
+          <button
+            type="button"
+            className={controlClass}
+            aria-label="Next photo"
+            disabled={!multi}
+            onClick={() => move(1)}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              aria-hidden
+            >
+              <path
+                d="M7 4.5L11.5 9 7 13.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
           <span id={panHelp} className="sr-only">
             When zoomed in, drag the image to pan, or keep this control focused
             and use the arrow keys.
