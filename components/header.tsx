@@ -174,28 +174,32 @@ export function Header() {
     };
   }, []);
 
-  // Slide in/out — fixed shell stays at top:0 so translate doesn't leave a gap.
+  // Overshoot + clip: -100% alone can leave a hairline of the solid bar
+  // (subpixels / scaled chrome). Clip only while hidden so desktop wash can bleed.
   const hideClass = hidden
-    ? "-translate-y-full pointer-events-none"
+    ? "-translate-y-[calc(100%+24px)] pointer-events-none"
     : "translate-y-0";
   const slideClass =
     "transition-transform duration-[350ms] ease-[cubic-bezier(0.4,0.15,0.6,0.85)] motion-reduce:transition-none";
 
   const mobileScrolled =
-    chrome === "scrolled" ? "bg-black/60" : "";
+    chrome === "scrolled" ? "rounded-b-[16px] bg-black" : "";
 
   return (
     <>
       <style>{progressiveWashStyles}</style>
-      <div className={`fixed top-0 left-0 z-50 w-full ${slideClass} ${hideClass}`}>
-        <div
-          className="origin-top-left"
-          style={{
-            width: frameWidth,
-            transform: `scale(${scale})`,
-            transformOrigin: "top left",
-          }}
-        >
+      <div
+        className={`fixed top-0 left-0 z-50 w-full ${hidden ? "pointer-events-none overflow-hidden" : ""}`}
+      >
+        <div className={`w-full ${slideClass} ${hideClass}`}>
+          <div
+            className="origin-top-left"
+            style={{
+              width: frameWidth,
+              transform: `scale(${scale})`,
+              transformOrigin: "top left",
+            }}
+          >
           <header className="relative hidden w-full items-center justify-between p-5 min-[1024px]:flex">
             <ProgressiveWash visible={chrome === "scrolled"} />
 
@@ -243,7 +247,7 @@ export function Header() {
           </header>
 
           <header
-            className={`relative flex w-full items-center justify-between rounded-b-[12px] px-2 py-3 min-[1024px]:hidden ${mobileScrolled}`}
+            className={`relative flex w-full items-center justify-between px-2 py-3 min-[1024px]:hidden ${mobileScrolled}`}
           >
             <LanguageSelect />
 
@@ -263,6 +267,7 @@ export function Header() {
               <img alt="" src={media("/ace/menu.svg")} width={35} height={35} />
             </button>
           </header>
+          </div>
         </div>
       </div>
     </>
