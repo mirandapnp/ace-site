@@ -51,7 +51,7 @@ export const featuredGradientFollow: GradientFollowConfig = {
   grx: 91.125,
   gry: 70.875,
   core: 8.1,
-  mid: 0.28,
+  mid: 0.238,
   midAt: 72,
   fade: 100,
   rangeX: 22,
@@ -59,13 +59,14 @@ export const featuredGradientFollow: GradientFollowConfig = {
   // Hover growth is 15% smaller than the shared defaults (scale 0.03, fade +11).
   scaleBoost: 0.0255,
   coreBoost: 0.425,
-  midDrop: 0.136,
+  midDrop: 0.1156,
   midAtBoost: 6.8,
   fadeBoost: 9.35,
-  coreAlpha: 0.55,
-  coreAlphaHover: 0.7,
-  washAlpha: 0.4,
-  washAlphaHover: 0.5,
+  // Alphas are 15% less opaque than the prior set (×0.85).
+  coreAlpha: 0.4675,
+  coreAlphaHover: 0.595,
+  washAlpha: 0.34,
+  washAlphaHover: 0.425,
 };
 
 /** Partner CTA / closing footer — green wash matches Figma radial size & opacity. */
